@@ -1,9 +1,10 @@
+using _Project.Scripts.VIew.Base;
 using _Project.Scripts.ViewModel.Base;
+using R3;
 using UnityEngine;
 using UnityEngine.UI;
-using R3;
 
-namespace _Project.Scripts.VIew.Base
+namespace _Project.Scripts.VIew.Implementation
 {
     public class MenuWindow : Window<MenuViewModel>
     {

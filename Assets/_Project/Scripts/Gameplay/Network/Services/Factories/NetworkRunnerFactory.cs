@@ -1,5 +1,7 @@
-using _Project.Scripts.Gameplay.Services.Factories.Base;
+using _Project.Scripts.Common.Repositories.Base;
+using _Project.Scripts.Common.Services.Factories.Base;
 using Fusion;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories
@@ -11,7 +13,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
         public NetworkRunnerFactory(
             NetworkRunnerCallBacksListener callBacksListener, 
             AssetReference networkRunnerPrefab, 
-            LocalObjectCreator creator) : base(networkRunnerPrefab, creator)
+            LocalObjectCreator<MonoBehaviour> creator) : base(networkRunnerPrefab, creator)
         {
             _callBacksListener = callBacksListener;
         }
