@@ -1,6 +1,6 @@
 using _Project.Scripts.Common.AssetsManagement;
 using _Project.Scripts.Common.Repositories.Base;
-using _Project.Scripts.VIew.Base;
+using _Project.Scripts.View.Base;
 using Zenject;
 
 namespace _Project.Scripts.Common.Services.Factories.Base

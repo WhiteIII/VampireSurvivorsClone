@@ -1,6 +1,6 @@
 using _Project.Scripts.Common.Services.Factories.Base;
 using _Project.Scripts.Gameplay.Services.Repositories;
-using _Project.Scripts.VIew.Services.Repositrories;
+using _Project.Scripts.View.Services.Repositrories;
 using UnityEngine;
 using Zenject;
 

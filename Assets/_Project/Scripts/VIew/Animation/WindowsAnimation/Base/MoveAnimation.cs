@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
-namespace _Project.Scripts.VIew.Base
+namespace _Project.Scripts.View.Base
 {
     public class MoveAnimation
     {

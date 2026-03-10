@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using _Project.Scripts.VIew.Base;
+using _Project.Scripts.View.Base;
 using Cysharp.Threading.Tasks;
 
-namespace _Project.Scripts.VIew.Services
+namespace _Project.Scripts.View.Services
 {
     public class WindowSwitcher
     {
@@ -20,9 +20,10 @@ namespace _Project.Scripts.VIew.Services
                 return;
             if (TryGetWindow(out TTo toWindow) == false)
                 return;
-
-            await fromWindow.CloseAsync();
-            await toWindow.OpenAsync();
+            if (fromWindow.IsOpen)
+                await fromWindow.CloseAsync();
+            if (toWindow.IsOpen == false)
+                await toWindow.OpenAsync();
         }
 
         private bool TryGetWindow<T>(out T result)

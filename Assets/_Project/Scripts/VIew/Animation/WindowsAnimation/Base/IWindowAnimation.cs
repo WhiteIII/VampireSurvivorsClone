@@ -1,7 +1,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 
-namespace _Project.Scripts.VIew.Base
+namespace _Project.Scripts.View.Base
 {
     public interface IWindowAnimation
     {

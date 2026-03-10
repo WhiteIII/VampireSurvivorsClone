@@ -29,7 +29,7 @@ namespace _Project.Scripts.ViewModel.Base
         public void SetOnToGameplayMethod(Func<UniTask> onGoToGameplay) => 
             _onGoToGameplay = onGoToGameplay;
 
-        public UniTask StartGameplay() => 
+        private void StartGameplay() => 
             _onGoToGameplay();
     }
 }

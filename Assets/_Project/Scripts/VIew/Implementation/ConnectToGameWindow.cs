@@ -1,6 +1,6 @@
 using _Project.Scripts.ViewModel.Base;
 
-namespace _Project.Scripts.VIew.Implementation
+namespace _Project.Scripts.View.Implementation
 {
     public class ConnectToGameWindow : StartGameWindow
     {
