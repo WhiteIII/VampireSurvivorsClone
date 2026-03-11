@@ -2,6 +2,7 @@ using _Project.Scripts.View.Base;
 using _Project.Scripts.View.Services;
 using _Project.Scripts.View.Services.Repositrories;
 using _Project.Scripts.ViewModel.Base;
+using Cysharp.Threading.Tasks;
 using R3;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,18 +21,43 @@ namespace _Project.Scripts.View.Implementation
         [SerializeField] private Button _connectToGameButton;
         
         private WindowSwitcher _windowSwitcher;
-        private WindowsRepository _repository; // TODO циклическая зависимость, поправить
-        
-        [Inject] private void Construct(WindowsRepository repository) => 
-            _repository = repository;
-        
+
         protected override void OnSetup()
         {
             _windowSwitcher = new WindowSwitcher(_createGameWindow, _connectToGameWindow);
             
-            _createGameButton.OnClickAsObservable().Subscribe().AddTo(this);
+            _createGameButton
+                .OnClickAsObservable()
+                .Subscribe(_ => SwitchToCreateGameWindow().Forget())
+                .AddTo(this);
+            _connectToGameButton
+                .OnClickAsObservable()
+                .Subscribe(_ => SwitchToConnectToGameWindow().Forget())
+                .AddTo(this);
+            
+            _createGameWindow
+                .OnCloseObservable
+                .Subscribe(task => DisableInteractivityDuringAsync(task).Forget())
+                .AddTo(this);
+            _connectToGameWindow
+                .OnCloseObservable
+                .Subscribe(task => DisableInteractivityDuringAsync(task).Forget())
+                .AddTo(this);
         }
 
+        private UniTask SwitchToCreateGameWindow() =>
+            DisableInteractivityDuringAsync(_windowSwitcher.Switch<ConnectToGameWindow, CreateGameWindow>());
+
+        private UniTask SwitchToConnectToGameWindow() =>
+            DisableInteractivityDuringAsync(_windowSwitcher.Switch<CreateGameWindow, ConnectToGameWindow>());
+
+        private async UniTask DisableInteractivityDuringAsync(UniTask task)
+        {
+            DisableInteractable();
+            await task;
+            EnableInteractable();
+        }
+        
         protected override void OnEnableInteractable()
         {
             _connectToGameButton.interactable = true;
@@ -43,15 +69,5 @@ namespace _Project.Scripts.View.Implementation
             _connectToGameButton.interactable = false;
             _createGameButton.interactable = false;
         }
-
-        private void RemoveInteractivityToAllWindows() => 
-            _repository.DisableInteractableAllWindowsWithout(
-                typeof(CreateGameWindow), 
-                typeof(ConnectToGameWindow));
-
-        private void ReturnInteractivityToAllWindows() =>
-            _repository.EnableInteractableAllWindowsWithout(
-                typeof(CreateGameWindow), 
-                typeof(ConnectToGameWindow));
     }
 }

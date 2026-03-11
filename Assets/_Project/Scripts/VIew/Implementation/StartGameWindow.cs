@@ -3,6 +3,7 @@ using _Project.Scripts.ViewModel.Base;
 using Cysharp.Threading.Tasks;
 using ModestTree;
 using R3;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static _Project.Scripts.ViewModel.Base.CreateGameOrConnectToGameViewModel;
@@ -13,7 +14,7 @@ namespace _Project.Scripts.View.Implementation
     {
         public Observable<UniTask> OnCloseObservable => _onCloseSubject;
         
-        [SerializeField] private InputField _sessionNameInputField;
+        [SerializeField] private TMP_InputField _sessionNameInputField;
         [SerializeField] private Button _startGameButton;
         [SerializeField] private Button _closeWindowButton;
         

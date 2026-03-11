@@ -18,6 +18,12 @@ namespace _Project.Scripts.View.Services.Repositrories
             return window;
         }
 
+        public void DisableInteractableAllWindows() => 
+            InvokeAllWindowsMethods(window => window.DisableInteractable());
+        
+        public void EnableInteractableAllWindows() => 
+            InvokeAllWindowsMethods(window => window.EnableInteractable());
+        
         public void DisableInteractableAllWindowsWithout(params Type[] types) => 
             InvokeIfWindowTypeNotIn(types, window => window.DisableInteractable());
         
@@ -31,6 +37,9 @@ namespace _Project.Scripts.View.Services.Repositrories
             _windows.Clear();
         }
 
+        private void InvokeAllWindowsMethods(Action<Window> action) => 
+            _windows.ForEach(action);
+        
         private void InvokeIfWindowTypeNotIn(Type[] types, Action<Window> action)
         {
             _windows.ForEach(window => types.ToList().ForEach(type =>
