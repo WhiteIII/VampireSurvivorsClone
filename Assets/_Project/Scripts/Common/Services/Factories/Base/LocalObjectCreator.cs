@@ -6,7 +6,7 @@ using Zenject;
 
 namespace _Project.Scripts.Common.Services.Factories.Base
 {
-    public class LocalObjectCreator<TBaseItem>
+    public class LocalObjectCreator<TBaseItem> : ILocalObjectsCreator<TBaseItem>
         where TBaseItem : MonoBehaviour
     {
         private readonly IRepository<TBaseItem> _repository;

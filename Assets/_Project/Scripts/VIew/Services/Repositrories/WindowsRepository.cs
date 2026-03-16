@@ -38,51 +38,39 @@ namespace _Project.Scripts.View.Services.Repositrories
         {
             if (windowTypes.Length == 0)
                 return;
-            int windowTypesIndex = 0;
             Queue<Window> windowsToRemove = new(windowTypes.Length);
             foreach (Window window in _windows)
             {
-                if (window.GetType() == windowTypes[windowTypesIndex])
+                foreach (Type type in windowTypes)
                 {
-                    windowTypesIndex++;
+                    if (window.GetType() != type)
+                        continue;
                     await window.CloseAsync();
                     windowsToRemove.Enqueue(window);
-                    Object.Destroy(window);
-                    if (windowTypesIndex == windowTypes.Length)
-                        break;
+                    Object.Destroy(window.gameObject);
                 }
             }
             while (windowsToRemove.Count > 0)
                 _windows.Remove(windowsToRemove.Dequeue());
         }
-        
-        public void DisableInteractableAllWindows() => 
-            InvokeAllWindowsMethods(window => window.DisableInteractable());
-        
-        public void EnableInteractableAllWindows() => 
-            InvokeAllWindowsMethods(window => window.EnableInteractable());
-        
-        //public void DisableInteractableAllWindowsWithout(params Type[] types) => 
-          //  InvokeWindowMethodIf(types, window => window.DisableInteractable());
-        
-        //public void EnableInteractableAllWindowsWithout(params Type[] types) => 
-          //  InvokeWindowMethodIf(types, window => window.EnableInteractable(), );
 
-        public void DestroyAllWindows()
-        {
-            foreach (Window window in _windows)
-                Object.Destroy(window);
-            _windows.Clear();
-        }
-
-        private void InvokeAllWindowsMethods(Action<Window> action) => 
-            _windows.ForEach(action);
+        public void DisableInteractableOnWindows(params Type[] types) => 
+            InvokeWindowMethodIf(
+                types, 
+                window => window.DisableInteractable(), 
+                (window, type) => window.GetType() == type);
         
-        private void InvokeWindowMethodIf(Type[] types, Action<Window> action, Predicate<Window> predicate)
+        public void EnableInteractableOnWindows(params Type[] types) => 
+            InvokeWindowMethodIf(
+                types, 
+                window => window.EnableInteractable(), 
+                (window, type) => window.GetType() == type);
+
+        private void InvokeWindowMethodIf(Type[] types, Action<Window> action, Func<Window, Type, bool> predicate)
         {
             _windows.ForEach(window => types.ToList().ForEach(type =>
             {
-                if (predicate(window))
+                if (predicate(window, type))
                     action(window);
             }));
         }

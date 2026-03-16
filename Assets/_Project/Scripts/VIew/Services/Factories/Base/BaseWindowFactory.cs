@@ -1,37 +1,17 @@
 using _Project.Scripts.Common.Services.Factories.Base;
+using _Project.Scripts.Common.Services.Factories.Implementation;
 using _Project.Scripts.View.Base;
-using _Project.Scripts.ViewModel.Base;
 using UnityEngine.AddressableAssets;
-using Zenject;
 
-public class BaseWindowFactory<TWindow, TViewModel> : PlaceholderFactory<TWindow>
-    where TWindow : Window<TViewModel>
-    where TViewModel : IViewModel
+namespace _Project.Scripts.View.Services.Factories.Base
 {
-    private readonly WindowsCreator _windowCreator;
-    private readonly AssetReference _windowAssetReference;
-
-    public BaseWindowFactory(
-        WindowsCreator windowCreator,
-        AssetReference windowAssetReference,
-        TViewModel viewModel)
+    public class BaseWindowFactory<TWindow> : BaseObjectFactory<TWindow>
+        where TWindow : Window
     {
-        _windowCreator = windowCreator;
-        _windowAssetReference = windowAssetReference;
-        ViewModel = viewModel;
+        public BaseWindowFactory(
+            AssetReference assetReference,
+            WindowsCreator windowCreator) : base(assetReference, windowCreator)
+        {
+        }
     }
-
-    protected TViewModel ViewModel { get; }
-
-    public override TWindow Create() => 
-        SetupWindow(CreateByCreator());
-
-    protected TWindow SetupWindow(TWindow window)
-    {
-        window.Setup(ViewModel);
-        return window;
-    }
-
-    protected TWindow CreateByCreator() => 
-        _windowCreator.Create<TWindow>(_windowAssetReference);
 }

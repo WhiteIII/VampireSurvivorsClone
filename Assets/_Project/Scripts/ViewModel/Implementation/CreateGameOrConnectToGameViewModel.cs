@@ -1,7 +1,8 @@
+using _Project.Scripts.ViewModel.Base;
 using Fusion;
 using R3;
 
-namespace _Project.Scripts.ViewModel.Base
+namespace _Project.Scripts.ViewModel.Implementation
 {
     public partial class CreateGameOrConnectToGameViewModel : IViewModel
     {
@@ -14,8 +15,10 @@ namespace _Project.Scripts.ViewModel.Base
 
         private StartGameArgs CreateStartGameArgs(string sessionName, SessionMode sessionMode)
         {
-            StartGameArgs startGameArgs = new();
-            startGameArgs.SessionName = sessionName;
+            StartGameArgs startGameArgs = new()
+            {
+                SessionName = sessionName
+            };
             if (sessionMode == SessionMode.Host)
                 startGameArgs.GameMode = GameMode.Host;
             else

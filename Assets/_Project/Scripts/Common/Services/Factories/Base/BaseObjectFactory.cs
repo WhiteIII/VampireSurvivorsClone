@@ -1,20 +1,18 @@
-using _Project.Scripts.Common.Repositories.Base;
-using _Project.Scripts.Common.Services.Factories.Base;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
 
-namespace _Project.Scripts.Gameplay.Network.Services.Factories
+namespace _Project.Scripts.Common.Services.Factories.Base
 {
-    public class BaseMonoBehaviourObjectFactory<T> : IFactory<T>
+    public abstract class BaseObjectFactory<T> : IFactory<T>
         where T : MonoBehaviour
     {
         private readonly AssetReference _assetReference;
-        private readonly LocalObjectCreator<MonoBehaviour> _creator;
+        private readonly ILocalObjectsCreator<T> _creator;
 
-        public BaseMonoBehaviourObjectFactory(
+        public BaseObjectFactory(
             AssetReference assetReference,
-            LocalObjectCreator<MonoBehaviour> creator)
+            ILocalObjectsCreator<T> creator)
         {
             _assetReference = assetReference;
             _creator = creator;

@@ -130,6 +130,8 @@ GameObject:
   - component: {fileID: 134400514}
   - component: {fileID: 134400515}
   - component: {fileID: 134400516}
+  - component: {fileID: 134400518}
+  - component: {fileID: 134400517}
   m_Layer: 0
   m_Name: SceneContext
   m_TagString: Untagged
@@ -166,6 +168,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scriptableObjectInstallers: []
   _monoInstallers:
+  - {fileID: 134400517}
+  - {fileID: 134400518}
   - {fileID: 134400516}
   _installerPrefabs: []
   _autoRun: 1
@@ -182,7 +186,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _parentNewObjectsUnderSceneContext: 0
-  _contractNames: []
+  _contractNames:
+  - Bootstrap
   _parentContractNames: []
 --- !u!114 &134400516
 MonoBehaviour:
@@ -196,6 +201,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d45c7831d69e4ce6b80503ccb3541a0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &134400517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134400513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bde4a20e05f141e7abfbd437c4bd3d75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _networkRunnerAssetReference:
+    m_AssetGUID: 2e0643ba929059e40b569bada77a8378
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  _networkSceneManagerReference:
+    m_AssetGUID: ef0568e93512bf44e9cd2f04f15ce73e
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+--- !u!114 &134400518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134400513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 344002d126424dd6abe4c97f6c1a5e5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _loadingWindowAssetReference:
+    m_AssetGUID: c04239d82665e6a49b48a7d25127c5db
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  _menuWindowAssetReference:
+    m_AssetGUID: a3c0d5b23ab09554c8abdd532ce890f2
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  _uiRootRectTransform: {fileID: 299549463}
 --- !u!1 &299549459
 GameObject:
   m_ObjectHideFlags: 0

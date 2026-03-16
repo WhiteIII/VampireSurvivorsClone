@@ -1,12 +1,12 @@
 using _Project.Scripts.View.Base;
-using _Project.Scripts.ViewModel.Base;
+using _Project.Scripts.ViewModel.Implementation;
 using Cysharp.Threading.Tasks;
 using ModestTree;
 using R3;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static _Project.Scripts.ViewModel.Base.CreateGameOrConnectToGameViewModel;
+using static _Project.Scripts.ViewModel.Implementation.CreateGameOrConnectToGameViewModel;
 
 namespace _Project.Scripts.View.Implementation
 {
@@ -18,11 +18,11 @@ namespace _Project.Scripts.View.Implementation
         [SerializeField] private Button _startGameButton;
         [SerializeField] private Button _closeWindowButton;
         
-        private Subject<UniTask> _onCloseSubject = new();
+        private readonly Subject<UniTask> _onCloseSubject = new();
         
         protected abstract SessionMode SessionMode { get; }
 
-        protected override void OnSetup()
+        protected override void OnAwakeMethod()
         {
             _closeWindowButton
                 .OnClickAsObservable()

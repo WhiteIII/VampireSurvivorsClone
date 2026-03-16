@@ -1,4 +1,4 @@
-using _Project.Scripts.ViewModel.Base;
+using _Project.Scripts.ViewModel.Implementation;
 
 namespace _Project.Scripts.View.Implementation
 {

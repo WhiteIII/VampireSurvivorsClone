@@ -2,6 +2,7 @@ using System.Threading;
 using _Project.Scripts.ViewModel.Base;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Zenject;
 
 namespace _Project.Scripts.View.Base
 {
@@ -12,8 +13,11 @@ namespace _Project.Scripts.View.Base
         public bool IsOpen { get; private set; }
         public bool IsInteractable { get; private set; }
 
-        private void Awake() => 
+        private void Awake()
+        {
             _windowAnimation = GetComponent<IWindowAnimation>();
+            OnAwakeMethod();
+        }
 
         private void OnDestroy() => 
             OnDestroyMethod();
@@ -48,12 +52,14 @@ namespace _Project.Scripts.View.Base
             OnDisableInteractable();
             IsInteractable = false;
         }
-        
+
         protected virtual void OnEnableInteractable() { }
         
         protected virtual void OnDisableInteractable() { }
         
         protected virtual void OnDestroyMethod() { }
+        
+        protected virtual void OnAwakeMethod() { }
         
         protected virtual UniTask OnCloseAnimationStartAsync(CancellationToken cancellationToken = default) => 
             UniTask.CompletedTask;
@@ -70,12 +76,7 @@ namespace _Project.Scripts.View.Base
     {
         protected T ViewModel { get; private set; }
 
-        public void Setup(T viewModel)
-        {
+        [Inject] private void Construct(T viewModel) => 
             ViewModel = viewModel;
-            OnSetup();
-        }
-        
-        protected virtual void OnSetup() { }
     }
 }

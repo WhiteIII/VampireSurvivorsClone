@@ -1,12 +1,11 @@
+using System.Threading;
 using _Project.Scripts.View.Base;
 using _Project.Scripts.View.Services;
-using _Project.Scripts.View.Services.Repositrories;
-using _Project.Scripts.ViewModel.Base;
+using _Project.Scripts.ViewModel.Implementation;
 using Cysharp.Threading.Tasks;
 using R3;
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
 
 namespace _Project.Scripts.View.Implementation
 {
@@ -22,7 +21,7 @@ namespace _Project.Scripts.View.Implementation
         
         private WindowSwitcher _windowSwitcher;
 
-        protected override void OnSetup()
+        protected override void OnAwakeMethod()
         {
             _windowSwitcher = new WindowSwitcher(_createGameWindow, _connectToGameWindow);
             
@@ -45,6 +44,26 @@ namespace _Project.Scripts.View.Implementation
                 .AddTo(this);
         }
 
+        protected override void OnEnableInteractable()
+        {
+            _connectToGameButton.interactable = true;
+            _createGameButton.interactable = true;
+        }
+
+        protected override void OnDisableInteractable()
+        {
+            _connectToGameButton.interactable = false;
+            _createGameButton.interactable = false;
+        }
+
+        protected override async UniTask OnCloseAnimationStartAsync(CancellationToken cancellationToken = default)
+        {
+            if (_connectToGameWindow.IsOpen)
+                await _connectToGameWindow.CloseAsync();
+            if (_createGameWindow.IsOpen)
+                await _createGameWindow.CloseAsync();
+        }
+
         private UniTask SwitchToCreateGameWindow() =>
             DisableInteractivityDuringAsync(_windowSwitcher.Switch<ConnectToGameWindow, CreateGameWindow>());
 
@@ -56,18 +75,6 @@ namespace _Project.Scripts.View.Implementation
             DisableInteractable();
             await task;
             EnableInteractable();
-        }
-        
-        protected override void OnEnableInteractable()
-        {
-            _connectToGameButton.interactable = true;
-            _createGameButton.interactable = true;
-        }
-
-        protected override void OnDisableInteractable()
-        {
-            _connectToGameButton.interactable = false;
-            _createGameButton.interactable = false;
         }
     }
 }

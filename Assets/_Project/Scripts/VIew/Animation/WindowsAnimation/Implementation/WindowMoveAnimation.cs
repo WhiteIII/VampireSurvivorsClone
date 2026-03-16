@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using _Project.Scripts.VIew.Animation.Services;
 using _Project.Scripts.View.Base;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace _Project.Scripts.View.Animation.WindowsAnimation.Base
+namespace _Project.Scripts.VIew.Animation.WindowsAnimation.Implementation
 {
     public partial class WindowMoveAnimation : MonoBehaviour, IWindowAnimation
     {
