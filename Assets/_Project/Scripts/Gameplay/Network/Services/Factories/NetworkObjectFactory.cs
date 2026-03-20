@@ -9,7 +9,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
     {
         public NetworkObjectFactory(
             AssetReference assetReference, 
-            NetworkObjectsCreator creator) : base(assetReference, creator)
+            GeneralNetworkObjectsCreator creator) : base(assetReference, creator)
         {
         }
     }

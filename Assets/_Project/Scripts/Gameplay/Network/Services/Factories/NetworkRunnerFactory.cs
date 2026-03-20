@@ -15,7 +15,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
         public NetworkRunnerFactory(
             NetworkRunnerCallBacksListener callBacksListener, 
             [Inject(Id = "NetworkRunnerAssetReference")]AssetReference networkRunnerPrefab, 
-            NetworkObjectsCreator creator) : base(networkRunnerPrefab, creator)
+            GeneralNetworkObjectsCreator creator) : base(networkRunnerPrefab, creator)
         {
             _callBacksListener = callBacksListener;
         }
