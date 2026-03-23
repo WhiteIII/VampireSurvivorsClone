@@ -1,14 +1,10 @@
-using _Project.Scripts.Common.Repositories.Base;
-using _Project.Scripts.Common.Services.Factories.Base;
-using _Project.Scripts.Common.Services.Factories.Implementation;
 using Fusion;
-using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories
 {
-    public class NetworkRunnerFactory : NetworkObjectFactory<NetworkRunner>
+    public class NetworkRunnerFactory : GeneralNetworkObjectFactory<NetworkRunner>
     {
         private readonly NetworkRunnerCallBacksListener _callBacksListener;
         

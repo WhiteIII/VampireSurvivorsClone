@@ -1,13 +1,12 @@
 using _Project.Scripts.Common.Services.Factories.Base;
-using _Project.Scripts.Common.Services.Factories.Implementation;
 using UnityEngine.AddressableAssets;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories
 {
-    public class NetworkObjectFactory<T> : BaseObjectFactory<T>
+    public abstract class GeneralNetworkObjectFactory<T> : BaseObjectFactory<T>
         where T : Fusion.Behaviour
     {
-        public NetworkObjectFactory(
+        protected GeneralNetworkObjectFactory(
             AssetReference assetReference, 
             GeneralNetworkObjectsCreator creator) : base(assetReference, creator)
         {

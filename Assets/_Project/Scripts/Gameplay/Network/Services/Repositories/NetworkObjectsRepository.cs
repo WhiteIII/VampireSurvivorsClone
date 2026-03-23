@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Repositories
 {
-    public class NetworkObjectRepository : IRepository<NetworkBehaviour>
+    public class NetworkObjectsRepository : IRepository<NetworkBehaviour>
     {
         private readonly GeneralNetworkObjectsRepository _generalNetworkObjectsRepository;
         private readonly List<NetworkBehaviour> _networkBehaviours = new();
 
-        public NetworkObjectRepository(GeneralNetworkObjectsRepository generalNetworkObjectsRepository) => 
+        public NetworkObjectsRepository(GeneralNetworkObjectsRepository generalNetworkObjectsRepository) => 
             _generalNetworkObjectsRepository = generalNetworkObjectsRepository;
 
         public T Add<T>(T networkBehaviour) where T : NetworkBehaviour
