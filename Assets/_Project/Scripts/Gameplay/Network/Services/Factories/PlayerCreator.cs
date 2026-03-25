@@ -1,5 +1,6 @@
 using _Project.Scripts.Common.AssetsManagement;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
+using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Fusion;
 using UnityEngine;
@@ -14,8 +15,9 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
             LocalAssetProvider localAssetProvider,
             DiContainer diContainer,
             GeneralNetworkObjectsRepository networkRunner, 
-            PlayerRepository repository) : 
-            base(localAssetProvider, diContainer, networkRunner, repository)
+            PlayerRepository repository,
+            GameLoop gameLoop) : 
+            base(localAssetProvider, diContainer, networkRunner, repository, gameLoop)
         {
         }
         

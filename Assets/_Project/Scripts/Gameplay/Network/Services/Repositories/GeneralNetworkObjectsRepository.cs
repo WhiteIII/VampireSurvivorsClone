@@ -10,7 +10,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
     {
         public NetworkRunner CurrentNetworkRunner { get; private set; }
         public NetworkSceneManagerDefault CurrentNetworkSceneManager { get; private set; }
-        
+
         public T Add<T>(T networkObject) where T : Behaviour
         {
             if (CurrentNetworkRunner && CurrentNetworkSceneManager)
@@ -31,7 +31,37 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
             }
             throw new Exception("The object is not defined!");
         }
-        
+
+        public bool TryGet<T>(out T item) where T : Behaviour
+        {
+            item = null;
+            if (typeof(T) == typeof(NetworkSceneManagerDefault))
+            {
+                if (CurrentNetworkSceneManager)
+                {
+                    item = CurrentNetworkSceneManager as T;
+                    return true;
+                }
+            }
+            else if (typeof(T) == typeof(NetworkRunner))
+            {
+                if (CurrentNetworkRunner)
+                {
+                    item = CurrentNetworkRunner as T;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void Remove(Behaviour item)
+        {
+            if (ReferenceEquals(item, CurrentNetworkRunner))
+                CurrentNetworkRunner = null;
+            else if (ReferenceEquals(item, CurrentNetworkSceneManager))
+                CurrentNetworkSceneManager = null;
+        }
+
         public void DestroyNetworkRunnerAndSceneManager()
         {
             Object.Destroy(CurrentNetworkRunner);

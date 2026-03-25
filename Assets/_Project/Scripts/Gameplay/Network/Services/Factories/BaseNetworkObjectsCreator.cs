@@ -18,18 +18,20 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
         private readonly DiContainer _diContainer;
         private readonly NetworkRunner _networkRunner; 
         private readonly IRepository<TBaseItem> _repository;
-        private readonly GameLoopRegistrationHelper _gameLoopRegistrationHelper;
+        private readonly GameLoop _gameLoop;
         
         protected BaseNetworkObjectsCreator(
             LocalAssetProvider localAssetProvider,
             DiContainer diContainer,
             GeneralNetworkObjectsRepository generalNetworkObjectsRepository,
-            IRepository<TBaseItem> repository)
+            IRepository<TBaseItem> repository,
+            GameLoop gameLoop)
         {
             _localAssetProvider = localAssetProvider;
             _diContainer = diContainer;
             _networkRunner = generalNetworkObjectsRepository.CurrentNetworkRunner;
             _repository = repository;
+            _gameLoop = gameLoop;
         }
 
         public T Create<T>(AssetReference assetReference) where T : TBaseItem =>
@@ -37,6 +39,14 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
 
         public T Create<T>(AssetReference assetReference, Vector3 position) where T : TBaseItem => 
             CreateWithParameters<T>(assetReference, position);
+
+        public void Despawn(TBaseItem item)
+        {
+            _gameLoop.TryUnregister(item);
+            if (_repository.TryGet(out TBaseItem _))
+                _repository.Remove(item);
+            _networkRunner.Despawn(item.Object);
+        }
 
         protected T CreateWithParameters<T>(
             AssetReference assetReference, 
@@ -47,7 +57,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
             if (_networkRunner.IsServer == false)
                 throw new Exception("An attempt was made to create an network object that was not a server!");
             
-            return _gameLoopRegistrationHelper.TryRegister(_repository.Add(
+            return _gameLoop.TryRegister(_repository.Add(
                 _networkRunner.Spawn(
                     _localAssetProvider.GetAsset<GameObject>(assetReference), 
                     position, 

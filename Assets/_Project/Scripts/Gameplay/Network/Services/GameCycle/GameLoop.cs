@@ -3,10 +3,9 @@ using Fusion;
 
 namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
 {
-    public class GameLoop : NetworkBehaviour, IPausedAndResumeObject
+    public class GameLoop : NetworkBehaviour
     {
         private readonly List<IUpdatable> _updatables = new();
-        private readonly List<IPausedCharacter> _pausedCharacters = new();
         private readonly Queue<IUpdatable> _addedUpdateablesQueue = new();
         private readonly Queue<IUpdatable> _removedUpdateablesQueue = new();
         
@@ -14,9 +13,6 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
 
         public override void FixedUpdateNetwork()
         {
-            if (_isPaused)
-                return;
-            
             foreach (IUpdatable updatable in _updatables)
                 updatable.GameLoopUpdate();
 
@@ -26,26 +22,28 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
                 _updatables.Remove(_removedUpdateablesQueue.Dequeue());
         }
         
-        public void AddUpdatable(IUpdatable updatable) =>
-            _addedUpdateablesQueue.Enqueue(updatable);
-        
-        public void RemoveUpdatable(IUpdatable updatable) => 
-            _removedUpdateablesQueue.Enqueue(updatable);
-        
-        public void AddPausedObject(IPausedCharacter pausedObject) => 
-            _pausedCharacters.Add(pausedObject);
-        
-        public void RemovePausedObject(IPausedCharacter pausedObject) => 
-            _pausedCharacters.Remove(pausedObject);
-
-        public void Pause()
+        public T TryRegister<T>(T item)
         {
-            _isPaused = true;
-            foreach (IPausedCharacter pausedObject in  _pausedCharacters)
-                pausedObject.OnPause();
+            if (item is IUpdatable gameLoopObject)
+                Register(gameLoopObject);
+            return item;
+        } 
+        
+        public T Register<T>(T item) where T : IUpdatable
+        {
+            _addedUpdateablesQueue.Enqueue(item);
+            return item;
         }
 
-        public void Resume() =>
-            _isPaused = false;
+        public void TryUnregister<T>(T item)
+        {
+            if (item is IUpdatable updatable == false)
+                return;
+            if (_updatables.Contains(updatable))
+                Unregister(updatable);
+        }
+
+        public void Unregister(IUpdatable updatable) => 
+            _removedUpdateablesQueue.Enqueue(updatable);
     }
 }

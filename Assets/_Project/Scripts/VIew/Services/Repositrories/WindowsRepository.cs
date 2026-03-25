@@ -34,6 +34,9 @@ namespace _Project.Scripts.View.Services.Repositrories
             return window;
         }
 
+        public void Remove(Window item) => 
+            _windows.Remove(item);
+
         public async UniTask CloseAndDestroyWindows(params Type[] windowTypes)
         {
             if (windowTypes.Length == 0)
@@ -51,7 +54,7 @@ namespace _Project.Scripts.View.Services.Repositrories
                 }
             }
             while (windowsToRemove.Count > 0)
-                _windows.Remove(windowsToRemove.Dequeue());
+                Remove(windowsToRemove.Dequeue());
         }
 
         public void DisableInteractableOnWindows(params Type[] types) => 

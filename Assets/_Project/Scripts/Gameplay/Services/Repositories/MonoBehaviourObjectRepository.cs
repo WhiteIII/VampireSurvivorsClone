@@ -30,6 +30,9 @@ namespace _Project.Scripts.Gameplay.Services.Repositories
             return false;
         }
 
+        public void Remove(MonoBehaviour item) => 
+            _objects.Remove(item);
+
         public void DestroyAllObjects()
         {
             foreach (MonoBehaviour monoBehaviour in _objects)

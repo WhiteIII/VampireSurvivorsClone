@@ -33,8 +33,15 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
             _callBacksListener
                 .OnPlayerJoinedSubject
                 .Subscribe(createdData => 
-                    _factory.Create(_spawnPositionHelper.GetSpawnPosition(), createdData.Item2))
+                    TryCreatePlayer(createdData.Item1, createdData.Item2))
                 .AddTo(_disposables);
+
+        private void TryCreatePlayer(NetworkRunner runner, PlayerRef playerRef)
+        {
+            if (runner.IsServer == false)
+                return;
+            _factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef);
+        }
         
         public void Dispose() => 
             _disposables.Dispose();

@@ -8,5 +8,6 @@ namespace _Project.Scripts.Common.Services.Factories.Base
         where TBaseItem : NetworkBehaviour
     {
         T Create<T>(AssetReference assetReference, Vector3 position) where T : TBaseItem;
+        void Despawn(TBaseItem item);
     }
 }

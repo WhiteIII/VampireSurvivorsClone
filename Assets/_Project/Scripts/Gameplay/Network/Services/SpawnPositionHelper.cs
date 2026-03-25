@@ -1,10 +1,10 @@
 using UnityEngine;
 
-namespace _Project.Scripts.Gameplay.Network.Services.Factories
+namespace _Project.Scripts.Gameplay.Network.Services
 {
     public class SpawnPositionHelper
     {
         public Vector3 GetSpawnPosition() => 
-            new();
+            Vector3.zero;
     }
 }

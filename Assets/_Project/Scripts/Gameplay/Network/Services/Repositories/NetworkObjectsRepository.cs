@@ -13,11 +13,28 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
         public NetworkObjectsRepository(GeneralNetworkObjectsRepository generalNetworkObjectsRepository) => 
             _generalNetworkObjectsRepository = generalNetworkObjectsRepository;
 
+        public bool TryGet<T>(out T item) where T : NetworkBehaviour
+        {
+            item = null;
+            foreach (NetworkBehaviour networkBehaviour in _networkBehaviours)
+            {
+                if (networkBehaviour is T concreteItem)
+                {
+                    item = concreteItem;
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public T Add<T>(T networkBehaviour) where T : NetworkBehaviour
         {
             _networkBehaviours.Add(networkBehaviour);
             return networkBehaviour;
         }
+
+        public void Remove(NetworkBehaviour item) => 
+            _networkBehaviours.Remove(item);
 
         public void DestroyAllObjects()
         {
