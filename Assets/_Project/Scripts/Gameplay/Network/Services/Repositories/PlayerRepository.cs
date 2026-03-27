@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using _Project.Scripts.Common.Repositories.Base;
+using _Project.Scripts.Common.Services.Repositories.Base;
 using _Project.Scripts.Configs.Base;
 using _Project.Scripts.Configs.Services.Base;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
@@ -12,7 +12,9 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
     {
         private readonly List<Player> _players;
         private readonly int _playerMaxCount;
-        
+
+        public int Count => _players.Count;
+
         public PlayerRepository(IConfigService configService)
         {
             _playerMaxCount = configService.GetConfig<IGameConfig>().MaxPlayerCountInSession;
@@ -60,5 +62,17 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
         
         public void Remove(Player player) => 
             _players.Remove(player);
+    }
+
+    public class RepositoryNetworkLayer<T> : NetworkBehaviour
+    {
+        private IRepository<T> _repository;
+
+        [Networked] public int Count => _repository.Count;
+        
+        public void Initialize(IRepository<T> repository) => 
+            _repository = repository;
+        
+        
     }
 }

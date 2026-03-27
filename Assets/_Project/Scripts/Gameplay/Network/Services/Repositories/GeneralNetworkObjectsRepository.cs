@@ -1,5 +1,5 @@
 using System;
-using _Project.Scripts.Common.Repositories.Base;
+using _Project.Scripts.Common.Services.Repositories.Base;
 using Fusion;
 using Behaviour = Fusion.Behaviour;
 using Object = UnityEngine.Object;
@@ -10,6 +10,19 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
     {
         public NetworkRunner CurrentNetworkRunner { get; private set; }
         public NetworkSceneManagerDefault CurrentNetworkSceneManager { get; private set; }
+
+        public int Count
+        {
+            get
+            {
+                int count = 0;
+                if (CurrentNetworkRunner)
+                    count++;
+                if (CurrentNetworkSceneManager)
+                    count++;
+                return count;
+            }
+        }
 
         public T Add<T>(T networkObject) where T : Behaviour
         {

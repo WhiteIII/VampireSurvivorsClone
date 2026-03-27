@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using _Project.Scripts.Common.Repositories.Base;
+using _Project.Scripts.Common.Services.Repositories.Base;
 using Fusion;
 using UnityEngine;
 
@@ -9,6 +9,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
     {
         private readonly GeneralNetworkObjectsRepository _generalNetworkObjectsRepository;
         private readonly List<NetworkBehaviour> _networkBehaviours = new();
+
+        public int Count => _networkBehaviours.Count;
 
         public NetworkObjectsRepository(GeneralNetworkObjectsRepository generalNetworkObjectsRepository) => 
             _generalNetworkObjectsRepository = generalNetworkObjectsRepository;

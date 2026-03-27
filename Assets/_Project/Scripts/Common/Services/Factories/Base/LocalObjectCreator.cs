@@ -1,5 +1,5 @@
 using _Project.Scripts.Common.AssetsManagement;
-using _Project.Scripts.Common.Repositories.Base;
+using _Project.Scripts.Common.Services.Repositories.Base;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;

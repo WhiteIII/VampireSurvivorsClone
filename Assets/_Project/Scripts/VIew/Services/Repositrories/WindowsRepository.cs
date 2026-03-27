@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using _Project.Scripts.Common.Repositories.Base;
+using _Project.Scripts.Common.Services.Repositories.Base;
 using _Project.Scripts.View.Base;
 using Cysharp.Threading.Tasks;
 using Object = UnityEngine.Object;
@@ -11,6 +11,8 @@ namespace _Project.Scripts.View.Services.Repositrories
     public class WindowsRepository : IRepository<Window>
     {
         private readonly List<Window> _windows = new();
+
+        public int Count => _windows.Count;
 
         public bool TryGet<T>(out T resultWindow)
             where T : Window

@@ -1,7 +1,7 @@
 using System;
 using _Project.Scripts.Common.AssetsManagement;
-using _Project.Scripts.Common.Repositories.Base;
 using _Project.Scripts.Common.Services.Factories.Base;
+using _Project.Scripts.Common.Services.Repositories.Base;
 using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Fusion;

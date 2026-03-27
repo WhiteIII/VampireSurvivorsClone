@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using _Project.Scripts.Common.Repositories.Base;
+using _Project.Scripts.Common.Services.Repositories.Base;
 using UnityEngine;
 
 namespace _Project.Scripts.Gameplay.Services.Repositories
@@ -7,7 +7,9 @@ namespace _Project.Scripts.Gameplay.Services.Repositories
     public class MonoBehaviourObjectRepository : IRepository<MonoBehaviour>
     {
         private readonly List<MonoBehaviour> _objects = new();
-        
+
+        public int Count => _objects.Count;
+
         public T Add<T>(T monoBehaviour) where T : MonoBehaviour
         {
             _objects.Add(monoBehaviour);
