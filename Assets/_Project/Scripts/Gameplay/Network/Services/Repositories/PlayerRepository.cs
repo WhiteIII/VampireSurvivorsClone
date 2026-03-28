@@ -63,16 +63,4 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
         public void Remove(Player player) => 
             _players.Remove(player);
     }
-
-    public class RepositoryNetworkLayer<T> : NetworkBehaviour
-    {
-        private IRepository<T> _repository;
-
-        [Networked] public int Count => _repository.Count;
-        
-        public void Initialize(IRepository<T> repository) => 
-            _repository = repository;
-        
-        
-    }
 }
