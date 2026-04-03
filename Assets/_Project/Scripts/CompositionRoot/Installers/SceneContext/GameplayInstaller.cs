@@ -14,6 +14,9 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
     public class GameplayInstaller : MonoInstaller
     {
+        [Header("OnScene:")] 
+        [SerializeField] private Transform _repositoriesParent;
+        
         [Header("Prefabs:")]
         [SerializeField] private AssetReference _playerPrefabAssetReference;
         [SerializeField] private AssetReference _gameLoopAssetReference;
@@ -48,6 +51,12 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
                 .FromInstance(_playerPrefabAssetReference);
             Container.Bind<AssetReference>().WithId("GameLoopAssetReference")
                 .FromInstance(_gameLoopAssetReference);
+        }
+
+        private void BindNetworkRunner<T>()
+            where T : NetworkBehaviour
+        {
+            
         }
     }
 }

@@ -5,6 +5,7 @@ using _Project.Scripts.Common.Services.Repositories.Base;
 using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Fusion;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
@@ -40,6 +41,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
         public T Create<T>(AssetReference assetReference, Vector3 position) where T : TBaseItem => 
             CreateWithParameters<T>(assetReference, position);
 
+        //public T CreateEmptyNetworkObject<T>()
+        
         public void Despawn(TBaseItem item)
         {
             _gameLoop.TryUnregister(item);
@@ -64,6 +67,18 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
                     rotation, 
                     playerRef, 
                     (_, createdObject) => _diContainer.Inject(createdObject)).GetComponent<T>()));
+        }
+
+        protected T CreateEmptyObjectWithParameters<T>(
+            AssetReference assetReference, 
+            Vector3? position = null, 
+            Quaternion? rotation = null,
+            PlayerRef? playerRef = null) where T : TBaseItem
+        {
+            if (_networkRunner.IsServer == false)
+                throw new Exception("An attempt was made to create an network object that was not a server!");
+
+            return _gameLoop.TryRegister(_repository.Add(_networkRunner.Spawn(NetworkPrefabRef.Empty).AddComponent<T>()));
         }
     }
 }

@@ -18,9 +18,9 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
         private readonly CompositeDisposable _disposables = new();
 
         public PlayerSpawner(
-            IFactory<Vector3, PlayerRef, Player> factory, 
+            IFactory<Vector3, PlayerRef, Player> factory,
             NetworkRunnerCallBacksListener callBacksListener,
-            SpawnPositionHelper spawnPositionHelper, 
+            SpawnPositionHelper spawnPositionHelper,
             PlayerRepository playerRepository)
         {
             _factory = factory;
@@ -29,12 +29,15 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
             _playerRepository = playerRepository;
         }
 
-        public void Initialize() =>
+        public void Initialize()
+        {
             _callBacksListener
                 .OnPlayerJoinedSubject
                 .Subscribe(createdData => 
                     TryCreatePlayer(createdData.Item1, createdData.Item2))
                 .AddTo(_disposables);
+        }
+
 
         private void TryCreatePlayer(NetworkRunner runner, PlayerRef playerRef)
         {
@@ -42,8 +45,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
                 return;
             _factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef);
         }
-        
-        public void Dispose() => 
+
+        public void Dispose() =>
             _disposables.Dispose();
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Common.Services.Repositories.Base;
 using UnityEngine;
@@ -41,5 +42,11 @@ namespace _Project.Scripts.Gameplay.Services.Repositories
                 Object.Destroy(monoBehaviour);
             _objects.Clear();
         }
+
+        public IEnumerator<MonoBehaviour> GetEnumerator() => 
+            _objects.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => 
+            GetEnumerator();
     }
 }

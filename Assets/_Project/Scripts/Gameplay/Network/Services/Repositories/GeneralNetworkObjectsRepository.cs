@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using _Project.Scripts.Common.Services.Repositories.Base;
 using Fusion;
 using Behaviour = Fusion.Behaviour;
@@ -6,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Repositories
 {
-    public class GeneralNetworkObjectsRepository : IRepository<Fusion.Behaviour>
+    public partial class GeneralNetworkObjectsRepository : IRepository<Behaviour>
     {
         public NetworkRunner CurrentNetworkRunner { get; private set; }
         public NetworkSceneManagerDefault CurrentNetworkSceneManager { get; private set; }
@@ -34,7 +36,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
                     throw new Exception("Only one NetworkRunner is allowed!");
                 CurrentNetworkRunner = networkRunner;
                 return networkObject;
-            } 
+            }
+
             if (networkObject is NetworkSceneManagerDefault networkSceneManager)
             {
                 if (CurrentNetworkSceneManager)
@@ -42,6 +45,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
                 CurrentNetworkSceneManager = networkSceneManager;
                 return networkObject;
             }
+
             throw new Exception("The object is not defined!");
         }
 
@@ -64,6 +68,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -81,6 +86,71 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
             Object.Destroy(CurrentNetworkSceneManager);
             CurrentNetworkRunner = null;
             CurrentNetworkSceneManager = null;
+        }
+
+        public IEnumerator<Behaviour> GetEnumerator() =>
+            new GeneralNetworkObjectsEnumerator(CurrentNetworkRunner, CurrentNetworkSceneManager);
+
+        IEnumerator IEnumerable.GetEnumerator() =>
+            GetEnumerator();
+    }
+
+    public partial class GeneralNetworkObjectsRepository
+    {
+        private struct GeneralNetworkObjectsEnumerator : IEnumerator<Behaviour>
+        {
+            private readonly NetworkRunner _networkRunner;
+            private readonly NetworkSceneManagerDefault _networkSceneManager;
+            private Behaviour _current;
+            private bool _networkRunnerIsCheck;
+            private bool _networkSceneManagerIsCheck;
+
+            public Behaviour Current => _current;
+            object IEnumerator.Current => Current;
+
+            public GeneralNetworkObjectsEnumerator(
+                NetworkRunner networkRunner,
+                NetworkSceneManagerDefault networkSceneManager) : this()
+            {
+                _networkRunner = networkRunner;
+                _networkSceneManager = networkSceneManager;
+                _networkRunnerIsCheck = false;
+                _networkSceneManagerIsCheck = false;
+            }
+
+            public bool MoveNext()
+            {
+                if (_networkRunnerIsCheck == false)
+                {
+                    _networkRunnerIsCheck = true;
+                    if (_networkRunner)
+                    {
+                        _current = _networkRunner;
+                        return true;
+                    }
+                }
+
+                if (_networkSceneManagerIsCheck == false)
+                {
+                    _networkSceneManagerIsCheck = true;
+                    if (_networkSceneManager)
+                    {
+                        _current = _networkSceneManager;
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            public void Reset()
+            {
+                _networkRunnerIsCheck = false;
+                _networkSceneManagerIsCheck = false;
+                _current = null;
+            }
+
+            public void Dispose() { }
         }
     }
 }

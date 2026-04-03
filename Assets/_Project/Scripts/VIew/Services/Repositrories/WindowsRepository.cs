@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Project.Scripts.Common.Services.Repositories.Base;
@@ -79,5 +80,11 @@ namespace _Project.Scripts.View.Services.Repositrories
                     action(window);
             }));
         }
+
+        public IEnumerator<Window> GetEnumerator() => 
+            _windows.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => 
+            GetEnumerator();
     }
 }

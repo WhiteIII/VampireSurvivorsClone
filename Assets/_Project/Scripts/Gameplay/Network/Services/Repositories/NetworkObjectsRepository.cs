@@ -1,48 +1,20 @@
-using System.Collections.Generic;
-using _Project.Scripts.Common.Services.Repositories.Base;
 using Fusion;
-using UnityEngine;
+using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Repositories
 {
-    public class NetworkObjectsRepository : IRepository<NetworkBehaviour>
+    public class NetworkObjectsRepository : BaseNetworkObjectsRepository<NetworkBehaviour>
     {
-        private readonly GeneralNetworkObjectsRepository _generalNetworkObjectsRepository;
-        private readonly List<NetworkBehaviour> _networkBehaviours = new();
-
-        public int Count => _networkBehaviours.Count;
-
-        public NetworkObjectsRepository(GeneralNetworkObjectsRepository generalNetworkObjectsRepository) => 
-            _generalNetworkObjectsRepository = generalNetworkObjectsRepository;
-
-        public bool TryGet<T>(out T item) where T : NetworkBehaviour
-        {
-            item = null;
-            foreach (NetworkBehaviour networkBehaviour in _networkBehaviours)
-            {
-                if (networkBehaviour is T concreteItem)
-                {
-                    item = concreteItem;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public T Add<T>(T networkBehaviour) where T : NetworkBehaviour
-        {
-            _networkBehaviours.Add(networkBehaviour);
-            return networkBehaviour;
-        }
-
-        public void Remove(NetworkBehaviour item) => 
-            _networkBehaviours.Remove(item);
+        private NetworkRunner _networkRunner;
+        
+        [Inject] private void Construct(GeneralNetworkObjectsRepository generalNetworkObjectsRepository) => 
+            _networkRunner = generalNetworkObjectsRepository.CurrentNetworkRunner;
 
         public void DestroyAllObjects()
         {
-            foreach (NetworkBehaviour networkBehaviour in _networkBehaviours)
-                _generalNetworkObjectsRepository.CurrentNetworkRunner.Despawn(networkBehaviour.Object);
-            _networkBehaviours.Clear();
+            foreach (NetworkBehaviour networkBehaviour in List)
+                _networkRunner.Despawn(networkBehaviour.Object);
+            List.Clear();
         }
     }
 }

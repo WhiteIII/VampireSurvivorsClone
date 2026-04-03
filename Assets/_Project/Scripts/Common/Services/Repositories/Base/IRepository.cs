@@ -1,6 +1,8 @@
+using System.Collections.Generic;
+
 namespace _Project.Scripts.Common.Services.Repositories.Base
 {
-    public interface IRepository<in TBaseItem>
+    public interface IRepository<TBaseItem> : IEnumerable<TBaseItem>
     {
         int Count { get; }
         bool TryGet<T>(out T item) where T : TBaseItem;
