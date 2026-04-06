@@ -6,15 +6,20 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
     public class NetworkObjectsRepository : BaseNetworkObjectsRepository<NetworkBehaviour>
     {
         private NetworkRunner _networkRunner;
-        
-        [Inject] private void Construct(GeneralNetworkObjectsRepository generalNetworkObjectsRepository) => 
-            _networkRunner = generalNetworkObjectsRepository.CurrentNetworkRunner;
 
+        [Networked] private NetworkLinkedList<NetworkBehaviour> _networkBehaviours { get; } = new();
+
+        [Inject] private void Construct(GeneralNetworkObjectsRepository generalNetworkObjectsRepository)
+        {
+            _networkRunner = generalNetworkObjectsRepository.CurrentNetworkRunner;
+            Initialize(_networkBehaviours);
+        }
+        
         public void DestroyAllObjects()
         {
-            foreach (NetworkBehaviour networkBehaviour in List)
+            foreach (NetworkBehaviour networkBehaviour in _networkBehaviours)
                 _networkRunner.Despawn(networkBehaviour.Object);
-            List.Clear();
+            _networkBehaviours.Clear();
         }
     }
 }

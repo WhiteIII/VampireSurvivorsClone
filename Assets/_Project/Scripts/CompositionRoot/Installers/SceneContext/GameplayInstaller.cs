@@ -52,11 +52,5 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             Container.Bind<AssetReference>().WithId("GameLoopAssetReference")
                 .FromInstance(_gameLoopAssetReference);
         }
-
-        private void BindNetworkRunner<T>()
-            where T : NetworkBehaviour
-        {
-            
-        }
     }
 }
