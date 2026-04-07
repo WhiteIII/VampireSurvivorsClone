@@ -8,14 +8,13 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
 {
     public class NetworkObjectsCreator : BaseNetworkObjectsCreator<NetworkBehaviour>
     {
-        public NetworkObjectsCreator(
+        [Inject] private void Construct(
             LocalAssetProvider localAssetProvider,
-            DiContainer diContainer,
             GeneralNetworkObjectsRepository networkRunner,
             NetworkObjectsRepository repository, 
-            GameLoop gameLoop) : 
-            base(localAssetProvider, diContainer, networkRunner, repository, gameLoop)
+            GameLoop gameLoop) 
         {
+            Initialize(localAssetProvider, networkRunner, repository, gameLoop);
         }
     }
 }

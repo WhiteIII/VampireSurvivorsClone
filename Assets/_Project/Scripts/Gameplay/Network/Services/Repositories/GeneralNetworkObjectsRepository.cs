@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Common.Services.Repositories.Base;
+using _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProvider;
 using Fusion;
 using Behaviour = Fusion.Behaviour;
 using Object = UnityEngine.Object;
@@ -12,7 +13,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
     {
         public NetworkRunner CurrentNetworkRunner { get; private set; }
         public NetworkSceneManagerDefault CurrentNetworkSceneManager { get; private set; }
-
+        public NetworkObjectEndEmptyObjectProvider CurrentNetworkObjectProvider { get; private set; }
+        
         public int Count
         {
             get
@@ -21,6 +23,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
                 if (CurrentNetworkRunner)
                     count++;
                 if (CurrentNetworkSceneManager)
+                    count++;
+                if (CurrentNetworkObjectProvider)
                     count++;
                 return count;
             }
@@ -46,6 +50,14 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
                 return networkObject;
             }
 
+            if (networkObject is NetworkObjectEndEmptyObjectProvider networkObjectProvider)
+            {
+                if (CurrentNetworkObjectProvider)
+                    throw new Exception("Only one NetworkObjectProvider is allowed!");
+                CurrentNetworkObjectProvider = networkObjectProvider;
+                return networkObject;
+            }
+
             throw new Exception("The object is not defined!");
         }
 
@@ -68,6 +80,14 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
                     return true;
                 }
             }
+            else if (typeof(T) == typeof(NetworkObjectEndEmptyObjectProvider))
+            {
+                if (CurrentNetworkObjectProvider)
+                {
+                    item = CurrentNetworkObjectProvider as T;
+                    return true;
+                }
+            }
 
             return false;
         }
@@ -78,18 +98,25 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
                 CurrentNetworkRunner = null;
             else if (ReferenceEquals(item, CurrentNetworkSceneManager))
                 CurrentNetworkSceneManager = null;
+            else if (ReferenceEquals(item, CurrentNetworkObjectProvider))
+                CurrentNetworkObjectProvider = null;
         }
 
         public void DestroyNetworkRunnerAndSceneManager()
         {
             Object.Destroy(CurrentNetworkRunner);
             Object.Destroy(CurrentNetworkSceneManager);
+            Object.Destroy(CurrentNetworkObjectProvider);
             CurrentNetworkRunner = null;
             CurrentNetworkSceneManager = null;
+            CurrentNetworkObjectProvider = null;
         }
 
         public IEnumerator<Behaviour> GetEnumerator() =>
-            new GeneralNetworkObjectsEnumerator(CurrentNetworkRunner, CurrentNetworkSceneManager);
+            new GeneralNetworkObjectsEnumerator(
+                CurrentNetworkRunner, 
+                CurrentNetworkSceneManager, 
+                CurrentNetworkObjectProvider);
 
         IEnumerator IEnumerable.GetEnumerator() =>
             GetEnumerator();
@@ -101,21 +128,26 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
         {
             private readonly NetworkRunner _networkRunner;
             private readonly NetworkSceneManagerDefault _networkSceneManager;
+            private readonly NetworkObjectProviderDefault _networkObjectProvider;
             private Behaviour _current;
             private bool _networkRunnerIsCheck;
             private bool _networkSceneManagerIsCheck;
+            private bool _networkObjectProviderIsCheck;
 
             public Behaviour Current => _current;
             object IEnumerator.Current => Current;
 
             public GeneralNetworkObjectsEnumerator(
                 NetworkRunner networkRunner,
-                NetworkSceneManagerDefault networkSceneManager) : this()
+                NetworkSceneManagerDefault networkSceneManager, 
+                NetworkObjectProviderDefault networkObjectProvider) : this()
             {
                 _networkRunner = networkRunner;
                 _networkSceneManager = networkSceneManager;
+                _networkObjectProvider = networkObjectProvider;
                 _networkRunnerIsCheck = false;
                 _networkSceneManagerIsCheck = false;
+                _networkObjectProviderIsCheck = false;
             }
 
             public bool MoveNext()
@@ -129,13 +161,21 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
                         return true;
                     }
                 }
-
                 if (_networkSceneManagerIsCheck == false)
                 {
                     _networkSceneManagerIsCheck = true;
                     if (_networkSceneManager)
                     {
                         _current = _networkSceneManager;
+                        return true;
+                    }
+                }
+                if (_networkObjectProvider == false)
+                {
+                    _networkObjectProviderIsCheck = true;
+                    if (_networkObjectProvider)
+                    {
+                        _current = _networkObjectProvider;
                         return true;
                     }
                 }
@@ -147,6 +187,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
             {
                 _networkRunnerIsCheck = false;
                 _networkSceneManagerIsCheck = false;
+                _networkObjectProviderIsCheck = false;
                 _current = null;
             }
 

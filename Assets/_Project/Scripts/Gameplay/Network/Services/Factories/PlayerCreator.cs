@@ -11,14 +11,13 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
 {
     public class PlayerCreator : BaseNetworkObjectsCreator<Player>
     {
-        public PlayerCreator(
+        [Inject] private void Construct(
             LocalAssetProvider localAssetProvider,
-            DiContainer diContainer,
             GeneralNetworkObjectsRepository networkRunner, 
             PlayerRepository repository,
-            GameLoop gameLoop) : 
-            base(localAssetProvider, diContainer, networkRunner, repository, gameLoop)
+            GameLoop gameLoop)  
         {
+            Initialize(localAssetProvider, networkRunner, repository, gameLoop);
         }
         
         public T Create<T>(AssetReference assetReference, Vector3 position, PlayerRef playerRef) where T : Player => 

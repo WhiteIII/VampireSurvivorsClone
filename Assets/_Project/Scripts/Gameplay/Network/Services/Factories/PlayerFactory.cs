@@ -6,7 +6,7 @@ using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories
 {
-    public class PlayerFactory : BaseNetworkObjectFactory<Player>, IFactory<Vector3, PlayerRef, Player>
+    public class PlayerFactory : BaseNetworkObjectFactory, IFactory<Vector3, PlayerRef, Player>
     {
         private readonly PlayerCreator _playerCreator;
         
