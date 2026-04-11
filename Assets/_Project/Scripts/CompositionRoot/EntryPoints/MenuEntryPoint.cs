@@ -1,5 +1,6 @@
 using _Project.Scripts.Common.AssetsManagement;
 using _Project.Scripts.Common.SceneSwitcher;
+using _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProvider;
 using _Project.Scripts.View.Implementation;
 using _Project.Scripts.View.Services;
 using _Project.Scripts.ViewModel.Implementation;
@@ -18,10 +19,12 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
         private readonly AssetReference _networkSceneManagerReference;
         private readonly AssetReference _networkRunnerAssetReference;
         private readonly AssetReference _menuWindowAssetReference;
+        private readonly AssetReference _networkObjectsProviderAssetReference;
         private readonly MenuViewModel _menuViewModel;
         private readonly GameStateSwitcher _gameStateSwitcher;
         private readonly IFactory<NetworkRunner> _networkRunnerFactory;
         private readonly IFactory<NetworkSceneManagerDefault> _networkSceneManagerFactory;
+        private readonly IFactory<NetworkObjectEndEmptyObjectProvider> _networkObjectProviderFactory;
         
         public MenuEntryPoint(
             UIController uiController,
@@ -33,7 +36,9 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             IFactory<NetworkRunner> networkRunnerFactory, 
             IFactory<NetworkSceneManagerDefault> networkSceneManagerFactory, 
             [Inject(Id = "NetworkRunnerAssetReference")] AssetReference networkRunnerAssetReference,
-            [Inject(Id = "NetworkSceneManagerReference")] AssetReference networkSceneManagerReference)
+            [Inject(Id = "NetworkSceneManagerReference")] AssetReference networkSceneManagerReference,
+            [Inject(Id = "NetworkObjectsProviderReference")] AssetReference networkObjectsProviderRefence, 
+            IFactory<NetworkObjectEndEmptyObjectProvider> networkObjectProviderFactory)
         {
             _uiController = uiController;
             _loadingWindowViewModel = loadingWindowViewModel;
@@ -45,6 +50,8 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             _networkSceneManagerFactory = networkSceneManagerFactory;
             _networkRunnerAssetReference = networkRunnerAssetReference;
             _networkSceneManagerReference = networkSceneManagerReference;
+            _networkObjectsProviderAssetReference = networkObjectsProviderRefence;
+            _networkObjectProviderFactory = networkObjectProviderFactory;
         }
 
         public async void Initialize()
@@ -69,6 +76,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
         {
             _networkRunnerFactory.Create();
             _networkSceneManagerFactory.Create();
+            _networkObjectProviderFactory.Create();
         }
 
         private void AddAssetToAssetLoader()
@@ -76,6 +84,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             _assetsLoader.AddAsset(_menuWindowAssetReference);
             _assetsLoader.AddAsset(_networkRunnerAssetReference);
             _assetsLoader.AddAsset(_networkSceneManagerReference);
+            _assetsLoader.AddAsset(_networkObjectsProviderAssetReference);
         }
     }
 }

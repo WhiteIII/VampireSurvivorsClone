@@ -227,6 +227,12 @@ MonoBehaviour:
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
+  _networkObjectsProvider:
+    m_AssetGUID: 4021c1dd654d7494fa0165ce26d9e0c7
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
 --- !u!114 &134400518
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,7 +1,7 @@
 using UnityEngine.AddressableAssets;
 using Zenject;
 
-namespace _Project.Scripts.Gameplay.Network.Services.Factories
+namespace _Project.Scripts.Gameplay.Network.Services.Factories.Base
 {
     public abstract class BaseNetworkObjectFactory : IFactory
     {

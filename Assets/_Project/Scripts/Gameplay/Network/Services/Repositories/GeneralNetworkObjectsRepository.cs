@@ -32,7 +32,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
 
         public T Add<T>(T networkObject) where T : Behaviour
         {
-            if (CurrentNetworkRunner && CurrentNetworkSceneManager)
+            if (CurrentNetworkRunner && CurrentNetworkSceneManager && CurrentNetworkObjectProvider)
                 throw new Exception("All the objects are already installed!");
             if (networkObject is NetworkRunner networkRunner)
             {
@@ -170,7 +170,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
                         return true;
                     }
                 }
-                if (_networkObjectProvider == false)
+                if (_networkObjectProviderIsCheck == false)
                 {
                     _networkObjectProviderIsCheck = true;
                     if (_networkObjectProvider)

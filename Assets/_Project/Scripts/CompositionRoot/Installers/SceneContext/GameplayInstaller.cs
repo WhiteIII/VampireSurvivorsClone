@@ -1,10 +1,13 @@
 using _Project.Scripts.CompositionRoot.EntryPoints;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
 using _Project.Scripts.Gameplay.Network.Services.Factories;
+using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation;
+using _Project.Scripts.Gameplay.Network.Services.Factories.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.InputSystem;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using _Project.Scripts.Gameplay.Network.Services.Spawners;
+using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -14,7 +17,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
     public class GameplayInstaller : MonoInstaller
     {
-        [Header("OnScene:")] 
+        /*[Header("OnScene:")] 
         [SerializeField] private Transform _repositoriesParent;
         
         [Header("Prefabs:")]
@@ -26,7 +29,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindAssets();
             BindCreators();
             BindRepositories();
-            Container.Bind<IFactory<Vector3, PlayerRef, Player>>().To<PlayerFactory>().AsSingle();
+            Container.Bind<IFactory<Vector3, PlayerRef, UniTask<Player>>>().To<PlayerFactory>().AsSingle();
             Container.Bind<GameLoop>().FromFactory<GameLoopFactory>().AsSingle();
             Container.BindInterfacesTo<PlayerSpawner>().AsSingle();
             Container.BindInterfacesTo<InputController>().AsSingle();
@@ -35,14 +38,14 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 
         private void BindRepositories()
         {
-            Container.Bind<PlayerRepository>().AsSingle();
-            Container.Bind<NetworkObjectsRepository>().AsSingle();
+            BindCreatorOrRepository<PlayerRepository>();
+            BindCreatorOrRepository<NetworkObjectsRepository>();
         }
         
         private void BindCreators()
         {
-            Container.Bind<PlayerCreator>().AsSingle();
-            Container.Bind<NetworkObjectsCreator>().AsSingle();
+            BindCreatorOrRepository<PlayerCreator>();
+            BindCreatorOrRepository<NetworkObjectsCreator>();
         }
         
         private void BindAssets()
@@ -52,5 +55,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             Container.Bind<AssetReference>().WithId("GameLoopAssetReference")
                 .FromInstance(_gameLoopAssetReference);
         }
+
+        private void BindCreatorOrRepository<T>() where T : NetworkBehaviour =>
+            Container.Bind<T>().FromFactory<CreatorAndRepositoryFactory<T>>().AsSingle();*/
     }
 }

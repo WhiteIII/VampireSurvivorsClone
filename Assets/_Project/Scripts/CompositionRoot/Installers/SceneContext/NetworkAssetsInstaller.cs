@@ -9,13 +9,16 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         [Header("AssetReferences:")]
         [SerializeField] private AssetReference _networkRunnerAssetReference;
         [SerializeField] private AssetReference _networkSceneManagerReference;
+        [SerializeField] private AssetReference _networkObjectsProvider;
         
         public override void InstallBindings()
         {
-            Container.Bind<AssetReference>().WithId("NetworkRunnerAssetReference")
-                .FromInstance(_networkRunnerAssetReference);
-            Container.Bind<AssetReference>().WithId("NetworkSceneManagerReference")
-                .FromInstance(_networkSceneManagerReference);
+            BindAsset("NetworkRunnerAssetReference", _networkRunnerAssetReference);
+            BindAsset("NetworkSceneManagerReference", _networkSceneManagerReference);
+            BindAsset("NetworkObjectsProviderReference", _networkObjectsProvider);
         }
+        
+        private void BindAsset(string id, AssetReference instance) => 
+            Container.Bind<AssetReference>().WithId(id).FromInstance(instance);
     }
 }

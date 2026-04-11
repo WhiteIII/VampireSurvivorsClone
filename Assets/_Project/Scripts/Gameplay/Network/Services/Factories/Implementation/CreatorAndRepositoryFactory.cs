@@ -1,12 +1,12 @@
 using _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProvider;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
+using Cysharp.Threading.Tasks;
 using Fusion;
-using UnityEngine.AddressableAssets;
 using Zenject;
 
-namespace _Project.Scripts.Gameplay.Network.Services.Factories
+namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
 {
-    public class CreatorsFactory<T> : BaseNetworkObjectFactory, IFactory<T>
+    public class CreatorAndRepositoryFactory<T> : IFactory<UniTask<T>>
         where T : NetworkBehaviour
     {
         private const uint CREATOR_ID = 101;
@@ -14,19 +14,18 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
         private readonly NetworkRunner _networkRunner;
         private readonly NetworkObjectEndEmptyObjectProvider _networkObjectEndEmptyObjectProvider;
         
-        public CreatorsFactory(
-            AssetReference prefabAssetReference, 
-            GeneralNetworkObjectsRepository repository) : base(prefabAssetReference)
+        public CreatorAndRepositoryFactory(GeneralNetworkObjectsRepository repository)
         {
             _networkRunner = repository.CurrentNetworkRunner;
             _networkObjectEndEmptyObjectProvider = repository.CurrentNetworkObjectProvider;
         }
 
-        public T Create()
+        public async UniTask<T> Create()
         {
             NetworkPrefabId networkPrefabId = NetworkPrefabId.FromRaw(CREATOR_ID);
             _networkObjectEndEmptyObjectProvider.SetPrefabIdAndComponentType<T>(CREATOR_ID);
-            return _networkRunner.Spawn(networkPrefabId).GetComponent<T>();
+            NetworkObject spawnedObject = await _networkRunner.SpawnAsync(networkPrefabId);
+            return spawnedObject.GetComponent<T>();
         }
     }
 }

@@ -5,11 +5,12 @@ using _Project.Scripts.Common.Services.Repositories.Base;
 using _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProvider;
 using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
+using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace _Project.Scripts.Gameplay.Network.Services.Factories
+namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
 {
     public abstract class BaseNetworkObjectsCreator<TBaseItem> : NetworkBehaviour, INetworkObjectsCreator<TBaseItem>
         where TBaseItem : NetworkBehaviour
@@ -35,14 +36,14 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
             _gameLoop = gameLoop;
         }
 
-        public T Create<T>(AssetReference assetReference) where T : TBaseItem =>
+        public UniTask<T> Create<T>(AssetReference assetReference) where T : TBaseItem =>
             CreateWithParameters<T>(assetReference);
 
-        public T Create<T>(AssetReference assetReference, Vector3 position) where T : TBaseItem => 
+        public UniTask<T> Create<T>(AssetReference assetReference, Vector3 position) where T : TBaseItem => 
             CreateWithParameters<T>(assetReference, position);
 
-        public T CreateEmptyNetworkObject<T>() => 
-            CreateEmptyNetworkObject<T>();
+        public UniTask<T> CreateEmptyNetworkObject<T>() where T : TBaseItem =>
+            CreateEmptyObjectWithParameters<T>();
 
         public void Despawn(TBaseItem item)
         {
@@ -52,7 +53,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
             _networkRunner.Despawn(item.Object);
         }
 
-        protected T CreateWithParameters<T>(
+        protected async UniTask<T> CreateWithParameters<T>(
             AssetReference assetReference, 
             Vector3? position = null, 
             Quaternion? rotation = null,
@@ -61,16 +62,16 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
             if (_networkRunner.IsServer == false)
                 throw new Exception("An attempt was made to create an network object that was not a server!");
             
-            return _gameLoop.TryRegister(_repository.Add(
-                _networkRunner.Spawn(
+            NetworkObject spawnedObject = await _networkRunner.SpawnAsync(
                     _localAssetProvider.GetAsset<GameObject>(assetReference), 
                     position, 
                     rotation, 
-                    playerRef).GetComponent<T>()));
+                    playerRef);
+            
+            return _gameLoop.TryRegister(_repository.Add(spawnedObject.GetComponent<T>()));
         }
 
-        protected T CreateEmptyObjectWithParameters<T>(
-            AssetReference assetReference, 
+        protected async UniTask<T> CreateEmptyObjectWithParameters<T>(
             Vector3? position = null, 
             Quaternion? rotation = null,
             PlayerRef? playerRef = null) where T : TBaseItem
@@ -81,10 +82,13 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
             NetworkPrefabId networkPrefabId = NetworkPrefabId.FromRaw(ID_FOR_EMPTY_NETWORK_OBJECT);
             _networkObjectProvider.SetPrefabIdAndComponentType<T>(ID_FOR_EMPTY_NETWORK_OBJECT);
             
-            return _gameLoop.TryRegister(
-                _repository.Add(
-                    _networkRunner.Spawn(
-                        networkPrefabId, position, rotation, playerRef).GetComponent<T>()));
+            NetworkObject spawnedObject = await _networkRunner.SpawnAsync(
+                networkPrefabId, 
+                position, 
+                rotation, 
+                playerRef);
+            
+            return _gameLoop.TryRegister(_repository.Add(spawnedObject.GetComponent<T>()));
         }
     }
 }
