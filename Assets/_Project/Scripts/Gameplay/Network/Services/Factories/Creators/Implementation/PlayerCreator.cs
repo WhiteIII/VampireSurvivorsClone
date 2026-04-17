@@ -1,4 +1,5 @@
 using _Project.Scripts.Common.AssetsManagement;
+using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base;
 using _Project.Scripts.Gameplay.Network.Services.GameCycle;
@@ -13,12 +14,13 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
 {
     public class PlayerCreator : BaseNetworkObjectsCreator<Player>
     {
-        [Inject] private void Construct(
+        [Inject] private async void Construct(
             LocalAssetProvider localAssetProvider,
             GeneralNetworkObjectsRepository networkRunner, 
-            PlayerRepository repository,
-            GameLoop gameLoop)  
+            AsyncDependenciesRepository dependenciesRepository,
+            GameLoop gameLoop)
         {
+            PlayerRepository repository = await dependenciesRepository.GetInstanceAsync<PlayerRepository>();
             Initialize(localAssetProvider, networkRunner, repository, gameLoop);
         }
         

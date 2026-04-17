@@ -14,6 +14,6 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
             _creator = creator;
 
         public UniTask<T> Create() => 
-            _creator.CreateEmptyNetworkObject<T>();
+            _creator.CreateEmptyNetworkObjectWithComponent<T>();
     }
 }

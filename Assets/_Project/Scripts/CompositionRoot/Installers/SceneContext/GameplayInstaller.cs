@@ -1,4 +1,6 @@
+using _Project.Scripts.Common.Services.Initialize;
 using _Project.Scripts.CompositionRoot.EntryPoints;
+using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
 using _Project.Scripts.Gameplay.Network.Services.Factories;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation;
@@ -17,7 +19,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
     public class GameplayInstaller : MonoInstaller
     {
-        /*[Header("OnScene:")] 
+        [Header("OnScene:")] 
         [SerializeField] private Transform _repositoriesParent;
         
         [Header("Prefabs:")]
@@ -26,14 +28,17 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         
         public override void InstallBindings()
         {
+            BindInterfacesAndSelfToIsSingle<AsyncDependenciesRepository>();
+            BindIsSingle<AsyncInitializableRepository>();
             BindAssets();
             BindCreators();
             BindRepositories();
             Container.Bind<IFactory<Vector3, PlayerRef, UniTask<Player>>>().To<PlayerFactory>().AsSingle();
-            Container.Bind<GameLoop>().FromFactory<GameLoopFactory>().AsSingle();
+            //Container.Bind<GameLoop>().FromFactory<GameLoopFactory>().AsSingle();
             Container.BindInterfacesTo<PlayerSpawner>().AsSingle();
             Container.BindInterfacesTo<InputController>().AsSingle();
-            Container.BindInterfacesTo<GameplayEntryPoint>().AsSingle();
+
+            BindInterfacesToIsSingle<GameplayEntryPoint>();
         }
 
         private void BindRepositories()
@@ -57,6 +62,22 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         }
 
         private void BindCreatorOrRepository<T>() where T : NetworkBehaviour =>
-            Container.Bind<T>().FromFactory<CreatorAndRepositoryFactory<T>>().AsSingle();*/
+            BindAsyncFromFactory<T, CreatorAndRepositoryFactory<T>>();
+
+        private void BindAsyncFromFactory<TContract, TFactory>() 
+            where TFactory : IFactory<UniTask<TContract>>
+        {
+            Container.Bind<IAsyncDependence>().To<AsyncDependence<TContract>>()
+                .FromFactory<LayerAboveAsyncFactory<TContract, TFactory>>().AsSingle();
+        } 
+        
+        private void BindIsSingle<T>() => 
+            Container.Bind<T>().AsSingle();
+        
+        private void BindInterfacesToIsSingle<T>() => 
+            Container.BindInterfacesTo<T>().AsSingle();
+        
+        private void BindInterfacesAndSelfToIsSingle<T>() => 
+            Container.BindInterfacesAndSelfTo<T>().AsSingle();
     }
 }
