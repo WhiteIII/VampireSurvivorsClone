@@ -9,23 +9,14 @@ using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
 {
-    public class PlayerFactory : BaseNetworkObjectFactory, IFactory<Vector3, PlayerRef, UniTask<Player>>
+    public class PlayerFactory : NetworkFactory<Player, PlayerCreator>, IFactory<Vector3, PlayerRef, UniTask<Player>>
     {
-        private readonly PlayerCreator _playerCreator;
+        private AssetReference _playerAssetReference;
         
-        public PlayerFactory(
-            PlayerCreator playerCreator, 
-            [Inject(Id = "PlayerPrefabAssetReference")]AssetReference prefabAssetReference) : 
-            base(prefabAssetReference)
-        {
-            _playerCreator = playerCreator;
-        }
-
-        public async UniTask<Player> Create(Vector3 position, PlayerRef playerRef)
-        {
-            Player player = await _playerCreator.Create<Player>(PrefabAssetReference, position, playerRef);
-            player.Initialize(playerRef);
-            return player;
-        }
+        [Inject] private void Construct([Inject(Id = "PlayerPrefabAssetReference")]AssetReference prefabAssetReference) => 
+            _playerAssetReference = prefabAssetReference;
+        
+        public async UniTask<Player> Create(Vector3 spawnPosition, PlayerRef playerRef) => 
+            await Creator.Create<Player>(_playerAssetReference, spawnPosition, playerRef);
     }
 }

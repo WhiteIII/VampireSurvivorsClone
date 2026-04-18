@@ -1,6 +1,7 @@
 using System;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
 using _Project.Scripts.Gameplay.Network.Services.Factories;
+using _Project.Scripts.Gameplay.Network.Services.HostMigration;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Fusion;
 using R3;
@@ -9,7 +10,7 @@ using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Spawners
 {
-    public class PlayerSpawner : IInitializable, IDisposable
+    public class PlayerSpawner : IInitializable, IDisposable, IOnHostMigration
     {
         private readonly IFactory<Vector3, PlayerRef, Player> _factory;
         private readonly NetworkRunnerCallBacksListener _callBacksListener;
@@ -37,7 +38,14 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
                     TryCreatePlayer(createdData.Item1, createdData.Item2))
                 .AddTo(_disposables);
         }
+        
+        public void Dispose() =>
+            _disposables.Dispose();
 
+        public void OnHostMigration(GeneralNetworkObjectsRepository generalNetworkObjectsRepository)
+        {
+            
+        }
 
         private void TryCreatePlayer(NetworkRunner runner, PlayerRef playerRef)
         {
@@ -45,8 +53,5 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
                 return;
             _factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef);
         }
-
-        public void Dispose() =>
-            _disposables.Dispose();
     }
 }

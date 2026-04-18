@@ -2,10 +2,8 @@ using _Project.Scripts.Common.Services.Initialize;
 using _Project.Scripts.CompositionRoot.EntryPoints;
 using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
-using _Project.Scripts.Gameplay.Network.Services.Factories;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Implementation;
-using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.InputSystem;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using _Project.Scripts.Gameplay.Network.Services.Spawners;
@@ -33,7 +31,9 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindAssets();
             BindCreators();
             BindRepositories();
-            Container.Bind<IFactory<Vector3, PlayerRef, UniTask<Player>>>().To<PlayerFactory>().AsSingle();
+            BindNetworkComponent<PlayerFactory>();
+            
+            //Container.Bind<IFactory<Vector3, PlayerRef, UniTask<Player>>>().To<PlayerFactory>().AsSingle();
             //Container.Bind<GameLoop>().FromFactory<GameLoopFactory>().AsSingle();
             Container.BindInterfacesTo<PlayerSpawner>().AsSingle();
             Container.BindInterfacesTo<InputController>().AsSingle();
@@ -60,7 +60,10 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             Container.Bind<AssetReference>().WithId("GameLoopAssetReference")
                 .FromInstance(_gameLoopAssetReference);
         }
-
+        
+        private void BindNetworkComponent<T>() where T : NetworkBehaviour => 
+            BindAsyncFromFactory<T, NetworkComponentFactory<T>>();
+        
         private void BindCreatorOrRepository<T>() where T : NetworkBehaviour =>
             BindAsyncFromFactory<T, CreatorAndRepositoryFactory<T>>();
 

@@ -14,6 +14,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
         public NetworkRunner CurrentNetworkRunner { get; private set; }
         public NetworkSceneManagerDefault CurrentNetworkSceneManager { get; private set; }
         public NetworkObjectEndEmptyObjectProvider CurrentNetworkObjectProvider { get; private set; }
+        //TODO Добавить сюда NetworkCallbackListener
         
         public int Count
         {

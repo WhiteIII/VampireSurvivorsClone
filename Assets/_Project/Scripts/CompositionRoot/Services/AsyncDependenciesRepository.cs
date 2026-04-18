@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using _Project.Scripts.Common.Services.Initialize;
 using Cysharp.Threading.Tasks;
-using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Services
 {
