@@ -1,27 +1,37 @@
-using _Project.Scripts.Common.Services.Initialize;
+using System;
 using Cysharp.Threading.Tasks;
 
 namespace _Project.Scripts.CompositionRoot.Services
 {
-    public struct AsyncDependence<T> : IAsyncDependence
+    public class AsyncDependence<T> : IAsyncDependence
     {
-        private UniTask<T> _task;
+        private readonly Func<UniTask<T>> _creationMethodAsync;
         
-        public UniTask Task { get; }
+        public bool InstanceCreated { get; private set; }
+        public bool CreatedInProcess { get; private set; }
         public T Instance { get; private set; }
         public object ObjectInstance { get; private set; }
 
-        public AsyncDependence(UniTask<T> task)
+        public AsyncDependence(Func<UniTask<T>> creationMethodAsync)
         {
-            Task = task;
-            _task = task;
+            _creationMethodAsync = creationMethodAsync;
+            InstanceCreated = false;
+            CreatedInProcess = false;
             Instance = default;
             ObjectInstance = null;
         }
-        public async UniTask InitializeAsync()
+
+        public UniTask InitializeAsync() => 
+             CreateInstanceAsync();
+
+        public async UniTask<T> CreateInstanceAsync()
         {
-            Instance = await _task;
+            CreatedInProcess = true;
+            Instance = await _creationMethodAsync();
             ObjectInstance = Instance;
+            InstanceCreated = true;
+            CreatedInProcess = false;
+            return Instance;
         }
     }
 }

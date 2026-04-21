@@ -12,6 +12,6 @@ namespace _Project.Scripts.CompositionRoot.Services
             _factory = instantiator.Instantiate<TFactory>();
         
         public AsyncDependence<TType> Create() => 
-            new(_factory.Create());
+            new(_factory.Create);
     }
 }

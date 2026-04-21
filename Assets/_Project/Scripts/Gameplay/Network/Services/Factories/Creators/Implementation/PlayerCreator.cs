@@ -23,7 +23,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
             EndInitialization();
         }
         
-        public UniTask<T> Create<T>(AssetReference assetReference, Vector3 position, PlayerRef playerRef) where T : Player => 
-            CreateWithParameters<T>(assetReference, position, null, playerRef);
+        public UniTask<T> Create<T>(NetworkPrefabRef networkPrefabRef, Vector3 position, PlayerRef playerRef) where T : Player => 
+            CreateWithParameters<T>(networkPrefabRef, position, null, playerRef);
     }
 }

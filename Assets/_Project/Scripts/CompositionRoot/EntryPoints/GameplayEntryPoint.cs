@@ -1,4 +1,6 @@
+using System;
 using _Project.Scripts.Common.Services.Initialize;
+using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using _Project.Scripts.View.Implementation;
 using _Project.Scripts.View.Services;
 using _Project.Scripts.ViewModel.Implementation;
@@ -6,20 +8,23 @@ using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.EntryPoints
 {
-    public class GameplayEntryPoint : IInitializable
+    public class GameplayEntryPoint : IInitializable, IDisposable
     {
         private readonly AsyncInitializableRepository _initializableRepository;
         private readonly UIController _uiController;
         private readonly LoadingWindowViewModel _loadingWindowViewModel;
+        private readonly GeneralNetworkObjectsRepository _generalNetworkObjectsRepository;
         
         public GameplayEntryPoint(
             AsyncInitializableRepository initializableRepository,
             UIController uiController,
-            LoadingWindowViewModel loadingWindowViewModel)
+            LoadingWindowViewModel loadingWindowViewModel,
+            GeneralNetworkObjectsRepository generalNetworkObjectsRepository)
         {
             _initializableRepository = initializableRepository;
             _uiController = uiController;
             _loadingWindowViewModel = loadingWindowViewModel;
+            _generalNetworkObjectsRepository = generalNetworkObjectsRepository;
         }
 
         public async void Initialize()
@@ -27,5 +32,8 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             await _loadingWindowViewModel.StartLoadingAsync(_initializableRepository.GetTasks());
             await _uiController.CloseWindowAsync<LoadingWindow>();
         }
+
+        public void Dispose() =>
+            _generalNetworkObjectsRepository.CurrentNetworkRunner.Shutdown();
     }
 }

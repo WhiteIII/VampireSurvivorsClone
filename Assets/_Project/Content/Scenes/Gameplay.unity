@@ -818,17 +818,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerPrefabAssetReference:
-    m_AssetGUID: 7bdc7304802497b409b7c8512eb847c3
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
-    m_EditorAssetChanged: 0
-  _gameLoopAssetReference:
-    m_AssetGUID: 0465d60af1e59df4db71ae874bdf5d92
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
-    m_EditorAssetChanged: 0
+    RawGuidValue: 7bdc7304802497b409b7c8512eb847c3
 --- !u!114 &2107132882
 MonoBehaviour:
   m_ObjectHideFlags: 0

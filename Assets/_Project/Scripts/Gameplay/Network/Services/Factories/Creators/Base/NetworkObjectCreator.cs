@@ -51,7 +51,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             else
                 throw new Exception("Asset provider not found!");
         }
-
+        
         public UniTask<T> Create<T>(AssetReference assetReference) where T : TBaseItem =>
             CreateWithParameters<T>(assetReference);
 
@@ -64,6 +64,25 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         public void Despawn(TBaseItem item) => 
             _networkRunner.Despawn(item.Object);
 
+        public async UniTask<T> CreateWithParameters<T>(
+            NetworkPrefabRef assetReference,
+            Vector3? position = null, 
+            Quaternion? rotation = null,
+            PlayerRef? playerRef = null) where T : TBaseItem
+        {
+            if (_networkRunner.IsServer == false)
+                throw new Exception("An attempt was made to create an network object that was not a server!");
+            
+            _networkObjectProvider.SetInstantiator(_instantiator);
+            NetworkObject spawnedObject = await _networkRunner.SpawnAsync(
+                assetReference, 
+                position, 
+                rotation, 
+                playerRef);
+
+            return spawnedObject.GetComponent<T>();
+        }
+        
         public async UniTask<T> CreateWithParameters<T>(
             AssetReference assetReference, 
             Vector3? position = null, 

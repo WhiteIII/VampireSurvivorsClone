@@ -58,6 +58,17 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         }
 
         protected async UniTask<T> CreateWithParameters<T>(
+            NetworkPrefabRef assetReference,
+            Vector3? position = null,
+            Quaternion? rotation = null,
+            PlayerRef? playerRef = null) where T : TBaseItem
+        {
+            T spawnedObject = await _networkObjectCreator
+                .CreateWithParameters<T>(assetReference, position, rotation, playerRef);
+            return _gameLoop.TryRegister(_repository.Add(spawnedObject));
+        }
+        
+        protected async UniTask<T> CreateWithParameters<T>(
             AssetReference assetReference, 
             Vector3? position = null, 
             Quaternion? rotation = null,

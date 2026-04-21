@@ -19,7 +19,8 @@ namespace _Project.Scripts.CompositionRoot.Services
         {
             foreach (IAsyncDependence dependence in _dependencies)
             {
-                await dependence.InitializeAsync();
+                if (dependence.InstanceCreated == false)
+                    await dependence.InitializeAsync();
                 _instances.Add(dependence.ObjectInstance);
             }
         }
@@ -39,7 +40,15 @@ namespace _Project.Scripts.CompositionRoot.Services
             {
                 if (dependence is AsyncDependence<T> concreteDependence)
                 {
-                    await UniTask.WaitWhile(() => dependence.Task.Status != UniTaskStatus.Succeeded);
+                    if (dependence.InstanceCreated == false)
+                    {
+                        if (dependence.CreatedInProcess)
+                            await UniTask.WaitWhile(() => dependence.CreatedInProcess);
+                        else
+                            await concreteDependence.CreateInstanceAsync();
+                    }
+                    if (_instances.Contains(dependence.ObjectInstance) == false)
+                        _instances.Add(dependence.ObjectInstance);
                     return concreteDependence.Instance;
                 }
             }

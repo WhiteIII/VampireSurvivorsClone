@@ -19,9 +19,9 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
     public class GameplayInstaller : MonoInstaller
     {
-        [Header("Prefabs:")]
-        [SerializeField] private AssetReference _playerPrefabAssetReference;
-
+        [Header("NetworkPrefabs:")]
+        [SerializeField] private NetworkPrefabRef _playerPrefabAssetReference;
+        
         public override void InstallBindings()
         {
             BindInterfacesAndSelfToIsSingle<AsyncDependenciesRepository>();
@@ -55,7 +55,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         
         private void BindAssets()
         {
-            Container.Bind<AssetReference>().WithId("PlayerPrefabAssetReference")
+            Container.Bind<NetworkPrefabRef>().WithId("PlayerPrefabAssetReference")
                 .FromInstance(_playerPrefabAssetReference);
         }
         

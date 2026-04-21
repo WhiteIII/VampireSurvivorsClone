@@ -12,10 +12,10 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
 {
     public class PlayerFactory : NetworkFactory<Player, PlayerCreator>, INetworkFactory<Player, Vector3, PlayerRef>
     {
-        private AssetReference _playerAssetReference;
+        private NetworkPrefabRef _playerAssetReference;
 
         [Inject] private async void Construct(
-            [Inject(Id = "PlayerPrefabAssetReference")] AssetReference prefabAssetReference, 
+            [Inject(Id = "PlayerPrefabAssetReference")] NetworkPrefabRef prefabAssetReference, 
             AsyncDependenciesRepository asyncDependenciesRepository)
         {
             _playerAssetReference = prefabAssetReference;
