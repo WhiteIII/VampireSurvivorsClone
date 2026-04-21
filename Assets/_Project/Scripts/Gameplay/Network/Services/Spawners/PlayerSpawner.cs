@@ -1,57 +1,70 @@
-using System;
+using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
-using _Project.Scripts.Gameplay.Network.Services.Factories;
+using _Project.Scripts.Gameplay.Network.Services.Factories.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.HostMigration;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
+using Cysharp.Threading.Tasks;
 using Fusion;
 using R3;
-using UnityEngine;
 using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Spawners
 {
-    public class PlayerSpawner : IInitializable, IDisposable, IOnHostMigration
+    public class PlayerSpawner : InjectNetworkBehaviour, ISendCallbackListenerOnHostMigration
     {
-        private readonly IFactory<Vector3, PlayerRef, Player> _factory;
-        private readonly NetworkRunnerCallBacksListener _callBacksListener;
-        private readonly SpawnPositionHelper _spawnPositionHelper;
-        private readonly PlayerRepository _playerRepository;
         private readonly CompositeDisposable _disposables = new();
+        
+        private PlayerFactory _factory;
+        private SpawnPositionHelper _spawnPositionHelper;
+        private PlayerRepository _playerRepository;
+        private NetworkRunnerCallBacksListener _callBacksListener;
 
-        public PlayerSpawner(
-            IFactory<Vector3, PlayerRef, Player> factory,
+        [Inject] private async void Construct(
+            AsyncDependenciesRepository asyncDependenciesRepository,
             NetworkRunnerCallBacksListener callBacksListener,
-            SpawnPositionHelper spawnPositionHelper,
-            PlayerRepository playerRepository)
+            SpawnPositionHelper spawnPositionHelper)
         {
-            _factory = factory;
             _callBacksListener = callBacksListener;
             _spawnPositionHelper = spawnPositionHelper;
-            _playerRepository = playerRepository;
+            
+            _factory = await asyncDependenciesRepository.GetInstanceAsync<PlayerFactory>();
+            _playerRepository = await asyncDependenciesRepository.GetInstanceAsync<PlayerRepository>();
+            EndInitialization();
         }
 
-        public void Initialize()
+        protected override void OnSpawn()
         {
             _callBacksListener
                 .OnPlayerJoinedSubject
                 .Subscribe(createdData => 
                     TryCreatePlayer(createdData.Item1, createdData.Item2))
                 .AddTo(_disposables);
+            _callBacksListener
+                .OnPlayerLeftSubject
+                .Subscribe(leftPlayerData => 
+                    TryDespawnPlayer(leftPlayerData.Item1, leftPlayerData.Item2))
+                .AddTo(_disposables);
+        }
+
+        public override void Despawned(NetworkRunner runner, bool hasState) =>
+            _disposables.Dispose();
+        
+        public void OnHostMigration(NetworkRunnerCallBacksListener generalNetworkObjectsRepository) => 
+            _callBacksListener = generalNetworkObjectsRepository;
+
+        private void TryDespawnPlayer(NetworkRunner runner, PlayerRef playerRef)
+        {
+            if (runner.IsServer == false)
+                return;
+            if (_playerRepository.TryGetByPlayerRef(out Player player, playerRef)) 
+                _factory.Despawn(player);
         }
         
-        public void Dispose() =>
-            _disposables.Dispose();
-
-        public void OnHostMigration(GeneralNetworkObjectsRepository generalNetworkObjectsRepository)
-        {
-            
-        }
-
         private void TryCreatePlayer(NetworkRunner runner, PlayerRef playerRef)
         {
             if (runner.IsServer == false)
                 return;
-            _factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef);
+            _factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef).Forget();
         }
     }
 }

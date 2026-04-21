@@ -1,10 +1,12 @@
 using _Project.Scripts.Common.Services.Initialize;
 using _Project.Scripts.CompositionRoot.EntryPoints;
 using _Project.Scripts.CompositionRoot.Services;
-using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
+using _Project.Scripts.Gameplay.Network;
+using _Project.Scripts.Gameplay.Network.Services;
+using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Implementation;
-using _Project.Scripts.Gameplay.Network.Services.InputSystem;
+using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using _Project.Scripts.Gameplay.Network.Services.Spawners;
 using Cysharp.Threading.Tasks;
@@ -17,56 +19,49 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
     public class GameplayInstaller : MonoInstaller
     {
-        [Header("OnScene:")] 
-        [SerializeField] private Transform _repositoriesParent;
-        
         [Header("Prefabs:")]
         [SerializeField] private AssetReference _playerPrefabAssetReference;
-        [SerializeField] private AssetReference _gameLoopAssetReference;
-        
+
         public override void InstallBindings()
         {
             BindInterfacesAndSelfToIsSingle<AsyncDependenciesRepository>();
+            BindInterfacesAndSelfToIsSingle<SpawnPositionHelper>();
+            Container.Bind<NetworkRunnerCallBacksListener>()
+                .FromFactory<NetworkRunnerCallBacksListenerFactory>().AsSingle();
             BindIsSingle<AsyncInitializableRepository>();
+            BindNetworkComponent<PlayerSpawner>();
+            BindNetworkComponent<GameLoop>();
+            BindIsSingle<NetworkCreatorForBinding>();
+            BindNetworkComponent<PlayerFactory>();
             BindAssets();
             BindCreators();
             BindRepositories();
-            BindNetworkComponent<PlayerFactory>();
-            
-            //Container.Bind<IFactory<Vector3, PlayerRef, UniTask<Player>>>().To<PlayerFactory>().AsSingle();
-            //Container.Bind<GameLoop>().FromFactory<GameLoopFactory>().AsSingle();
-            Container.BindInterfacesTo<PlayerSpawner>().AsSingle();
-            Container.BindInterfacesTo<InputController>().AsSingle();
+            //Container.BindInterfacesTo<InputController>().AsSingle();
 
             BindInterfacesToIsSingle<GameplayEntryPoint>();
         }
 
         private void BindRepositories()
         {
-            BindCreatorOrRepository<PlayerRepository>();
-            BindCreatorOrRepository<NetworkObjectsRepository>();
+            BindNetworkComponent<PlayerRepository>();
+            BindNetworkComponent<NetworkObjectsRepository>();
         }
         
         private void BindCreators()
         {
-            BindCreatorOrRepository<PlayerCreator>();
-            BindCreatorOrRepository<NetworkObjectsCreator>();
+            BindNetworkComponent<PlayerCreator>();
+            BindNetworkComponent<NetworkObjectsCreator>();
         }
         
         private void BindAssets()
         {
             Container.Bind<AssetReference>().WithId("PlayerPrefabAssetReference")
                 .FromInstance(_playerPrefabAssetReference);
-            Container.Bind<AssetReference>().WithId("GameLoopAssetReference")
-                .FromInstance(_gameLoopAssetReference);
         }
         
         private void BindNetworkComponent<T>() where T : NetworkBehaviour => 
             BindAsyncFromFactory<T, NetworkComponentFactory<T>>();
         
-        private void BindCreatorOrRepository<T>() where T : NetworkBehaviour =>
-            BindAsyncFromFactory<T, CreatorAndRepositoryFactory<T>>();
-
         private void BindAsyncFromFactory<TContract, TFactory>() 
             where TFactory : IFactory<UniTask<TContract>>
         {

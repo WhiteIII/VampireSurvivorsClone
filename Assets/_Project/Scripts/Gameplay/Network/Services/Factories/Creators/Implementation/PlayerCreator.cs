@@ -12,16 +12,15 @@ using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation
 {
-    public class PlayerCreator : BaseNetworkObjectsCreator<Player>
+    public class PlayerCreator : NetworkLayerAboveObjectCreator<Player>
     {
         [Inject] private async void Construct(
-            LocalAssetProvider localAssetProvider,
-            GeneralNetworkObjectsRepository networkRunner, 
             AsyncDependenciesRepository dependenciesRepository,
-            GameLoop gameLoop)
+            IInstantiator instantiator)
         {
             PlayerRepository repository = await dependenciesRepository.GetInstanceAsync<PlayerRepository>();
-            Initialize(localAssetProvider, networkRunner, repository, gameLoop);
+            await Initialize(repository, dependenciesRepository, instantiator);
+            EndInitialization();
         }
         
         public UniTask<T> Create<T>(AssetReference assetReference, Vector3 position, PlayerRef playerRef) where T : Player => 

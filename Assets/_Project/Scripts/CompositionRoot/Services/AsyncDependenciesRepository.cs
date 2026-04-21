@@ -39,7 +39,7 @@ namespace _Project.Scripts.CompositionRoot.Services
             {
                 if (dependence is AsyncDependence<T> concreteDependence)
                 {
-                    await concreteDependence.Task;
+                    await UniTask.WaitWhile(() => dependence.Task.Status != UniTaskStatus.Succeeded);
                     return concreteDependence.Instance;
                 }
             }

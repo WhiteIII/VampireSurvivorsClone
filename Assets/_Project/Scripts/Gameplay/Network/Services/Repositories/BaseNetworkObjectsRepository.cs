@@ -33,10 +33,10 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
             return false;
         }
 
-        public T Add<T>(T obj) where T : TBaseItem
+        public T Add<T>(T item) where T : TBaseItem
         {
-            _list.Add(obj);
-            return obj;
+            _list.Add(item);
+            return item;
         }
 
         public void Remove(TBaseItem item) => 

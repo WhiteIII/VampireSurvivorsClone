@@ -1,3 +1,4 @@
+using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Base;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation;
@@ -9,14 +10,24 @@ using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
 {
-    public class PlayerFactory : NetworkFactory<Player, PlayerCreator>, IFactory<Vector3, PlayerRef, UniTask<Player>>
+    public class PlayerFactory : NetworkFactory<Player, PlayerCreator>, INetworkFactory<Player, Vector3, PlayerRef>
     {
         private AssetReference _playerAssetReference;
-        
-        [Inject] private void Construct([Inject(Id = "PlayerPrefabAssetReference")]AssetReference prefabAssetReference) => 
+
+        [Inject] private async void Construct(
+            [Inject(Id = "PlayerPrefabAssetReference")] AssetReference prefabAssetReference, 
+            AsyncDependenciesRepository asyncDependenciesRepository)
+        {
             _playerAssetReference = prefabAssetReference;
+            PlayerCreator creator = await asyncDependenciesRepository.GetInstanceAsync<PlayerCreator>();
+            Initialize(creator);
+            EndInitialization();
+        } 
         
         public async UniTask<Player> Create(Vector3 spawnPosition, PlayerRef playerRef) => 
             await Creator.Create<Player>(_playerAssetReference, spawnPosition, playerRef);
+
+        public void Despawn(Player item) => 
+            Creator.Despawn(item);
     }
 }

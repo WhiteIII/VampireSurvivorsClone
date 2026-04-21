@@ -1,12 +1,12 @@
+using _Project.Scripts.Gameplay.Network.Services.Factories.Base;
 using _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProvider;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Cysharp.Threading.Tasks;
 using Fusion;
-using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
 {
-    public class CreatorAndRepositoryFactory<T> : IFactory<UniTask<T>>
+    public class CreatorAndRepositoryFactory<T> : INetworkFactory<T>
         where T : NetworkBehaviour
     {
         private const uint CREATOR_ID = 101;
@@ -27,5 +27,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
             NetworkObject spawnedObject = await _networkRunner.SpawnAsync(networkPrefabId);
             return spawnedObject.GetComponent<T>();
         }
+
+        public void Despawn(T item) => 
+            _networkRunner.Despawn(item.Object);
     }
 }

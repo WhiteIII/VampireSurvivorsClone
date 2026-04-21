@@ -1,19 +1,22 @@
-using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation;
+using _Project.Scripts.Gameplay.Network.Services.Factories.Base;
+using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base;
 using Cysharp.Threading.Tasks;
 using Fusion;
-using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
 {
-    public class NetworkComponentFactory<T> : IFactory<UniTask<T>>
+    public class NetworkComponentFactory<T> : INetworkFactory<T>
         where T : NetworkBehaviour
     {
-        private readonly NetworkObjectsCreator _creator;
+        private NetworkCreatorForBinding _creator;
 
-        public NetworkComponentFactory(NetworkObjectsCreator creator) => 
+        public NetworkComponentFactory(NetworkCreatorForBinding creator) => 
             _creator = creator;
 
         public UniTask<T> Create() => 
             _creator.CreateEmptyNetworkObjectWithComponent<T>();
+
+        public void Despawn(T item) => 
+            _creator.Despawn(item);
     }
 }

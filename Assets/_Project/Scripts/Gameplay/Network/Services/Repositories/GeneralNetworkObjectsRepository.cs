@@ -14,7 +14,6 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
         public NetworkRunner CurrentNetworkRunner { get; private set; }
         public NetworkSceneManagerDefault CurrentNetworkSceneManager { get; private set; }
         public NetworkObjectEndEmptyObjectProvider CurrentNetworkObjectProvider { get; private set; }
-        //TODO Добавить сюда NetworkCallbackListener
         
         public int Count
         {
@@ -31,32 +30,32 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
             }
         }
 
-        public T Add<T>(T networkObject) where T : Behaviour
+        public T Add<T>(T item) where T : Behaviour
         {
             if (CurrentNetworkRunner && CurrentNetworkSceneManager && CurrentNetworkObjectProvider)
                 throw new Exception("All the objects are already installed!");
-            if (networkObject is NetworkRunner networkRunner)
+            if (item is NetworkRunner networkRunner)
             {
                 if (CurrentNetworkRunner)
                     throw new Exception("Only one NetworkRunner is allowed!");
                 CurrentNetworkRunner = networkRunner;
-                return networkObject;
+                return item;
             }
 
-            if (networkObject is NetworkSceneManagerDefault networkSceneManager)
+            if (item is NetworkSceneManagerDefault networkSceneManager)
             {
                 if (CurrentNetworkSceneManager)
                     throw new Exception("Only one NetworkSceneManagerDefault is allowed!");
                 CurrentNetworkSceneManager = networkSceneManager;
-                return networkObject;
+                return item;
             }
 
-            if (networkObject is NetworkObjectEndEmptyObjectProvider networkObjectProvider)
+            if (item is NetworkObjectEndEmptyObjectProvider networkObjectProvider)
             {
                 if (CurrentNetworkObjectProvider)
                     throw new Exception("Only one NetworkObjectProvider is allowed!");
                 CurrentNetworkObjectProvider = networkObjectProvider;
-                return networkObject;
+                return item;
             }
 
             throw new Exception("The object is not defined!");

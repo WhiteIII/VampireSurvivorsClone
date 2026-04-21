@@ -10,11 +10,11 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProv
     {
         private IInstantiator _instantiator;
 
-        [Inject] private void Construct(IInstantiator instantiator) =>
+        public void SetInstantiator(IInstantiator instantiator) => 
             _instantiator = instantiator;
 
-        protected GameObject CreateEmptyObject() =>
-            _instantiator.CreateEmptyGameObject("Clone");
+        protected GameObject CreateEmptyObject(string name) =>
+            _instantiator.CreateEmptyGameObject(name);
 
         protected void AddComponentOnNetworkObject(GameObject gameObject, Type componentType) =>
             _instantiator.InstantiateComponent(componentType, gameObject);

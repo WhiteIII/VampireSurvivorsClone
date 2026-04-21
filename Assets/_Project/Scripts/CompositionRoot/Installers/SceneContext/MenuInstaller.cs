@@ -12,8 +12,6 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
     {
         public override void InstallBindings()
         {
-            Container.Bind<NetworkRunnerCallBacksListener>().AsSingle();
-
             BindFactory<NetworkRunner, NetworkRunnerFactory>();
             BindFactory<NetworkSceneManagerDefault, NetworkSceneManagerFactory>();
             BindFactory<NetworkObjectEndEmptyObjectProvider, NetworkObjectsProviderFactory>();

@@ -12,11 +12,21 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProv
         private uint _currentPrefabId;
         private Type _currentComponentType;
         
+        public bool EmptyObjectCreationInProcess { get; private set; }
+        
         public void SetPrefabIdAndComponentType<T>(uint id)
             where T : NetworkBehaviour
         {
             _currentPrefabId = id;
             _currentComponentType = typeof(T);
+            EmptyObjectCreationInProcess = true;
+        }
+
+        public void ResetCreationEmptyObjectProcess()
+        {
+            _currentPrefabId = 0;
+            _currentComponentType = null;
+            EmptyObjectCreationInProcess = false;
         }
         
         public override NetworkObjectAcquireResult AcquirePrefabInstance(
@@ -52,13 +62,10 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProv
                     Log.Error("An error occurred when adding a component to an empty object! Component type was null!");
                     return NetworkObjectAcquireResult.Failed;
                 }
-                GameObject emptyObject = CreateEmptyObject();
+                GameObject emptyObject = CreateEmptyObject(_currentComponentType.Name);
                 instance = AddComponentOnNetworkObject<NetworkObject>(emptyObject);
                 AddComponentOnNetworkObject(emptyObject, _currentComponentType);
-                emptyObject.name = _currentComponentType.Name;
                 Baker.Bake(emptyObject);
-                _currentPrefabId = 0;
-                _currentComponentType = null;
             }
             
             Assert.Check(instance);

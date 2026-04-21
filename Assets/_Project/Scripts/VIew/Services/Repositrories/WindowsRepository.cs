@@ -30,11 +30,11 @@ namespace _Project.Scripts.View.Services.Repositrories
             return false;
         }
         
-        public T Add<T>(T window)
+        public T Add<T>(T item)
             where T : Window
         {
-            _windows.Add(window);
-            return window;
+            _windows.Add(item);
+            return item;
         }
 
         public void Remove(Window item) => 

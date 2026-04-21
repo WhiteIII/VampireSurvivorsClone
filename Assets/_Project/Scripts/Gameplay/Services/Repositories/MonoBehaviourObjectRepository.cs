@@ -11,10 +11,10 @@ namespace _Project.Scripts.Gameplay.Services.Repositories
 
         public int Count => _objects.Count;
 
-        public T Add<T>(T monoBehaviour) where T : MonoBehaviour
+        public T Add<T>(T item) where T : MonoBehaviour
         {
-            _objects.Add(monoBehaviour);
-            return monoBehaviour;
+            _objects.Add(item);
+            return item;
         }
 
         public bool TryGet<T>(out T result) where T : MonoBehaviour
