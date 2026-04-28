@@ -1,5 +1,4 @@
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
-using _Project.Scripts.Gameplay.Network.Services.Factories;
 using Fusion;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Repositories

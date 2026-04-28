@@ -1,13 +1,10 @@
-using _Project.Scripts.Common.AssetsManagement;
 using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base;
-using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation
@@ -22,8 +19,13 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
             await Initialize(repository, dependenciesRepository, instantiator);
             EndInitialization();
         }
-        
-        public UniTask<T> Create<T>(NetworkPrefabRef networkPrefabRef, Vector3 position, PlayerRef playerRef) where T : Player => 
-            CreateWithParameters<T>(networkPrefabRef, position, null, playerRef);
+
+        public async UniTask<T> Create<T>(NetworkPrefabRef networkPrefabRef, Vector3 position, PlayerRef playerRef)
+            where T : Player
+        {
+            T player = await CreateWithParameters<T>(networkPrefabRef, position, null, playerRef);
+            player.Initialize(playerRef);
+            return player;
+        } 
     }
 }

@@ -45,5 +45,12 @@ namespace _Project.Scripts.Common.AssetsManagement
                 }
             }
         }
+
+        public void UnloadAllAssets()
+        {
+            foreach (AssetReference asset in _loadedAssets)
+                _localAssetProvider.ReleaseAsset(asset);
+            _loadedAssets.Clear();
+        }
     }
 }

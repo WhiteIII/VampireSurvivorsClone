@@ -15,11 +15,6 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 83fc1ad7dacc8374183f685305be0975
   m_SerializeEntries:
-  - m_GUID: 0465d60af1e59df4db71ae874bdf5d92
-    m_Address: GameLoop
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2e0643ba929059e40b569bada77a8378
     m_Address: NerworkRunner
     m_ReadOnly: 0

@@ -34,49 +34,29 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProv
             in NetworkPrefabAcquireContext context,
             out NetworkObject instance)
         {
-            instance = null;
-
-            if (runner.SceneManager.IsBusy) 
-                return NetworkObjectAcquireResult.Retry;
-            NetworkObject prefab;
-
-            if (_currentPrefabId != context.PrefabId.RawValue)
-            {
-                try
-                {
-                    prefab = runner.Prefabs.Load(context.PrefabId, isSynchronous: context.IsSynchronous);
-                } 
-                catch (Exception ex)
-                {
-                    Log.Error($"Failed to load prefab: {ex}");
-                    return NetworkObjectAcquireResult.Failed;
-                }
-                if (prefab == false)
-                    return NetworkObjectAcquireResult.Retry;
-                instance = InstantiatePrefab(runner, prefab);
-            }
-            else 
+            if (_currentPrefabId == context.PrefabId.RawValue)
             {
                 if (_currentComponentType == null)
                 {
                     Log.Error("An error occurred when adding a component to an empty object! Component type was null!");
+                    instance = null;
                     return NetworkObjectAcquireResult.Failed;
                 }
+
                 GameObject emptyObject = CreateEmptyObject(_currentComponentType.Name);
-                instance = AddComponentOnNetworkObject<NetworkObject>(emptyObject);
+                NetworkObject networkObject = AddComponentOnNetworkObject<NetworkObject>(emptyObject);
                 AddComponentOnNetworkObject(emptyObject, _currentComponentType);
                 Baker.Bake(emptyObject);
+                
+                if (context.DontDestroyOnLoad)
+                    runner.MakeDontDestroyOnLoad(emptyObject);
+                else
+                    runner.MoveToRunnerScene(emptyObject);
+                instance = networkObject;
+                return NetworkObjectAcquireResult.Success;
             }
-            
-            Assert.Check(instance);
 
-            if (context.DontDestroyOnLoad)
-                runner.MakeDontDestroyOnLoad(instance.gameObject);
-            else
-                runner.MoveToRunnerScene(instance.gameObject);
-
-            runner.Prefabs.AddInstance(context.PrefabId);
-            return NetworkObjectAcquireResult.Success;
+            return base.AcquirePrefabInstance(runner, context, out instance);
         }
     }
 }

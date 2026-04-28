@@ -1,3 +1,4 @@
+using System;
 using _Project.Scripts.Common.AssetsManagement;
 using _Project.Scripts.Common.SceneSwitcher;
 using _Project.Scripts.View.Implementation;
@@ -8,7 +9,7 @@ using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.EntryPoints
 {
-    public class BootstrapEntryPoint : IInitializable
+    public class BootstrapEntryPoint : IInitializable, IDisposable
     {
         private readonly GameStateSwitcher _gameStateSwitcher;
         private readonly AssetsLoader _assetLoader;
@@ -35,5 +36,8 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             await _uiController.CreateAndOpenWindowAsync<LoadingWindow>();
             await _gameStateSwitcher.GoToMenu();
         }
+
+        public void Dispose() => 
+            _assetLoader.UnloadAllAssets();
     }
 }

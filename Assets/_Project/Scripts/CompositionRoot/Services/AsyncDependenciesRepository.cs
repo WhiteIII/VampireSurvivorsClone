@@ -19,7 +19,7 @@ namespace _Project.Scripts.CompositionRoot.Services
         {
             foreach (IAsyncDependence dependence in _dependencies)
             {
-                if (dependence.InstanceCreated == false)
+                if (dependence.InstanceCreated == false && dependence.CreatedInProcess == false)
                     await dependence.InitializeAsync();
                 _instances.Add(dependence.ObjectInstance);
             }
