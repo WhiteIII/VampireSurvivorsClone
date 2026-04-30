@@ -8,21 +8,14 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
     public abstract class BaseNetworkObjectsRepository<TBaseItem> : NetworkBehaviour, IRepository<TBaseItem>
         where TBaseItem : NetworkBehaviour
     {
-        private NetworkLinkedList<TBaseItem> _list;
+        protected readonly List<TBaseItem> List = new();
 
-        [Networked] public int Count
-        {
-            get => _list.Count;
-            set { }
-        }
+        public int Count => List.Count;
 
-        protected void Initialize(NetworkLinkedList<TBaseItem> list) => 
-            _list = list;
-        
         public bool TryGet<T>(out T item) where T : TBaseItem
         {       
             item = null;
-            foreach (TBaseItem networkBehaviour in _list)
+            foreach (TBaseItem networkBehaviour in List)
             {
                 if (networkBehaviour is T concreteItem)
                 {
@@ -35,15 +28,15 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
 
         public T Add<T>(T item) where T : TBaseItem
         {
-            _list.Add(item);
+            List.Add(item);
             return item;
         }
 
         public void Remove(TBaseItem item) => 
-            _list.Remove(item);
+            List.Remove(item);
 
         public IEnumerator<TBaseItem> GetEnumerator() => 
-            _list.GetEnumerator();
+            List.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => 
             GetEnumerator();

@@ -5,8 +5,6 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
 {
     public class PlayerRepository : BaseNetworkObjectsRepository<Player>
     {
-        [Networked] private NetworkLinkedList<Player> List { get; } = new();
-
         public bool TryGetByPlayerRef(out Player player, PlayerRef playerRef)
         {
             player = null;
@@ -21,8 +19,5 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
             
             return false;
         }
-        
-        public override void Spawned() => 
-            Initialize(List);
     }
 }
