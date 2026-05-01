@@ -63,6 +63,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             Quaternion? rotation = null,
             PlayerRef? playerRef = null) where T : TBaseItem
         {
+            await InitializeTask;
             T spawnedObject = await _networkObjectCreator
                 .CreateWithParameters<T>(assetReference, position, rotation, playerRef);
             return _gameLoop.TryRegister(_repository.Add(spawnedObject));
@@ -74,6 +75,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             Quaternion? rotation = null,
             PlayerRef? playerRef = null) where T : TBaseItem
         {
+            await InitializeTask;
             T spawnedObject = await _networkObjectCreator
                 .CreateWithParameters<T>(assetReference, position, rotation, playerRef);
             return _gameLoop.TryRegister(_repository.Add(spawnedObject));
@@ -84,6 +86,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             Quaternion? rotation = null,
             PlayerRef? playerRef = null) where T : TBaseItem
         {
+            await InitializeTask;
             T spawnedObject = await _networkObjectCreator
                 .CreateEmptyObjectWithParameters<T>(position, rotation, playerRef);
             return _gameLoop.TryRegister(_repository.Add(spawnedObject));

@@ -7,6 +7,16 @@ namespace _Project.Scripts.CompositionRoot.Services
     {
         private bool IsReady = false;
 
+        protected UniTask InitializeTask
+        {
+            get
+            {
+                if (IsReady)
+                    return UniTask.CompletedTask;
+                return UniTask.WaitWhile(() => IsReady == false);
+            }
+        }
+        
         protected void EndInitialization() =>
             IsReady = true;
 

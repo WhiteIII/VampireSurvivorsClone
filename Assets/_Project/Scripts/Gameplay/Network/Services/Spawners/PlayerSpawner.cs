@@ -37,12 +37,12 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
             _callBacksListener
                 .OnPlayerJoinedSubject
                 .Subscribe(createdData => 
-                    TryCreatePlayer(createdData.Item1, createdData.Item2))
+                    TryCreatePlayer(createdData.Item1, createdData.Item2).Forget())
                 .AddTo(_disposables);
             _callBacksListener
                 .OnPlayerLeftSubject
                 .Subscribe(leftPlayerData => 
-                    TryDespawnPlayer(leftPlayerData.Item1, leftPlayerData.Item2))
+                    TryDespawnPlayer(leftPlayerData.Item1, leftPlayerData.Item2).Forget())
                 .AddTo(_disposables);
         }
 
@@ -52,18 +52,20 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
         public void OnHostMigration(NetworkRunnerCallBacksListener generalNetworkObjectsRepository) => 
             _callBacksListener = generalNetworkObjectsRepository;
 
-        private void TryDespawnPlayer(NetworkRunner runner, PlayerRef playerRef)
+        private async UniTask TryDespawnPlayer(NetworkRunner runner, PlayerRef playerRef)
         {
             if (runner.IsServer == false)
                 return;
+            await InitializeTask;
             if (_playerRepository.TryGetByPlayerRef(out Player player, playerRef)) 
                 _factory.Despawn(player);
         }
         
-        private void TryCreatePlayer(NetworkRunner runner, PlayerRef playerRef)
+        private async UniTask TryCreatePlayer(NetworkRunner runner, PlayerRef playerRef)
         {
-            if (runner.IsServer == false)
+            if (runner.IsServer == false || (!runner && _playerRepository.TryGetByPlayerRef(out Player _, playerRef) == false)) 
                 return;
+            await InitializeTask;
             _factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef).Forget();
         }
     }

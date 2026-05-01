@@ -7,6 +7,7 @@ using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.GameCycle;
+using _Project.Scripts.Gameplay.Network.Services.InputSystem;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using _Project.Scripts.Gameplay.Network.Services.Spawners;
 using Cysharp.Threading.Tasks;
@@ -36,7 +37,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindAssets();
             BindCreators();
             BindRepositories();
-            //Container.BindInterfacesTo<InputController>().AsSingle();
+            BindInterfacesToIsSingle<InputController>();
 
             BindInterfacesToIsSingle<GameplayEntryPoint>();
         }
