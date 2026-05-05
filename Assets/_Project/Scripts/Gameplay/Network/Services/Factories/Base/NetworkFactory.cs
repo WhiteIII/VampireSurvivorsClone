@@ -6,11 +6,16 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Base
 {
     public abstract class NetworkFactory<TValue, TCreator> : InjectNetworkBehaviour, INetworkFactory
         where TValue : NetworkBehaviour
-        where TCreator : INetworkObjectsCreator<TValue>
+        where TCreator : NetworkBehaviour, INetworkObjectsCreator<TValue>
     {
+        [Networked] private NetworkBehaviour CreatorNetworkBehaviour { get; set; }
+        
         protected TCreator Creator { get; private set; }
 
-        protected void Initialize(TCreator creator) => 
+        protected void Initialize(TCreator creator)
+        {
             Creator = creator;
+            CreatorNetworkBehaviour = Creator;
+        }
     }
 }

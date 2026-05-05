@@ -21,17 +21,28 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         where TBaseItem : NetworkBehaviour
     {
         private IRepository<TBaseItem> _repository;
-        private GameLoop _gameLoop;
         private NetworkObjectCreator<TBaseItem> _networkObjectCreator;
+        
+        [Networked] private GameLoop GameLoop { get; set; }
+        [Networked] private NetworkBehaviour RepositoryNetworkBehaviour { get; set; }
         
         protected async UniTask Initialize(
             IRepository<TBaseItem> repository,
             AsyncDependenciesRepository asyncDependenciesRepository,
             IInstantiator instantiator)
         {
-            _repository = repository;
             _networkObjectCreator = instantiator.Instantiate<NetworkObjectCreator<TBaseItem>>();
-            _gameLoop = await asyncDependenciesRepository.GetInstanceAsync<GameLoop>();
+            
+            bool hasStateAuthority = await GetStateAuthorityAsync();
+            if (hasStateAuthority == false)
+            {
+                _repository = (IRepository<TBaseItem>)RepositoryNetworkBehaviour;
+                return;
+            }
+            
+            _repository = repository;
+            RepositoryNetworkBehaviour = (NetworkBehaviour)_repository;
+            GameLoop = await asyncDependenciesRepository.GetInstanceAsync<GameLoop>();
         }
 
         public void OnHostMigration(GlobalRepository globalRepository) => 
@@ -51,7 +62,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
 
         public void Despawn(TBaseItem item)
         {
-            _gameLoop.TryUnregister(item);
+            GameLoop.TryUnregister(item);
             if (_repository.TryGet(out TBaseItem _))
                 _repository.Remove(item);
             _networkObjectCreator.Despawn(item);
@@ -66,7 +77,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             await InitializeTask;
             T spawnedObject = await _networkObjectCreator
                 .CreateWithParameters<T>(assetReference, position, rotation, playerRef);
-            return _gameLoop.TryRegister(_repository.Add(spawnedObject));
+            return GameLoop.TryRegister(_repository.Add(spawnedObject));
         }
         
         protected async UniTask<T> CreateWithParameters<T>(
@@ -78,7 +89,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             await InitializeTask;
             T spawnedObject = await _networkObjectCreator
                 .CreateWithParameters<T>(assetReference, position, rotation, playerRef);
-            return _gameLoop.TryRegister(_repository.Add(spawnedObject));
+            return GameLoop.TryRegister(_repository.Add(spawnedObject));
         }
 
         protected async UniTask<T> CreateEmptyObjectWithParameters<T>(
@@ -89,7 +100,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             await InitializeTask;
             T spawnedObject = await _networkObjectCreator
                 .CreateEmptyObjectWithParameters<T>(position, rotation, playerRef);
-            return _gameLoop.TryRegister(_repository.Add(spawnedObject));
+            return GameLoop.TryRegister(_repository.Add(spawnedObject));
         }
     }
 }

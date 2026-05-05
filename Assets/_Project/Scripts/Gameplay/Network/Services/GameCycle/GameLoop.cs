@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using _Project.Scripts.Gameplay.Network.Services.HostMigration;
+using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Fusion;
 
 namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
 {
-    public class GameLoop : NetworkBehaviour
+    public class GameLoop : NetworkBehaviour, IOnHostMigration
     {
         private readonly List<IUpdatable> _updatables = new();
         private readonly Queue<IUpdatable> _addedUpdateablesQueue = new();
@@ -11,8 +13,23 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
         
         private bool _isPaused;
 
+        public void OnHostMigration(GeneralNetworkObjectsRepository generalNetworkObjectsRepository)
+        {
+            List<NetworkObject> networkObjects = 
+                generalNetworkObjectsRepository.CurrentNetworkRunner.GetAllNetworkObjects();
+
+            foreach (NetworkObject networkObject in networkObjects)
+            {
+                foreach (IUpdatable updatable in networkObject.GetComponentsInChildren<IUpdatable>())
+                    Register(updatable);
+            }
+        }
+
         public override void FixedUpdateNetwork()
         {
+            if (HasStateAuthority == false)
+                return;
+            
             foreach (IUpdatable updatable in _updatables)
                 updatable.GameLoopUpdate();
 
@@ -21,21 +38,20 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
             while (_removedUpdateablesQueue.Count > 0)
                 _updatables.Remove(_removedUpdateablesQueue.Dequeue());
         }
-        
-        public T TryRegister<T>(T item)
+
+        public T TryRegister<T>(T item) 
+            where T : NetworkBehaviour
         {
             if (item is IUpdatable gameLoopObject)
                 Register(gameLoopObject);
             return item;
-        } 
-        
-        public T Register<T>(T item) where T : IUpdatable
-        {
-            _addedUpdateablesQueue.Enqueue(item);
-            return item;
         }
 
-        public void TryUnregister<T>(T item)
+        private void Register(IUpdatable item) =>       
+            _addedUpdateablesQueue.Enqueue(item);
+
+        public void TryUnregister<T>(T item) 
+            where T : NetworkBehaviour
         {
             if (item is IUpdatable updatable == false)
                 return;
@@ -43,7 +59,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
                 Unregister(updatable);
         }
 
-        public void Unregister(IUpdatable updatable) => 
+        private void Unregister(IUpdatable updatable) => 
             _removedUpdateablesQueue.Enqueue(updatable);
     }
 }

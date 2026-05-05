@@ -19,21 +19,15 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         ISendGlobalRepositoryOnHostMigration
         where TBaseItem : NetworkBehaviour
     {
-        private const uint ID_FOR_EMPTY_NETWORK_OBJECT = 10001;
-        
-        private readonly IInstantiator _instantiator;
-        
         private LocalAssetProvider _localAssetProvider;
         private NetworkObjectEndEmptyObjectProvider _networkObjectProvider;
         private NetworkRunner _networkRunner;
         
         public NetworkObjectCreator(
             LocalAssetProvider localAssetProvider,
-            GeneralNetworkObjectsRepository generalNetworkObjectsRepository,
-            IInstantiator instantiator)
+            GeneralNetworkObjectsRepository generalNetworkObjectsRepository)
         {
             _localAssetProvider = localAssetProvider;
-            _instantiator = instantiator;
             _networkObjectProvider = generalNetworkObjectsRepository.CurrentNetworkObjectProvider;
             _networkRunner = generalNetworkObjectsRepository.CurrentNetworkRunner;
         }
@@ -73,7 +67,6 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             if (_networkRunner.IsServer == false)
                 throw new Exception("An attempt was made to create an network object that was not a server!");
             
-            _networkObjectProvider.SetInstantiator(_instantiator);
             NetworkObject spawnedObject = await _networkRunner.SpawnAsync(
                 assetReference, 
                 position, 
@@ -92,7 +85,6 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             if (_networkRunner.IsServer == false)
                 throw new Exception("An attempt was made to create an network object that was not a server!");
             
-            _networkObjectProvider.SetInstantiator(_instantiator);
             NetworkObject spawnedObject = await _networkRunner.SpawnAsync(
                 _localAssetProvider.GetAsset<GameObject>(assetReference), 
                 position, 
@@ -109,20 +101,19 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         {
             if (_networkRunner.IsServer == false)
                 throw new Exception("An attempt was made to create an network object that was not a server!");
-
-            await UniTask.WaitWhile(() => _networkObjectProvider.EmptyObjectCreationInProcess);
-            _networkObjectProvider.SetInstantiator(_instantiator);
-            NetworkPrefabId networkPrefabId = NetworkPrefabId.FromRaw(ID_FOR_EMPTY_NETWORK_OBJECT);
-            _networkObjectProvider.SetPrefabIdAndComponentType<T>(ID_FOR_EMPTY_NETWORK_OBJECT);
             
+            uint freeRawValue = await _networkObjectProvider.GetFreeRawValue();
+            NetworkPrefabId networkPrefabId = NetworkPrefabId.FromRaw(freeRawValue);
+            await _networkObjectProvider.AddRawValueAndType<T>(networkPrefabId);
+
             NetworkObject spawnedObject = await _networkRunner.SpawnAsync(
                 networkPrefabId, 
                 position, 
                 rotation, 
                 playerRef);
-            _networkObjectProvider.ResetCreationEmptyObjectProcess();
             
             return spawnedObject.GetComponent<T>();
         }
+
     }
 }

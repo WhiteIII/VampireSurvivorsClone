@@ -1,3 +1,4 @@
+using System;
 using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Implementation;
@@ -14,10 +15,11 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
     {
         private readonly CompositeDisposable _disposables = new();
         
-        private PlayerFactory _factory;
         private SpawnPositionHelper _spawnPositionHelper;
-        private PlayerRepository _playerRepository;
         private NetworkRunnerCallBacksListener _callBacksListener;
+        
+        [Networked] private PlayerFactory Factory { get; set; }
+        [Networked] private PlayerRepository PlayerRepository { get; set; }
 
         [Inject] private async void Construct(
             AsyncDependenciesRepository asyncDependenciesRepository,
@@ -26,14 +28,24 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
         {
             _callBacksListener = callBacksListener;
             _spawnPositionHelper = spawnPositionHelper;
+
+            bool hasStateAuthority = await GetStateAuthorityAsync();
+            if (hasStateAuthority == false)
+            {
+                EndInitialization();
+                return;
+            }
             
-            _factory = await asyncDependenciesRepository.GetInstanceAsync<PlayerFactory>();
-            _playerRepository = await asyncDependenciesRepository.GetInstanceAsync<PlayerRepository>();
+            Factory = await asyncDependenciesRepository.GetInstanceAsync<PlayerFactory>();
+            PlayerRepository = await asyncDependenciesRepository.GetInstanceAsync<PlayerRepository>();
             EndInitialization();
         }
 
         protected override void OnSpawn()
         {
+            if (HasStateAuthority == false)
+                return;
+            
             _callBacksListener
                 .OnPlayerJoinedSubject
                 .Subscribe(createdData => 
@@ -57,16 +69,20 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
             if (runner.IsServer == false)
                 return;
             await InitializeTask;
-            if (_playerRepository.TryGetByPlayerRef(out Player player, playerRef)) 
-                _factory.Despawn(player);
+            if (PlayerRepository.TryGetByPlayerRef(out Player player, playerRef)) 
+                Factory.Despawn(player);
         }
         
         private async UniTask TryCreatePlayer(NetworkRunner runner, PlayerRef playerRef)
         {
-            if (runner.IsServer == false || (!runner && _playerRepository.TryGetByPlayerRef(out Player _, playerRef) == false)) 
+            if (runner == false)
+                return;
+            if (runner.IsServer == false) 
+                return;
+            if (PlayerRepository.TryGetByPlayerRef(out Player _, playerRef))
                 return;
             await InitializeTask;
-            _factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef).Forget();
+            Factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef).Forget();
         }
     }
 }

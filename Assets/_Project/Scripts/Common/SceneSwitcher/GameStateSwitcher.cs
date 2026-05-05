@@ -40,7 +40,7 @@ namespace _Project.Scripts.Common.SceneSwitcher
             startGameArgs.SceneManager = _repository.CurrentNetworkSceneManager;
             startGameArgs.ObjectProvider = _repository.CurrentNetworkObjectProvider;
             startGameArgs.Scene = networkSceneInfo;
-
+            
             networkRunner.ProvideInput = true;
             await networkRunner.StartGame(startGameArgs);
         }

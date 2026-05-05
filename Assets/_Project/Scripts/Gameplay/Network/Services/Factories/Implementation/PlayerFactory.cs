@@ -19,9 +19,16 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
             AsyncDependenciesRepository asyncDependenciesRepository)
         {
             _playerAssetReference = prefabAssetReference;
+
+            bool hasStateAuthority = await GetStateAuthorityAsync();
+            if (hasStateAuthority == false)
+            {
+                EndInitialization();
+                return;
+            }
+            
             PlayerCreator creator = await asyncDependenciesRepository.GetInstanceAsync<PlayerCreator>();
             Initialize(creator);
-            EndInitialization();
         } 
         
         public async UniTask<Player> Create(Vector3 spawnPosition, PlayerRef playerRef) => 

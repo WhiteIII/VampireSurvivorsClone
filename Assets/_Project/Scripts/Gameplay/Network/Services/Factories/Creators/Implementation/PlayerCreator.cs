@@ -15,6 +15,14 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
             AsyncDependenciesRepository dependenciesRepository,
             IInstantiator instantiator)
         {
+            bool hasStateAuthority = await GetStateAuthorityAsync();
+            if (hasStateAuthority == false)
+            {
+                await Initialize(null, dependenciesRepository, instantiator);
+                EndInitialization();
+                return;
+            }
+            
             PlayerRepository repository = await dependenciesRepository.GetInstanceAsync<PlayerRepository>();
             await Initialize(repository, dependenciesRepository, instantiator);
             EndInitialization();

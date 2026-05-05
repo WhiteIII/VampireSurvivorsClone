@@ -38,7 +38,10 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
 
             Debug.Log($"Count: {list.Count}");
             foreach (NetworkObject networkObject in list)
+            {
                 Debug.Log(networkObject);
+                Debug.Log(networkObject.GetComponent<NetworkBehaviour>().GetType().FullName);
+            }
         }
     }
 }

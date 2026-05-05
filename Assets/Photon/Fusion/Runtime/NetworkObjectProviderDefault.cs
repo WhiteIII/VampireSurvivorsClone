@@ -11,7 +11,14 @@ namespace Fusion {
     /// </summary>
     [InlineHelp]
     public bool DelayIfSceneManagerIsBusy = true;
+    
+    protected NetworkRunner NetworkRunner { get; private set; }
 
+    void INetworkObjectProvider.Initialize(NetworkRunner networkRunner)
+    {
+      NetworkRunner = networkRunner;
+    }
+    
     public virtual NetworkObjectAcquireResult AcquirePrefabInstance(NetworkRunner runner, in NetworkPrefabAcquireContext context, out NetworkObject instance) {
 
       instance = null;
