@@ -5,16 +5,17 @@ namespace _Project.Scripts.CompositionRoot.Services
 {
     public abstract class InjectNetworkBehaviour : NetworkBehaviour
     {
-        private bool _isInitializeEnd = false;
         private bool _isSpawned = false;
         
+        [Networked, UnityNonSerialized] public NetworkBool IsInitializeEnd { get; set; } = false;
+
         protected UniTask InitializeTask
         {
             get
             {
-                if (_isInitializeEnd)
+                if (IsInitializeEnd)
                     return UniTask.CompletedTask;
-                return UniTask.WaitWhile(() => _isInitializeEnd == false);
+                return UniTask.WaitWhile(() => IsInitializeEnd == false);
             }
         }
 
@@ -28,15 +29,15 @@ namespace _Project.Scripts.CompositionRoot.Services
             }
         }
 
-        public override async void Spawned()
+        public override sealed async void Spawned()
         {
             _isSpawned = true;
-            await UniTask.WaitWhile(() => _isInitializeEnd == false);
+            await UniTask.WaitWhile(() => IsInitializeEnd == false);
             OnSpawn();
         }
 
         protected void EndInitialization() =>
-            _isInitializeEnd = true;
+            IsInitializeEnd = true;
 
         protected async UniTask<bool> GetStateAuthorityAsync()
         {

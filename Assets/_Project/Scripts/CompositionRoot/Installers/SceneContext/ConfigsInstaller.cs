@@ -9,11 +9,13 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
     public class ConfigsInstaller : MonoInstaller
     {
         [Header("Configs:")]
-        [SerializeField] private GameConfig _gameConfig;
+        [SerializeField] private GameConfigScriptableObject _gameConfig;
+        [SerializeField] private PlayerDataScriptableObject _playerData;
         
         public override void InstallBindings()
         {
             BindConfig(_gameConfig);
+            BindConfig(_playerData);
             
             Container.BindInterfacesTo<ScriptableObjectsConfigService>().AsSingle();
         }

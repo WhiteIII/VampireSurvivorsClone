@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.HostMigration;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Fusion;
@@ -29,9 +30,16 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
         {
             if (HasStateAuthority == false)
                 return;
-            
+
             foreach (IUpdatable updatable in _updatables)
+            {
+                if (updatable is InjectNetworkBehaviour injectNetworkBehaviour)
+                {
+                    if (injectNetworkBehaviour.IsInitializeEnd == false)
+                        continue;
+                }
                 updatable.GameLoopUpdate();
+            }
 
             while (_addedUpdateablesQueue.Count > 0)
                 _updatables.Add(_addedUpdateablesQueue.Dequeue());

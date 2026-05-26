@@ -5,7 +5,6 @@ using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementati
 using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
@@ -29,6 +28,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
             
             PlayerCreator creator = await asyncDependenciesRepository.GetInstanceAsync<PlayerCreator>();
             Initialize(creator);
+            EndInitialization();
         } 
         
         public async UniTask<Player> Create(Vector3 spawnPosition, PlayerRef playerRef) => 

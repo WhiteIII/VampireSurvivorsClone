@@ -5,6 +5,11 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
 {
     public class PlayerRepository : BaseNetworkObjectsRepository<Player>
     {
+        [Networked, Capacity(4)] private NetworkLinkedList<NetworkBehaviour> NetworkLinkedList => default;
+        
+        public override void Spawned() => 
+            Initialize(NetworkLinkedList);
+        
         public bool TryGetByPlayerRef(out Player player, PlayerRef playerRef)
         {
             player = null;

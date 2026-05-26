@@ -49,6 +49,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         {
             BindNetworkComponent<PlayerRepository>();
             BindNetworkComponent<NetworkObjectsRepository>();
+            BindNetworkComponent<EnemyRepository>();
         }
 
         private void BindCreators()
