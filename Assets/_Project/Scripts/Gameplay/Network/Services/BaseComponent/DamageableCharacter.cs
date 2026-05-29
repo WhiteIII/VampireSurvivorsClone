@@ -1,5 +1,3 @@
-using UnityEngine.TextCore.Text;
-
 namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
 {
     public class DamageableCharacter : Character

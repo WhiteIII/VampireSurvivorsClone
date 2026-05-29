@@ -9,15 +9,15 @@ using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
 {
-    public class PlayerFactory : NetworkFactory<Player, PlayerCreator>, INetworkFactory<Player, Vector3, PlayerRef>
+    public class EnemyFactory : NetworkFactory<Enemy, EnemyCreator>, INetworkFactory<Enemy, Vector3>
     {
-        private NetworkPrefabRef _playerAssetReference;
-
+        private NetworkPrefabRef _enemyAssetReference;
+        
         [Inject] private async void Construct(
-            [Inject(Id = "PlayerPrefabAssetReference")] NetworkPrefabRef prefabAssetReference, 
+            [Inject(Id = "EnemyPrefabAssetReference")] NetworkPrefabRef prefabAssetReference, 
             AsyncDependenciesRepository asyncDependenciesRepository)
         {
-            _playerAssetReference = prefabAssetReference;
+            _enemyAssetReference = prefabAssetReference;
 
             bool hasStateAuthority = await GetStateAuthorityAsync();
             if (hasStateAuthority == false)
@@ -26,15 +26,15 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
                 return;
             }
             
-            PlayerCreator creator = await asyncDependenciesRepository.GetInstanceAsync<PlayerCreator>();
+            EnemyCreator creator = await asyncDependenciesRepository.GetInstanceAsync<EnemyCreator>();
             Initialize(creator);
             EndInitialization();
         } 
         
-        public UniTask<Player> Create(Vector3 spawnPosition, PlayerRef playerRef) => 
-            Creator.Create<Player>(_playerAssetReference, spawnPosition, playerRef);
+        public UniTask<Enemy> Create(Vector3 spawnPosition) => 
+            Creator.Create<Enemy>(_enemyAssetReference, spawnPosition);
 
-        public void Despawn(Player item) => 
+        public void Despawn(Enemy item) => 
             Creator.Despawn(item);
     }
 }

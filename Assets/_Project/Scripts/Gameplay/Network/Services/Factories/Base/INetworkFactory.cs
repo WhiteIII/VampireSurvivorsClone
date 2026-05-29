@@ -14,6 +14,11 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Base
         void Despawn(T item);
     }
 
+    public interface INetworkFactory<TValue, TParametor> : INetworkFactory, IFactory<TParametor, UniTask<TValue>>
+    {
+        void Despawn(TValue item);
+    }
+    
     public interface INetworkFactory<TValue, TParametor1, TParametor2> : INetworkFactory, 
         IFactory<TParametor1, TParametor2, UniTask<TValue>>
         where TValue : NetworkBehaviour

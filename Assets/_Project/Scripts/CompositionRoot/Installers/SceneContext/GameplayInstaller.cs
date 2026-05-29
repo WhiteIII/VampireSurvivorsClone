@@ -21,6 +21,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
     {
         [Header("NetworkPrefabs:")] 
         [SerializeField] private NetworkPrefabRef _playerPrefabAssetReference;
+        [SerializeField] private NetworkPrefabRef _enemyPrefabAssetReference;
 
         protected override void OnInstallBindings()
         {
@@ -40,11 +41,17 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindIsSingle<NetworkCreatorForBinding>();
             BindCreators();
             BindRepositories();
+            BindFactories();
             BindNetworkComponent<PlayerSpawner>();
             BindNetworkComponent<GameLoop>();
-            BindNetworkComponent<PlayerFactory>();
         }
 
+        private void BindFactories()
+        {
+            BindNetworkComponent<PlayerFactory>();
+            BindNetworkComponent<EnemyFactory>();
+        }
+        
         private void BindRepositories()
         {
             BindNetworkComponent<PlayerRepository>();
@@ -56,12 +63,15 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         {
             BindNetworkComponent<PlayerCreator>();
             BindNetworkComponent<NetworkObjectsCreator>();
+            BindNetworkComponent<EnemyCreator>();
         }
 
         private void BindAssets()
         {
             Container.Bind<NetworkPrefabRef>().WithId("PlayerPrefabAssetReference")
                 .FromInstance(_playerPrefabAssetReference);
+            Container.Bind<NetworkPrefabRef>().WithId("EnemyPrefabAssetReference")
+                .FromInstance(_enemyPrefabAssetReference);
         }
 
         private void BindNetworkComponent<T>() where T : NetworkBehaviour =>

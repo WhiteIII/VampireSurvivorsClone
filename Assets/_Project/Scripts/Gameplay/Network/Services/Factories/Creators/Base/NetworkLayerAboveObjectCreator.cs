@@ -57,6 +57,9 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         public UniTask<T> Create<T>(AssetReference assetReference, Vector3 position) where T : TBaseItem => 
             CreateWithParameters<T>(assetReference, position);
 
+        public UniTask<T> Create<T>(NetworkPrefabRef assetReference, Vector3 position) where T : TBaseItem =>
+            CreateWithParameters<T>(assetReference, position);
+        
         public UniTask<T> CreateEmptyNetworkObjectWithComponent<T>() where T : TBaseItem =>
             CreateEmptyObjectWithParameters<T>();
 

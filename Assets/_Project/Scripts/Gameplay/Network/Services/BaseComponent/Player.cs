@@ -9,10 +9,12 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
     [RequireComponent(typeof(PlayerMovement))]
     [RequireComponent(typeof(AttackSystem))]
     [RequireComponent(typeof(PlayerRunTimeDataNetwork))]
+    [RequireComponent(typeof(Health))]
     public class Player : NetworkBehaviour, IUpdatable
     {
         private PlayerMovement _playerMovement;
         private AttackSystem _attackSystem;
+        private Health _health;
         
         public PlayerRef PlayerRef { get; private set; }
         
@@ -23,6 +25,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
         {
             _playerMovement = GetComponent<PlayerMovement>();
             _attackSystem = GetComponent<AttackSystem>();
+            PlayerRunTimeDataNetwork playerData = GetComponent<PlayerRunTimeDataNetwork>();
+            //playerData.Setup(x => _health.SetMaxHealth(x));
         }
         
         public void SetPosition(Vector3 position) =>

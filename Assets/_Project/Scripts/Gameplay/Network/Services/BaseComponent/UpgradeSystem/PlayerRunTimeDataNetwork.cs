@@ -1,3 +1,4 @@
+using System;
 using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Configs.Base;
 using _Project.Scripts.Configs.Services.Base;
@@ -14,6 +15,9 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent.UpgradeSystem
         [Networked, UnityNonSerialized] public float MovementSpeed { get; set; }
         [Networked, UnityNonSerialized] public float AttackDistance { get; set; }
 
+        private Action<int> _onSetHealth;
+        private Action<float> _onSetMovementSpeed;
+        
         [Inject] private async void Construct(IConfigService configService)
         {
             bool hasStateAuthority = await GetStateAuthorityAsync();
@@ -31,18 +35,30 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent.UpgradeSystem
             MovementSpeed = playerData.MovementSpeed;
             AttackDistance = playerData.AttackDistance;
             EndInitialization();
-        } 
-        
-        public void SetHealth(int health) => 
+        }
+
+        public void Setup(Action<int> onSetHealth, Action<float> onSetMovementSpeed)
+        {
+            _onSetHealth = onSetHealth;
+            _onSetMovementSpeed = onSetMovementSpeed;
+        }
+
+        public void SetHealth(int health)
+        {
             Health = health;
+            _onSetHealth.Invoke(health);
+        }
         
         public void SetDamage(int damage) =>
             Damage = damage;
         
         public void SetAttackCoolDown(int coolDown) =>
             AttackCooldown = coolDown;
-        
-        public void SetMovementSpeed(float movementSpeed) => 
+
+        public void SetMovementSpeed(float movementSpeed)
+        {
             MovementSpeed = movementSpeed;
+            _onSetMovementSpeed.Invoke(movementSpeed);
+        }
     }
 }

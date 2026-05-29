@@ -102,6 +102,7 @@ GameObject:
   - component: {fileID: 2184957418843628883}
   - component: {fileID: 8845953812571056136}
   - component: {fileID: 7167611876560157005}
+  - component: {fileID: 3610388238007553240}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -147,6 +148,7 @@ MonoBehaviour:
   - {fileID: 2184957418843628883}
   - {fileID: 8845953812571056136}
   - {fileID: 7167611876560157005}
+  - {fileID: 3610388238007553240}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &3720062600570877073
 CharacterController:
@@ -228,8 +230,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50208dafa6934f5bbd02924761e1fad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _IsInitializeEnd:
-    _value: 0
 --- !u!114 &7167611876560157005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,13 +242,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7af8e0bee3a84822a5bdc3b2e9fb66c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _IsInitializeEnd:
-    _value: 0
-  _Health: 0
-  _Damage: 0
-  _AttackCooldown: 0
-  _MovementSpeed: 0
-  _AttackDistance: 0
+--- !u!114 &3610388238007553240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7628716578057962845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fbde3a9da504b1cb2cf4602ced39fc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7701495124619323067
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,16 +8,16 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
     public class PlayerMovement : NetworkBehaviour
     {
         [Networked] private NetworkCharacterController CharacterController { get; set; }
-        [Networked] private PlayerRunTimeDataNetwork PlayerData { get; set; }
+        [Networked] private float MovementSpeed { get; set; }
 
-        public override void Spawned()
-        {
+        public override void Spawned() => 
             CharacterController = GetComponent<NetworkCharacterController>();
-            PlayerData = GetComponent<PlayerRunTimeDataNetwork>();
-        }
+
+        public void SetMovementSpeed(float movementSpeed) => 
+            MovementSpeed = movementSpeed;
         
         public void Move(Vector3 direction) =>
-            CharacterController.Move(direction * Runner.DeltaTime * 5);
+            CharacterController.Move(direction * Runner.DeltaTime * MovementSpeed);
         
         public void SetPosition(Vector3 position) =>
             CharacterController.transform.position = position;
