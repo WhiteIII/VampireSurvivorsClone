@@ -13,7 +13,7 @@ namespace _Project.Scripts.Common.Services.Factories.Base
         private readonly LocalAssetProvider _localAssetProvider;
         private readonly IInstantiator _instantiator;
 
-        public LocalObjectCreator(
+        protected LocalObjectCreator(
             IRepository<TBaseItem> repository, 
             IInstantiator instantiator, 
             LocalAssetProvider localAssetProvider)
