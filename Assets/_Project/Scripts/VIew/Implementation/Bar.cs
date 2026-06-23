@@ -7,16 +7,29 @@ using UnityEngine.UI;
 namespace _Project.Scripts.View.Implementation
 {
     public class Bar<T> : Window<T>
-        where T : IBarViewModel
+        where T : class, IBarViewModel
     {
         [SerializeField] private Slider _slider;
 
-        protected override void OnAwakeMethod()
+        protected CompositeDisposable Disposable { get; private set; } = new();
+        
+        protected override void OnAwakeMethodIfViewModelIsNotNull()
         {
             ViewModel
                 .OnValueChanged
                 .Subscribe(x => _slider.value = x)
-                .AddTo(this);
+                .AddTo(Disposable);
+        }
+        
+        protected override void OnSetViewModel()
+        {
+            if (Disposable.IsDisposed == false)
+                Disposable.Dispose();
+            Disposable = new CompositeDisposable();
+            ViewModel
+                .OnValueChanged
+                .Subscribe(x => _slider.value = x)
+                .AddTo(Disposable);
         }
     }
 }

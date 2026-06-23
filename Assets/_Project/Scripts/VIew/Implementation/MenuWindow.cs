@@ -21,7 +21,7 @@ namespace _Project.Scripts.View.Implementation
         
         private WindowSwitcher _windowSwitcher;
 
-        protected override void OnAwakeMethod()
+        protected override void OnAwakeMethodIfViewModelIsNotNull()
         {
             _windowSwitcher = new WindowSwitcher(_createGameWindow, _connectToGameWindow);
             

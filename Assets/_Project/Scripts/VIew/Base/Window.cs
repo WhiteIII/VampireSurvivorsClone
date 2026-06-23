@@ -71,12 +71,40 @@ namespace _Project.Scripts.View.Base
             UniTask.CompletedTask;
     }
 
-    public abstract class Window<T> : Window 
-        where T : IViewModel
+    public abstract class Window<T> : Window
+        where T : class, IViewModel
     {
         protected T ViewModel { get; private set; }
 
-        [Inject] private void Construct(T viewModel) => 
+        [Inject] private void Construct(T viewModel) =>
             ViewModel = viewModel;
+
+        protected sealed override void OnAwakeMethod()
+        {
+            Awake();
+            if (ViewModel != null)
+                OnAwakeMethodIfViewModelIsNotNull();
+        }
+
+        public void SetViewModel(T viewModel)
+        {
+            if (viewModel == null)
+            {
+                OnRelease();
+                ViewModel = null;
+                return;
+            }
+
+            ViewModel = viewModel;
+            OnSetViewModel();
+        }
+
+        protected virtual void OnRelease() { }
+
+        protected virtual void Awake() { }
+
+        protected virtual void OnAwakeMethodIfViewModelIsNotNull() { }
+
+        protected virtual void OnSetViewModel() { }
     }
 }

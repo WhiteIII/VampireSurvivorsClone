@@ -14,4 +14,13 @@ namespace _Project.Scripts.VIew.Services.Factories.Implementation
         {
         }
     }
+
+    public class EnemyBarWindowFactory : BaseWindowFactory<EnemyBar>
+    {
+        public EnemyBarWindowFactory(
+            AssetReference assetReference,
+            WindowsCreator windowCreator) : base(assetReference, windowCreator)
+        {
+        }
+    }
 }

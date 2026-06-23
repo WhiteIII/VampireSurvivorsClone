@@ -24,7 +24,9 @@ namespace _Project.Scripts.ViewModel.Implementation
             _onHealthChanged = onHealthChanged;
             _onMaxHealthChanged = onMaxHealthChanged;
 
-            _onHealthChanged.Subscribe(_ => ChangeValue()).AddTo(_disposables);
+            _onHealthChanged
+                .Subscribe(_ => ChangeValue())
+                .AddTo(_disposables);
         }
 
         private void ChangeValue() =>

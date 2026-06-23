@@ -8,16 +8,34 @@ namespace _Project.Scripts.View.Implementation
     {
         private RectTransform _rectTransform;
 
-        protected override void OnAwakeMethod()
+        public void Release()
         {
-            base.OnAwakeMethod();
+            if (Disposable.IsDisposed == false)
+                Disposable.Dispose();
+            SetViewModel(null);
+        }
+
+        protected override void Awake() => 
             _rectTransform = GetComponent<RectTransform>();
+
+        protected override void OnAwakeMethodIfViewModelIsNotNull()
+        {
+            base.OnAwakeMethodIfViewModelIsNotNull();
             ViewModel
                 .OnPositionChanged
                 .Subscribe(x => Move(x))
-                .AddTo(this);
+                .AddTo(Disposable);
         }
-        
+
+        protected override void OnSetViewModel()
+        {
+            base.OnSetViewModel();
+            ViewModel
+                .OnPositionChanged
+                .Subscribe(x => Move(x))
+                .AddTo(Disposable);
+        }
+
         private void Move(Vector2 positionTo) => 
             _rectTransform.anchoredPosition = positionTo;
     }

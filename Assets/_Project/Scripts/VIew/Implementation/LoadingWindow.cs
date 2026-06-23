@@ -12,7 +12,7 @@ namespace _Project.Scripts.View.Implementation
     {
         [SerializeField] private Slider _loadingSlider;
 
-        protected override void OnAwakeMethod() => 
+        protected override void OnAwakeMethodIfViewModelIsNotNull() => 
             ViewModel.Progress.Subscribe(x => _loadingSlider.value = x).AddTo(this);
 
         protected override UniTask OnOpenAnimationStartAsync(CancellationToken cancellationToken = default)

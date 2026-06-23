@@ -22,7 +22,7 @@ namespace _Project.Scripts.View.Implementation
         
         protected abstract SessionMode SessionMode { get; }
 
-        protected override void OnAwakeMethod()
+        protected override void OnAwakeMethodIfViewModelIsNotNull()
         {
             _closeWindowButton
                 .OnClickAsObservable()

@@ -1,8 +1,7 @@
-using System;
-using _Project.Scripts.View.Implementation;
+using _Project.Scripts.Common.Services.Factories.ObjectPools.Base;
 using _Project.Scripts.ViewModel.Base;
 using R3;
-using Zenject;
+using UnityEngine;
 
 namespace _Project.Scripts.ViewModel.Implementation
 {
@@ -11,13 +10,30 @@ namespace _Project.Scripts.ViewModel.Implementation
         public readonly Observable<EnemyBarViewModel> OnEnemyBarAdded;
         public readonly Observable<EnemyBarViewModel> OnEnemyBarRemoved;
         
-        private readonly EnemyBarsViewModelRepository _repository;
+        private readonly ObjectPoolWithSubjects<EnemyBarViewModel, EnemyBarViewModelData> _pool;
         
-        public EnemiesBarsViewModel(EnemyBarsViewModelRepository repository)
+        public EnemiesBarsViewModel()
         {
-            _repository = repository;
-            OnEnemyBarAdded = _repository.OnEnemyBarAdded;
-            OnEnemyBarRemoved = _repository.OnEnemyBarRemoved;
+            OnEnemyBarAdded = _pool.OnGet;
+            OnEnemyBarRemoved = _pool.OnRelease;
         }
+
+        public void Add(EnemyBarViewModelData enemyBarViewModelData)
+        {
+            
+        }
+
+        public void Remove(string id)
+        {
+            
+        }
+    }
+
+    public struct EnemyBarViewModelData
+    {
+        public Observable<Vector3> OnPositionChanged;
+        public ReadOnlyReactiveProperty<int> OnHealthChanged;
+        public ReadOnlyReactiveProperty<int> OnMaxHealthChanged;
+        public string EnemyId;
     }
 }
