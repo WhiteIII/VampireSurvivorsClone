@@ -25,7 +25,6 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
         {
             int pastHealth = MaxHealth;
             MaxHealth = maxHealth;
-            
         } 
 
         public void Revive() => 

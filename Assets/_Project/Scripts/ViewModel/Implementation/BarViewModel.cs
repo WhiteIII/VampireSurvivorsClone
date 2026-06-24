@@ -12,10 +12,16 @@ namespace _Project.Scripts.ViewModel.Implementation
         private ReadOnlyReactiveProperty<int> _onMaxHealthChanged;
         
         private readonly Subject<float> _onValueChanged = new();
-        private readonly CompositeDisposable _disposables = new();
+        private CompositeDisposable _disposable = new();
 
-        public void Dispose() => 
-            _disposables.Dispose();
+        public void Dispose()
+        {
+            if (_disposable != null && _disposable.IsDisposed == false)
+                _disposable.Dispose();
+        }
+
+        public virtual void Reset() => 
+            ResetObservables();
 
         public void SetHealthObservables(
             ReadOnlyReactiveProperty<int> onHealthChanged, 
@@ -23,13 +29,21 @@ namespace _Project.Scripts.ViewModel.Implementation
         {
             _onHealthChanged = onHealthChanged;
             _onMaxHealthChanged = onMaxHealthChanged;
-
+            
             _onHealthChanged
                 .Subscribe(_ => ChangeValue())
-                .AddTo(_disposables);
+                .AddTo(_disposable);
         }
 
         private void ChangeValue() =>
             _onValueChanged.OnNext((float)_onHealthChanged.CurrentValue / _onMaxHealthChanged.CurrentValue);
+
+        protected void ResetObservables()
+        {
+            _disposable.Dispose();
+            _disposable = new CompositeDisposable();
+            _onHealthChanged = null;
+            _onMaxHealthChanged = null;
+        }
     }
 }
