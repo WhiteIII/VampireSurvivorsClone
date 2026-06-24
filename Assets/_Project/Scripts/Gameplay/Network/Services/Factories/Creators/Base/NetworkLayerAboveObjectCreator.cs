@@ -1,3 +1,4 @@
+using System;
 using _Project.Scripts.Common.Services.Factories.Base;
 using _Project.Scripts.Common.Services.Repositories.Base;
 using _Project.Scripts.Common.Services.Repositories.Implementation;
@@ -66,8 +67,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         public void Despawn(TBaseItem item)
         {
             GameLoop.TryUnregister(item);
-            if (_repository.TryGet(out TBaseItem _))
-                _repository.Remove(item);
+            TryRemoveFromRepository(item);
             _networkObjectCreator.Despawn(item);
         }
 
@@ -80,7 +80,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             await InitializeTask;
             T spawnedObject = await _networkObjectCreator
                 .CreateWithParameters<T>(assetReference, position, rotation, playerRef);
-            return GameLoop.TryRegister(_repository.Add(spawnedObject));
+            return GameLoop.TryRegister(TryAddInRepository(spawnedObject));
         }
         
         protected async UniTask<T> CreateWithParameters<T>(
@@ -92,7 +92,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             await InitializeTask;
             T spawnedObject = await _networkObjectCreator
                 .CreateWithParameters<T>(assetReference, position, rotation, playerRef);
-            return GameLoop.TryRegister(_repository.Add(spawnedObject));
+            return GameLoop.TryRegister(TryAddInRepository(spawnedObject));
         }
 
         protected async UniTask<T> CreateEmptyObjectWithParameters<T>(
@@ -103,7 +103,32 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             await InitializeTask;
             T spawnedObject = await _networkObjectCreator
                 .CreateEmptyObjectWithParameters<T>(position, rotation, playerRef);
-            return GameLoop.TryRegister(_repository.Add(spawnedObject));
+            return GameLoop.TryRegister(TryAddInRepository(spawnedObject));
         }
+        
+        private T TryRemoveFromRepository<T>(T spawnedObject) where T : TBaseItem => 
+            CallMethodIfRepositoryNotNull(spawnedObject, x => _repository.Remove(x));
+
+        private T TryAddInRepository<T>(T spawnedObject) where T : TBaseItem => 
+            CallMethodIfRepositoryNotNull(spawnedObject, x => _repository.Add(x));
+        
+        private T CallMethodIfRepositoryNotNull<T>(T createdObject, Action<T> action) 
+            where T : TBaseItem
+        {
+            if (_repository != null)
+            {
+                if (_repository is not MonoBehaviour monoBehaviour)
+                {
+                    action(createdObject);                        
+                }
+                else
+                {
+                    if (monoBehaviour)
+                        action(createdObject);
+                }
+            }
+            
+            return createdObject;
+        } 
     }
 }

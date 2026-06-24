@@ -9,7 +9,6 @@ using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
 {
@@ -114,6 +113,5 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             
             return spawnedObject.GetComponent<T>();
         }
-
     }
 }

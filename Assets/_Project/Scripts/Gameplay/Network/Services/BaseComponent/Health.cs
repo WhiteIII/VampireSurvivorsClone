@@ -6,10 +6,12 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
 {
     public class Health : NetworkBehaviour
     {
-        public Observable<int> OnHealthChanged => _onHealthChanged;
+        public ReadOnlyReactiveProperty<int> OnHealthChanged => _onHealthChanged;
+        public ReadOnlyReactiveProperty<int> OnMaxHealthChanged => _onMaxHealthChanged;
         public Observable<Unit> OnDead => _onDead;
         
         private readonly ReactiveProperty<int> _onHealthChanged = new();
+        private readonly ReactiveProperty<int> _onMaxHealthChanged = new();
         private readonly Subject<Unit> _onDead = new();
 
         [Networked] private int MaxHealth { get; set; }
@@ -25,6 +27,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
         {
             int pastHealth = MaxHealth;
             MaxHealth = maxHealth;
+            _onMaxHealthChanged.OnNext(MaxHealth);
         } 
 
         public void Revive() => 
