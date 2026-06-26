@@ -6,6 +6,7 @@ using _Project.Scripts.Gameplay.Network.Services;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Implementation;
+using _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.InputSystem;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
@@ -30,6 +31,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             Container.Bind<NetworkRunnerCallBacksListener>()
                 .FromFactory<NetworkRunnerCallBacksListenerFactory>().AsSingle();
             BindIsSingle<AsyncInitializableRepository>();
+            BindIsSingle<EnemySpawnPositionHelper>();
             BindAssets();
             BindInterfacesToIsSingle<InputController>();
 
@@ -43,6 +45,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindRepositories();
             BindFactories();
             BindNetworkComponent<PlayerSpawner>();
+            BindNetworkComponent<EnemySpawner>();
             BindNetworkComponent<GameLoop>();
         }
 
@@ -56,7 +59,6 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         {
             BindNetworkComponent<PlayerRepository>();
             BindNetworkComponent<NetworkObjectsRepository>();
-            BindNetworkComponent<EnemyRepository>();
         }
 
         private void BindCreators()
@@ -68,10 +70,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 
         private void BindAssets()
         {
-            Container.Bind<NetworkPrefabRef>().WithId("PlayerPrefabAssetReference")
-                .FromInstance(_playerPrefabAssetReference);
-            Container.Bind<NetworkPrefabRef>().WithId("EnemyPrefabAssetReference")
-                .FromInstance(_enemyPrefabAssetReference);
+            BindAsset("PlayerPrefabAssetReference", _playerPrefabAssetReference);
+            BindAsset("EnemyPrefabAssetReference", _enemyPrefabAssetReference);
         }
 
         private void BindNetworkComponent<T>() where T : NetworkBehaviour =>

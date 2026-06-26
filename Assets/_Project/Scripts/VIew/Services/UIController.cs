@@ -20,6 +20,12 @@ namespace _Project.Scripts.View.Services
             _uiRoot = uiRoot;
         }
 
+        public T Add<T>(T windowFactory) where T : IFactory<Window>
+        {
+            _windowFactories.Add(windowFactory);
+            return windowFactory;
+        }
+        
         public async UniTask CreateAndOpenWindowAsync<T>()
             where T : Window
         {
@@ -64,7 +70,7 @@ namespace _Project.Scripts.View.Services
                 if (windowFactory is IFactory<T> resultFactory)
                     return resultFactory;
             }
-            return null;
+            throw new Exception("Factory window not found!");
         }
     }
 }

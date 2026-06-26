@@ -7,13 +7,13 @@ using UnityEngine;
 
 namespace _Project.Scripts.ViewModel.Implementation
 {
-    public class EnemiesBarsViewModel : IViewModel
+    public class EnemiesBarsViewModel : IViewModel, IDisposable
     {
         public readonly Observable<EnemyBarViewModel> OnEnemyBarAdded;
         public readonly Observable<EnemyBarViewModel> OnEnemyBarRemoved;
         
         private readonly ObjectPoolWithSubjects<EnemyBarViewModel, EnemyBarViewModelData> _pool;
-        private readonly List<EnemyBarViewModelData> _enemiesData = new(); 
+        private readonly List<EnemyBarViewModelData> _enemiesData = new();
         
         public EnemiesBarsViewModel()
         {
@@ -24,6 +24,11 @@ namespace _Project.Scripts.ViewModel.Implementation
             
             OnEnemyBarAdded = _pool.OnGet;
             OnEnemyBarRemoved = _pool.OnRelease;
+        }
+
+        public void Dispose()
+        {
+            
         }
 
         public void Add(EnemyBarViewModelData enemyBarViewModelData)

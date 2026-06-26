@@ -4,7 +4,7 @@ using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
-    public class NetworkAssetsInstaller : MonoInstaller
+    public class NetworkAssetsInstaller : AdvancedMonoInstaller
     {
         [Header("AssetReferences:")]
         [SerializeField] private AssetReference _networkRunnerAssetReference;
@@ -17,8 +17,5 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindAsset("NetworkSceneManagerReference", _networkSceneManagerReference);
             BindAsset("NetworkObjectsProviderReference", _networkObjectsProvider);
         }
-        
-        private void BindAsset(string id, AssetReference instance) => 
-            Container.Bind<AssetReference>().WithId(id).FromInstance(instance);
     }
 }

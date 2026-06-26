@@ -6,11 +6,11 @@ using Zenject;
 
 namespace _Project.Scripts.VIew.Services.Factories.Implementation
 {
-    public class MenuWindowFactory : BaseWindowFactory<MenuWindow>
+    public class EnemiesBarsWindowFactory : BaseWindowFactory<EnemiesBarsWindow>
     {
-        public MenuWindowFactory(
-            [Inject(Id = "MenuWindowAssetReference")]AssetReference assetReference, 
-            WindowsCreator creator) : base(assetReference, creator)
+        public EnemiesBarsWindowFactory(
+            [Inject(Id = "EnemiesBarsWindowAssetReference")]AssetReference assetReference,
+            WindowsCreator windowCreator) : base(assetReference, windowCreator)
         {
         }
     }

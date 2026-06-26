@@ -6,7 +6,7 @@ using Fusion;
 
 namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
 {
-    public class GameLoop : NetworkBehaviour, IOnHostMigration
+    public class GameLoop : NetworkBehaviour, IAfterHostMigration
     {
         private readonly List<IUpdatable> _updatables = new();
         private readonly Queue<IUpdatable> _addedUpdateablesQueue = new();
@@ -14,10 +14,9 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
         
         private bool _isPaused;
 
-        public void OnHostMigration(GeneralNetworkObjectsRepository generalNetworkObjectsRepository)
+        public void AfterHostMigration()
         {
-            List<NetworkObject> networkObjects = 
-                generalNetworkObjectsRepository.CurrentNetworkRunner.GetAllNetworkObjects();
+            List<NetworkObject> networkObjects = Runner.GetAllNetworkObjects();
 
             foreach (NetworkObject networkObject in networkObjects)
             {

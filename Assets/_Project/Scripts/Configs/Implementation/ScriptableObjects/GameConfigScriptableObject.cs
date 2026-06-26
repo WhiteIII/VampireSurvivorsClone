@@ -7,5 +7,6 @@ namespace _Project.Scripts.Configs.Implementation.ScriptableObjects
     public class GameConfigScriptableObject : ScriptableObject, IGameConfig
     {
         [field: SerializeField] public int MaxPlayerCountInSession { get; private set; }
+        [field: SerializeField] public float EnemySpawnCooldown { get; private set; }
     }
 }

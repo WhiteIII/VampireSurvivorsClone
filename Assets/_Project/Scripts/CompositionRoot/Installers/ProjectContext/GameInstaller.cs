@@ -1,16 +1,15 @@
 using _Project.Scripts.Common.AssetsManagement;
 using _Project.Scripts.Common.Services.Factories.Implementation;
 using _Project.Scripts.Common.Services.Repositories.Implementation;
-using _Project.Scripts.Gameplay.Network;
-using Zenject;
+using _Project.Scripts.CompositionRoot.Installers.SceneContext;
 
 namespace _Project.Scripts.CompositionRoot.Installers.ProjectContext
 {
-    public class GameInstaller : MonoInstaller
+    public class GameInstaller : AdvancedMonoInstaller
     {
         public override void InstallBindings()
         {
-            Container.Bind<GlobalRepository>().AsSingle();
+            BindIsSingle<GlobalRepository>();
             Container.Bind<LocalAssetProvider>()
                 .FromFactory<FactoryWithGlobalRepository<LocalAssetProvider>>().AsSingle();
         }

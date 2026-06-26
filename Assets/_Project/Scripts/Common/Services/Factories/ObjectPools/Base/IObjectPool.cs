@@ -17,4 +17,5 @@ namespace _Project.Scripts.Common.Services.Factories.ObjectPools.Base
         T ReleaseByParameter<T>(TParameter parameter) where T : TBase;
         T Release<T>(T item) where T : TBase;
     }
+    //TODO Добавить итератор в пул для EnemiesBarsViewModel!
 }

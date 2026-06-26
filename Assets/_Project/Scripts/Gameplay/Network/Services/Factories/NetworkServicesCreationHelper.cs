@@ -20,7 +20,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
         public int NetworkPrefabIdCount => NetworkPrefabId.Count;
         
         [Networked] private uint CurrentFreeRawValue { get; set; } = 10001;
-        [Networked, Capacity(16)] private NetworkDictionary<NetworkPrefabId, NetworkString<_128>> NetworkPrefabId => default;
+        [Networked, Capacity(32)] private NetworkDictionary<NetworkPrefabId, NetworkString<_256>> NetworkPrefabId => default;
 
         public override void Spawned() => 
             IsReady = true;
@@ -28,7 +28,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
         public Dictionary<NetworkPrefabId, Type> GetNetworkPrefabIds()
         {
             Dictionary<NetworkPrefabId, Type> networkPrefabIds = new();
-            foreach (KeyValuePair<NetworkPrefabId, NetworkString<_128>> prefabIdAndTypeFullName in NetworkPrefabId)
+            foreach (KeyValuePair<NetworkPrefabId, NetworkString<_256>> prefabIdAndTypeFullName in NetworkPrefabId)
                 networkPrefabIds.Add(prefabIdAndTypeFullName.Key, Type.GetType(prefabIdAndTypeFullName.Value.ToString()));
             return networkPrefabIds;
         }
@@ -37,7 +37,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
         {
             if (HasStateAuthority == false)
                 return;
-            NetworkPrefabId.Add(networkPrefabId, new NetworkString<_128>(typeof(T).FullName));
+            NetworkPrefabId.Add(networkPrefabId, new NetworkString<_256>(typeof(T).FullName));
         }
         
         public uint GetRawValue()

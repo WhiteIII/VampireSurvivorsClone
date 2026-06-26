@@ -7,7 +7,7 @@ using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
-    public abstract class BaseNetworkInstaller : MonoInstaller
+    public abstract class BaseNetworkInstaller : AdvancedMonoInstaller
     {
         [Header("General:")]
         [SerializeField] private NetworkServicesCreationHelper _networkServicesCreationHelper;
@@ -34,14 +34,5 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         protected abstract void OnInstallBindings();
 
         protected abstract void BindIfIsServer();
-        
-        protected void BindIsSingle<T>() =>
-            Container.Bind<T>().AsSingle();
-
-        protected void BindInterfacesToIsSingle<T>() =>
-            Container.BindInterfacesTo<T>().AsSingle();
-
-        protected void BindInterfacesAndSelfToIsSingle<T>() =>
-            Container.BindInterfacesAndSelfTo<T>().AsSingle();
     }
 }

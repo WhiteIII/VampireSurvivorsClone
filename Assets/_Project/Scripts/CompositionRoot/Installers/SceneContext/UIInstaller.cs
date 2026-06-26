@@ -10,7 +10,7 @@ using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
-    public class UIInstaller : MonoInstaller
+    public class UIInstaller : AdvancedMonoInstaller
     {
         [Header("AssetReferences:")]
         [SerializeField] private AssetReference _loadingWindowAssetReference;
@@ -21,28 +21,25 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         
         public override void InstallBindings()
         {
-            BindAssetReferences(_loadingWindowAssetReference, "LoadingWindowAssetReference");
-            BindAssetReferences(_menuWindowAssetReference, "MenuWindowAssetReference");
+            BindAsset("LoadingWindowAssetReference", _loadingWindowAssetReference);
+            BindAsset("MenuWindowAssetReference", _menuWindowAssetReference);
             
             BindWindowFactory<LoadingWindowFactory>();
             BindWindowFactory<MenuWindowFactory>();
             
-            Container.BindInterfacesAndSelfTo<MenuViewModel>().AsSingle();
-            Container.Bind<CreateGameOrConnectToGameViewModel>().AsSingle();
-            Container.Bind<LoadingWindowViewModel>().AsSingle();
+            BindInterfacesAndSelfToIsSingle<MenuViewModel>();
+            BindIsSingle<CreateGameOrConnectToGameViewModel>();
+            BindIsSingle<LoadingWindowViewModel>();
             
             BindWindowsServices();
         }
-
-        private void BindAssetReferences(AssetReference assetReference, string id) => 
-            Container.Bind<AssetReference>().WithId(id).FromInstance(assetReference);
         
         private void BindWindowsServices()
         {
-            Container.Bind<WindowsRepository>().AsSingle();
-            Container.Bind<WindowsCreator>().AsSingle();
-            Container.Bind<UIRoot>().AsSingle().WithArguments(_uiRootRectTransform);
-            Container.Bind<UIController>().AsSingle();
+            BindIsSingle<WindowsRepository>();
+            BindIsSingle<WindowsCreator>();
+            BindIsSingle<UIRoot>();
+            BindIsSingle<UIController>();
         }
         
         private void BindWindowFactory<T>() where T : IFactory<Window> =>
