@@ -81,7 +81,7 @@ namespace _Project.Scripts.View.Base
 
         protected sealed override void OnAwakeMethod()
         {
-            Awake();
+            AwakeVirtual();
             if (ViewModel != null)
                 OnAwakeMethodIfViewModelIsNotNull();
         }
@@ -101,7 +101,7 @@ namespace _Project.Scripts.View.Base
 
         protected virtual void OnRelease() { }
 
-        protected virtual void Awake() { }
+        protected virtual void AwakeVirtual() { }
 
         protected virtual void OnAwakeMethodIfViewModelIsNotNull() { }
 

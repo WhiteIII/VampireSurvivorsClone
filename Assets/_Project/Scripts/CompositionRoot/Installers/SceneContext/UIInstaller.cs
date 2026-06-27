@@ -38,7 +38,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         {
             BindIsSingle<WindowsRepository>();
             BindIsSingle<WindowsCreator>();
-            BindIsSingle<UIRoot>();
+            BindIsSingle<UIRoot>().WithArguments(_uiRootRectTransform);
             BindIsSingle<UIController>();
         }
         

@@ -12,13 +12,13 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         protected void BindAsset(string id, NetworkPrefabRef prefabRef) => 
             Container.Bind<NetworkPrefabRef>().WithId(id).FromInstance(prefabRef);
         
-        protected void BindIsSingle<T>() =>
+        protected ConcreteIdArgConditionCopyNonLazyBinder BindIsSingle<T>() =>
             Container.Bind<T>().AsSingle();
 
-        protected void BindInterfacesToIsSingle<T>() =>
+        protected ConcreteIdArgConditionCopyNonLazyBinder BindInterfacesToIsSingle<T>() =>
             Container.BindInterfacesTo<T>().AsSingle();
 
-        protected void BindInterfacesAndSelfToIsSingle<T>() =>
+        protected ConcreteIdArgConditionCopyNonLazyBinder BindInterfacesAndSelfToIsSingle<T>() =>
             Container.BindInterfacesAndSelfTo<T>().AsSingle();
     }
 }

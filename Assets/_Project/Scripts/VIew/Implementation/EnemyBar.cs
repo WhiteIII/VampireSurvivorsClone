@@ -15,7 +15,7 @@ namespace _Project.Scripts.View.Implementation
             SetViewModel(null);
         }
 
-        protected override void Awake() => 
+        protected override void AwakeVirtual() => 
             _rectTransform = GetComponent<RectTransform>();
 
         protected override void OnAwakeMethodIfViewModelIsNotNull()

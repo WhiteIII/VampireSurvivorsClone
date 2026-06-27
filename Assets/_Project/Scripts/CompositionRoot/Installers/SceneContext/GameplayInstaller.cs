@@ -6,11 +6,13 @@ using _Project.Scripts.Gameplay.Network.Services;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Implementation;
+using _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.InputSystem;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using _Project.Scripts.Gameplay.Network.Services.Spawners;
+using _Project.Scripts.Gameplay.Services;
 using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
@@ -47,6 +49,10 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindNetworkComponent<PlayerSpawner>();
             BindNetworkComponent<EnemySpawner>();
             BindNetworkComponent<GameLoop>();
+            BindNetworkComponent<EnemyObjectPool>();
+            BindNetworkComponent<EnemySpawnPositionHelper>();
+            BindNetworkComponent<IdGenerator>();
+            BindNetworkComponent<EnemyRepository>();
         }
 
         private void BindFactories()
@@ -74,9 +80,20 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindAsset("EnemyPrefabAssetReference", _enemyPrefabAssetReference);
         }
 
-        private void BindNetworkComponent<T>() where T : NetworkBehaviour =>
-            BindAsyncFromFactory<T, NetworkComponentFactory<T>>();
+        private void BindNetworkComponent<T>() 
+            where T : NetworkBehaviour
+        {
+            if (IsServer)
+                BindAsyncFromFactory<T, NetworkComponentFactory<T>>();
+            
+        }
 
+        private void BindNetworkComponentIfIsClient<T>() 
+            where T : NetworkBehaviour
+        {
+             
+        }
+        
         private void BindAsyncFromFactory<TContract, TFactory>()
             where TFactory : IFactory<UniTask<TContract>>
         {

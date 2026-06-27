@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using _Project.Scripts.Gameplay.Network.Services.Factories;
 using _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProvider;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
@@ -14,20 +15,30 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         
         private GeneralNetworkObjectsRepository _generalNetworkObjectsRepository;
 
+        protected bool IsServer => _generalNetworkObjectsRepository.CurrentNetworkRunner.IsServer;    
+        
         private NetworkObjectEndEmptyObjectProvider NetworkObjectProvider =>
             _generalNetworkObjectsRepository.CurrentNetworkObjectProvider;  
-        private NetworkRunner NetworkRunner => _generalNetworkObjectsRepository.CurrentNetworkRunner; 
         
         [Inject] private void Construct(GeneralNetworkObjectsRepository generalNetworkObjectsRepository) => 
             _generalNetworkObjectsRepository = generalNetworkObjectsRepository;
         
         public sealed override void InstallBindings()
-        { 
+        {
+            List<NetworkObject> list = _generalNetworkObjectsRepository.CurrentNetworkRunner.GetAllNetworkObjects();
+
+            Debug.Log($"Count: {list.Count}");
+            foreach (NetworkObject networkObject in list)
+            {
+                Debug.Log(networkObject);
+                Debug.Log(networkObject.GetComponent<NetworkBehaviour>().GetType().FullName);
+            }
+            
             NetworkObjectProvider.SetInstantiator(Container);
             NetworkObjectProvider.SetNetworkServicesCreationHelper(_networkServicesCreationHelper);
             
             OnInstallBindings();
-            if (NetworkRunner.IsServer)
+            if (IsServer)
                 BindIfIsServer();
         }
         

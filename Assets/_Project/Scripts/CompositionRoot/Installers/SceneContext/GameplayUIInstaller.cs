@@ -28,7 +28,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         
         private void BindFactories()
         {
-            BindUIFactory<EnemiesBarsWindowFactory>().WhenInjectedInto<EnemyBarFactory>();
+            BindIsSingle<EnemyBarFactory>().WhenInjectedInto<EnemiesBarsWindowFactory>();
+            BindUIFactory<EnemiesBarsWindowFactory>();
         }
 
         private void BindAssets()

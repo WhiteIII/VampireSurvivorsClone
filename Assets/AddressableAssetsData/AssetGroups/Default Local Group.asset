@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 83fc1ad7dacc8374183f685305be0975
   m_SerializeEntries:
+  - m_GUID: 1b9e0f5ee0d99f84389ef25c87faf258
+    m_Address: EnemyHealthBar
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2e0643ba929059e40b569bada77a8378
     m_Address: NerworkRunner
     m_ReadOnly: 0
@@ -22,6 +27,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4021c1dd654d7494fa0165ce26d9e0c7
     m_Address: NetworkObjectProvider
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e8033821add1704b8c5fc97f65aa686
+    m_Address: EnemiesBarsWindow
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
