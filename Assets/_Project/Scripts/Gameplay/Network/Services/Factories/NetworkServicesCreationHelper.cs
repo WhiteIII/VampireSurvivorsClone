@@ -8,6 +8,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
     public class NetworkServicesCreationHelper : NetworkBehaviour
     {
         public bool IsReady { get; private set; } = false;
+        public int NetworkPrefabIdCount => NetworkPrefabId.Count;
         public UniTask InitialisationTask
         {
             get
@@ -17,8 +18,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories
                 return UniTask.WaitWhile(() => IsReady == false);
             }
         }
-        public int NetworkPrefabIdCount => NetworkPrefabId.Count;
-        
+
         [Networked] private uint CurrentFreeRawValue { get; set; } = 10001;
         [Networked, Capacity(32)] private NetworkDictionary<NetworkPrefabId, NetworkString<_256>> NetworkPrefabId => default;
 
