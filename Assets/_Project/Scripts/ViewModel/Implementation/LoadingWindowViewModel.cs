@@ -5,13 +5,13 @@ using R3;
 
 namespace _Project.Scripts.ViewModel.Implementation
 {
-    public class LoadingWindowViewModel : IViewModel
+    public partial class LoadingWindowViewModel : IViewModel
     {
         public ReadOnlyReactiveProperty<float> Progress => _progress;
         
         private readonly ReactiveProperty<float>  _progress = new();
 
-        public async UniTask StartLoadingAsync(UniTask[] tasks)
+        public async UniTask StartLoadingAsync(params UniTask[] tasks)
         {
             List<UniTask> tasksList = new(tasks);
             int tasksCount = tasksList.Count;
@@ -55,5 +55,15 @@ namespace _Project.Scripts.ViewModel.Implementation
         
         public void ResetLoadingProgress() => 
             _progress.Value = 0;
+    }
+
+    public partial class LoadingWindowViewModel
+    {
+        private int _totalCount;
+        
+        public void SetTotalCountTasks(int totalCount) => 
+            _totalCount = totalCount;
+        
+        
     }
 }

@@ -15,6 +15,8 @@ namespace _Project.Scripts.Common.SceneSwitcher
 
         private readonly GeneralNetworkObjectsRepository _repository;
         
+        public StartGameArgs StartGameArgs { get; private set; }
+        
         public GameStateSwitcher(GeneralNetworkObjectsRepository repository) => 
             _repository = repository;
 
@@ -30,19 +32,10 @@ namespace _Project.Scripts.Common.SceneSwitcher
 
         public async UniTask GoToGameplay(StartGameArgs startGameArgs)
         {
-            NetworkSceneInfo networkSceneInfo = new();
-            
+            StartGameArgs = startGameArgs;
             if (loadedSceneCount > 1)
                 await UnloadSceneAsync(MENU);
-            
-            NetworkRunner networkRunner = _repository.CurrentNetworkRunner;
-            networkSceneInfo.AddSceneRef(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(GAMEPLAY)), Additive);
-            startGameArgs.SceneManager = _repository.CurrentNetworkSceneManager;
-            startGameArgs.ObjectProvider = _repository.CurrentNetworkObjectProvider;
-            startGameArgs.Scene = networkSceneInfo;
-            
-            networkRunner.ProvideInput = true;
-            await networkRunner.StartGame(startGameArgs);
+            await LoadSceneAsync(GAMEPLAY, Additive);
         }
     }
 }

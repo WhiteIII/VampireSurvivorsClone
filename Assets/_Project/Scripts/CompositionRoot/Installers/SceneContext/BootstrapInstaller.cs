@@ -1,7 +1,6 @@
 using _Project.Scripts.Common.AssetsManagement;
 using _Project.Scripts.Common.SceneSwitcher;
 using _Project.Scripts.CompositionRoot.EntryPoints;
-using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 
 namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
@@ -12,7 +11,6 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         {
             BindIsSingle<AssetsLoader>();
             BindIsSingle<GeneralNetworkObjectsRepository>();
-            BindIsSingle<GeneralNetworkObjectsCreator>();
             BindIsSingle<GameStateSwitcher>();
             BindInterfacesToIsSingle<BootstrapEntryPoint>();
         }

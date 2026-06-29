@@ -20,5 +20,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 
         protected ConcreteIdArgConditionCopyNonLazyBinder BindInterfacesAndSelfToIsSingle<T>() =>
             Container.BindInterfacesAndSelfTo<T>().AsSingle();
+        
+        protected void BindFactory<TType, TFactory>() where TFactory : IFactory<TType> =>
+            Container.Bind<IFactory<TType>>().To<TFactory>().AsSingle();
     }
 }

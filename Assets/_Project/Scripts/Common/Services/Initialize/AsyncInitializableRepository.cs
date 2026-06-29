@@ -6,7 +6,9 @@ namespace _Project.Scripts.Common.Services.Initialize
     public class AsyncInitializableRepository
     {
         private readonly List<IAsyncInitializable> _initializables;
-
+        
+        public int Count => _initializables.Count;
+        
         public AsyncInitializableRepository(List<IAsyncInitializable> initializables) => 
             _initializables = initializables;
 

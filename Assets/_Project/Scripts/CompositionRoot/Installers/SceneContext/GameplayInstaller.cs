@@ -6,6 +6,7 @@ using _Project.Scripts.Gameplay.Network.Services;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Implementation;
+using _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProvider;
 using _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.GameCycle;
@@ -28,6 +29,11 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 
         protected override void OnInstallBindings()
         {
+            BindIsSingle<GeneralNetworkObjectsCreator>();
+            BindFactory<NetworkRunner, NetworkRunnerFactory>();
+            BindFactory<NetworkSceneManagerDefault, NetworkSceneManagerFactory>();
+            BindFactory<NetworkObjectEndEmptyObjectProvider, NetworkObjectsProviderFactory>();
+            
             BindInterfacesAndSelfToIsSingle<AsyncDependenciesRepository>();
             BindInterfacesAndSelfToIsSingle<SpawnPositionHelper>();
             Container.Bind<NetworkRunnerCallBacksListener>()
