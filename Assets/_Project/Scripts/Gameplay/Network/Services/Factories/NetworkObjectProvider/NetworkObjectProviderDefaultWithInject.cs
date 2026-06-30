@@ -10,14 +10,15 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProv
     {
         private IInstantiator _instantiator;
 
-        public void SetInstantiator(IInstantiator instantiator) => 
+        [Inject] private void Construct(IInstantiator instantiator) => 
             _instantiator = instantiator;
-
+        
         protected GameObject CreateEmptyObject(string name) =>
             _instantiator.CreateEmptyGameObject(name);
 
         protected void AddComponentOnNetworkObject(GameObject gameObject, Type componentType) =>
             _instantiator.InstantiateComponent(componentType, gameObject);
+        
         protected T AddComponentOnNetworkObject<T>(GameObject gameObject) where T : Behaviour =>
             _instantiator.InstantiateComponent<T>(gameObject);
         

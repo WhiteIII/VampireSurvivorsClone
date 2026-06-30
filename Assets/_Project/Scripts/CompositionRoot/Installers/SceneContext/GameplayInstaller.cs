@@ -27,9 +27,10 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         [SerializeField] private NetworkPrefabRef _playerPrefabAssetReference;
         [SerializeField] private NetworkPrefabRef _enemyPrefabAssetReference;
 
-        protected override void OnInstallBindings()
+        public override void InstallBindings()
         {
             BindIsSingle<GeneralNetworkObjectsCreator>();
+            BindIsSingle<NetworkComponentCreationRepository>();
             BindFactory<NetworkRunner, NetworkRunnerFactory>();
             BindFactory<NetworkSceneManagerDefault, NetworkSceneManagerFactory>();
             BindFactory<NetworkObjectEndEmptyObjectProvider, NetworkObjectsProviderFactory>();
@@ -43,11 +44,6 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindAssets();
             BindInterfacesToIsSingle<InputController>();
 
-            BindInterfacesToIsSingle<GameplayEntryPoint>();
-        }
-
-        protected override void BindIfIsServer()
-        {
             BindIsSingle<NetworkCreatorForBinding>();
             BindCreators();
             BindRepositories();
@@ -59,6 +55,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindNetworkComponent<EnemySpawnPositionHelper>();
             BindNetworkComponent<IdGenerator>();
             BindNetworkComponent<EnemyRepository>();
+            
+            BindInterfacesToIsSingle<GameplayEntryPoint>();
         }
 
         private void BindFactories()
@@ -90,8 +88,10 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             where T : NetworkBehaviour
         {
             if (IsServer)
+            {
                 BindAsyncFromFactory<T, NetworkComponentFactory<T>>();
-            
+                
+            }
         }
 
         private void BindNetworkComponentIfIsClient<T>() 

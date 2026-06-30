@@ -78,7 +78,7 @@ namespace _Project.Scripts.ViewModel.Implementation
             }
         }
 
-        private void StartMultiStageLoading(int totalTasksCount) => 
+        public void StartMultiStageLoading(int totalTasksCount) => 
             _multiStageLoading = new MultiStageLoading(totalTasksCount);
 
         public async UniTask WaitLoadingForMultiStageLoadingAsync(params UniTask[] tasks)

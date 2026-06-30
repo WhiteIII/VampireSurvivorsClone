@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Cysharp.Threading.Tasks;
 using Fusion;
 using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProvider
 {
@@ -12,45 +14,18 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProv
         private static NetworkObjectBaker _baker;
         private static NetworkObjectBaker Baker => _baker ??= new NetworkObjectBaker();
 
-        private readonly Dictionary<NetworkPrefabId, Type> _rawValuesAndTypes = new();
+        private NetworkComponentCreationRepository _networkComponentCreationRepository;
 
-        private NetworkServicesCreationHelper _networkServicesCreationHelper;
-
-        public void SetNetworkServicesCreationHelper(NetworkServicesCreationHelper networkServicesCreationHelper) => 
-            _networkServicesCreationHelper = networkServicesCreationHelper;
-
-        public async UniTask<uint> GetFreeRawValue()
-        {
-            await _networkServicesCreationHelper.InitialisationTask;
-            return _networkServicesCreationHelper.GetRawValue();  
-        }
-
-        public async UniTask AddRawValueAndType<T>(NetworkPrefabId networkPrefabId) 
-            where T : NetworkBehaviour
-        {
-            if (NetworkRunner.IsServer == false)
-                return;
-            _rawValuesAndTypes.Add(networkPrefabId, typeof(T));
-            await _networkServicesCreationHelper.InitialisationTask;
-            _networkServicesCreationHelper.Add<T>(networkPrefabId);
-        }
-
+        [Inject] private void Construct(NetworkComponentCreationRepository networkComponentCreationRepository) =>
+            _networkComponentCreationRepository = networkComponentCreationRepository;
+        
         public override NetworkObjectAcquireResult AcquirePrefabInstance(
             NetworkRunner runner, 
             in NetworkPrefabAcquireContext context,
             out NetworkObject instance)
         {
             instance = null;
-            if (_networkServicesCreationHelper.IsReady == false)
-                return NetworkObjectAcquireResult.Retry;
-
-            if (_rawValuesAndTypes.Count != _networkServicesCreationHelper.NetworkPrefabIdCount)
-            {
-                _rawValuesAndTypes.Clear();
-                _rawValuesAndTypes.AddRange(_networkServicesCreationHelper.GetNetworkPrefabIds());
-            }
-            
-            if (_rawValuesAndTypes.TryGetValue(context.PrefabId, out var componentType))
+            if (_networkComponentCreationRepository.TryGetTypeById(context.PrefabId.RawValue, out Type componentType))
             {
                 if (componentType == null)
                 {

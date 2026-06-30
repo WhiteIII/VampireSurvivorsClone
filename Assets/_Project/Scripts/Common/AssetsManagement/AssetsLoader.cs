@@ -10,6 +10,8 @@ namespace _Project.Scripts.Common.AssetsManagement
         private readonly List<AssetReference> _notLoadedAssets = new();
         private readonly List<AssetReference> _loadedAssets = new();
         
+        public int NotLoadedAssetsCount => _notLoadedAssets.Count;
+
         public AssetsLoader(
             LocalAssetProvider localAssetProvider,
             AssetReference[] loadedAssets = null)

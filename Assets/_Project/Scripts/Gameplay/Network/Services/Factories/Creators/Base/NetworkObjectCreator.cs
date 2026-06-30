@@ -19,22 +19,22 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         where TBaseItem : NetworkBehaviour
     {
         private LocalAssetProvider _localAssetProvider;
-        private NetworkObjectEndEmptyObjectProvider _networkObjectProvider;
+        private NetworkComponentCreationRepository _networkComponentCreationRepository;
         private NetworkRunner _networkRunner;
         
         public NetworkObjectCreator(
             LocalAssetProvider localAssetProvider,
-            GeneralNetworkObjectsRepository generalNetworkObjectsRepository)
+            GeneralNetworkObjectsRepository generalNetworkObjectsRepository, 
+            NetworkComponentCreationRepository networkComponentCreationRepository)
         {
             _localAssetProvider = localAssetProvider;
-            _networkObjectProvider = generalNetworkObjectsRepository.CurrentNetworkObjectProvider;
+            _networkComponentCreationRepository = networkComponentCreationRepository;
             _networkRunner = generalNetworkObjectsRepository.CurrentNetworkRunner;
         }
 
         public void OnHostMigration(GeneralNetworkObjectsRepository generalNetworkObjectsRepository)
         {
             _networkRunner = generalNetworkObjectsRepository.CurrentNetworkRunner;
-            _networkObjectProvider = generalNetworkObjectsRepository.CurrentNetworkObjectProvider;
         }
 
         public void OnHostMigration(GlobalRepository globalRepository)
@@ -100,10 +100,9 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         {
             if (_networkRunner.IsServer == false)
                 throw new Exception("An attempt was made to create an network object that was not a server!");
-            
-            uint freeRawValue = await _networkObjectProvider.GetFreeRawValue();
+
+            uint freeRawValue = _networkComponentCreationRepository.RegisterTypeAndGetTypeId<T>();
             NetworkPrefabId networkPrefabId = NetworkPrefabId.FromRaw(freeRawValue);
-            await _networkObjectProvider.AddRawValueAndType<T>(networkPrefabId);
 
             NetworkObject spawnedObject = await _networkRunner.SpawnAsync(
                 networkPrefabId, 

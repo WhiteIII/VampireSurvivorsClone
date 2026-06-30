@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using _Project.Scripts.Common.AssetsManagement;
 using _Project.Scripts.Common.Services.Initialize;
+using _Project.Scripts.Gameplay.Network.Services;
 using _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProvider;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using _Project.Scripts.View.Implementation;
@@ -8,6 +9,7 @@ using _Project.Scripts.View.Services;
 using _Project.Scripts.ViewModel.Implementation;
 using Cysharp.Threading.Tasks;
 using Fusion;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
@@ -27,6 +29,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
         private readonly AssetReference _networkRunnerAssetReference;
         private readonly AssetReference _networkSceneManagerAssetReference;
         private readonly AssetReference _networkObjectProviderAssetReference;
+        private readonly FusionGameStarter _gameStarter;
         
         public GameplayEntryPoint(
             AsyncInitializableRepository initializableRepository,
@@ -39,7 +42,8 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             [Inject(Id = "NetworkRunnerAssetReference")] AssetReference networkRunnerAssetReference,
             [Inject(Id = "NetworkSceneManagerReference")] AssetReference networkSceneManagerReference,
             [Inject(Id = "NetworkObjectsProviderReference")] AssetReference networkObjectsProviderRefence, 
-            AssetsLoader assetsLoader)
+            AssetsLoader assetsLoader,
+            FusionGameStarter fusionGameStarter)
         {
             _initializableRepository = initializableRepository;
             _uiController = uiController;
@@ -52,13 +56,17 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             _networkSceneManagerAssetReference = networkSceneManagerReference;
             _networkObjectProviderAssetReference = networkObjectsProviderRefence;
             _assetsLoader = assetsLoader;
+            _gameStarter = fusionGameStarter;
         }
 
         public async void Initialize()
         {
             AddAssetsForLoading();
+            _loadingWindowViewModel.StartMultiStageLoading(GetTotalTasksCount());
+            await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_assetsLoader.GetLoadedTaskAssets());
             CreateGeneralNetworkObjects();
-            await _loadingWindowViewModel.StartLoadingAsync(GetLoadedTasks());
+            await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_gameStarter.StartGameAsync());
+            await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_initializableRepository.GetTasks());
             await _uiController.CloseWindowAsync<LoadingWindow>();
             List<NetworkObject> list = _generalNetworkObjectsRepository.CurrentNetworkRunner.GetAllNetworkObjects();
 
@@ -76,20 +84,18 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             _networkSceneManagerDefaultFactory.Create();
             _networkObjectEndEmptyObjectProviderFactory.Create();
         }
-        
+
         private void AddAssetsForLoading()
         {
             _assetsLoader.AddAsset(_networkRunnerAssetReference);
             _assetsLoader.AddAsset(_networkSceneManagerAssetReference);
             _assetsLoader.AddAsset(_networkObjectProviderAssetReference);
         }
-        
-        private UniTask[] GetLoadedTasks()
+
+        private int GetTotalTasksCount()
         {
-            List<UniTask> tasks = new();
-            tasks.AddRange(_initializableRepository.GetTasks());
-            tasks.AddRange(_assetsLoader.GetLoadedTaskAssets());
-            return tasks.ToArray();
+            int startGameUnit = 1;
+            return _assetsLoader.NotLoadedAssetsCount + _initializableRepository.Count + startGameUnit;
         }
     }
 }
