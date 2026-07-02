@@ -26,7 +26,9 @@ namespace _Project.Scripts.Gameplay.Network.Services
             NetworkSceneInfo networkSceneInfo = new();
             StartGameArgs startGameArgs = _gameStateSwitcher.StartGameArgs;
 
-            networkSceneInfo.AddSceneRef(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(GAMEPLAY)));
+            networkSceneInfo.AddSceneRef(
+                SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(GAMEPLAY)),
+                LoadSceneMode.Additive);
             startGameArgs.SceneManager = _generalNetworkObjectsRepository.CurrentNetworkSceneManager;
             startGameArgs.ObjectProvider = _generalNetworkObjectsRepository.CurrentNetworkObjectProvider;
             startGameArgs.Scene = networkSceneInfo;

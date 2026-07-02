@@ -31,16 +31,20 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         {
             BindIsSingle<GeneralNetworkObjectsCreator>();
             BindIsSingle<NetworkComponentCreationRepository>();
-            BindFactory<NetworkRunner, NetworkRunnerFactory>();
-            BindFactory<NetworkSceneManagerDefault, NetworkSceneManagerFactory>();
-            BindFactory<NetworkObjectEndEmptyObjectProvider, NetworkObjectsProviderFactory>();
-            
-            BindInterfacesAndSelfToIsSingle<AsyncDependenciesRepository>();
-            BindInterfacesAndSelfToIsSingle<SpawnPositionHelper>();
+            Container.Bind<NetworkRunner>()
+                .FromFactory<GeneralNetworkObjectFactory<NetworkRunner>>().AsSingle();
+            Container.Bind<NetworkSceneManagerDefault>()
+                .FromFactory<GeneralNetworkObjectFactory<NetworkSceneManagerDefault>>().AsSingle();
+            Container.Bind<NetworkObjectEndEmptyObjectProvider>()
+                .FromFactory<GeneralNetworkObjectFactory<NetworkObjectEndEmptyObjectProvider>>().AsSingle();
             Container.Bind<NetworkRunnerCallBacksListener>()
                 .FromFactory<NetworkRunnerCallBacksListenerFactory>().AsSingle();
+
+            BindInterfacesAndSelfToIsSingle<AsyncDependenciesRepository>();
+            BindInterfacesAndSelfToIsSingle<SpawnPositionHelper>();
             BindIsSingle<AsyncInitializableRepository>();
             BindIsSingle<EnemySpawnPositionHelper>();
+            BindIsSingle<FusionGameStarter>();
             BindAssets();
             BindInterfacesToIsSingle<InputController>();
 

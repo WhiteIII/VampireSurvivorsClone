@@ -1,25 +1,26 @@
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
+using Fusion;
 using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
 {
     public class NetworkRunnerCallBacksListenerFactory : IFactory<NetworkRunnerCallBacksListener>
     {
-        private readonly GeneralNetworkObjectsRepository _generalNetworkObjectsRepository;
+        private readonly NetworkRunner _networkRunner;
         private readonly IInstantiator _instantiator;
 
         public NetworkRunnerCallBacksListenerFactory(
-            GeneralNetworkObjectsRepository generalNetworkObjectsRepository,
+            NetworkRunner networkRunner,
             IInstantiator instantiator)
         {
-            _generalNetworkObjectsRepository = generalNetworkObjectsRepository;
+            _networkRunner = networkRunner;
             _instantiator = instantiator;
         }
 
         public NetworkRunnerCallBacksListener Create()
         {
             NetworkRunnerCallBacksListener listener = _instantiator.Instantiate<NetworkRunnerCallBacksListener>();
-            _generalNetworkObjectsRepository.CurrentNetworkRunner.AddCallbacks(listener);
+            _networkRunner.AddCallbacks(listener);
             return listener;
         }
     }

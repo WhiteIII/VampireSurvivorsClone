@@ -27,5 +27,8 @@ namespace _Project.Scripts.Common.Services.Factories.Base
             _repository.Add(
                 _instantiator.InstantiatePrefab(
                     _localAssetProvider.GetAsset<GameObject>(assetReference)).GetComponent<T>());
+
+        public T CreateComponentOnGameObject<T>() where T : TBaseItem => 
+            _repository.Add(_instantiator.InstantiateComponentOnNewGameObject<T>());
     }
 }
