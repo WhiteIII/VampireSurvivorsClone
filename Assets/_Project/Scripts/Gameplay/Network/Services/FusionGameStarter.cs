@@ -1,5 +1,5 @@
 using _Project.Scripts.Common.SceneSwitcher;
-using _Project.Scripts.Gameplay.Network.Services.Repositories;
+using _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProvider;
 using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine.SceneManagement;
@@ -9,16 +9,22 @@ namespace _Project.Scripts.Gameplay.Network.Services
     public class FusionGameStarter
     {
         private const string GAMEPLAY = "Gameplay";
-        
-        private readonly GeneralNetworkObjectsRepository  _generalNetworkObjectsRepository;
+
+        private readonly NetworkRunner _networkRunner;
+        private readonly NetworkObjectEndEmptyObjectProvider _networkObjectProvider;
+        private readonly NetworkSceneManagerDefault _networkSceneManager;
         private readonly GameStateSwitcher _gameStateSwitcher;
         
         public FusionGameStarter(
-            GeneralNetworkObjectsRepository generalNetworkObjectsRepository, 
-            GameStateSwitcher gameStateSwitcher)
+            GameStateSwitcher gameStateSwitcher, 
+            NetworkRunner networkRunner,
+            NetworkObjectEndEmptyObjectProvider networkObjectProvider, 
+            NetworkSceneManagerDefault networkSceneManager)
         {
-            _generalNetworkObjectsRepository = generalNetworkObjectsRepository;
             _gameStateSwitcher = gameStateSwitcher;
+            _networkRunner = networkRunner;
+            _networkObjectProvider = networkObjectProvider;
+            _networkSceneManager = networkSceneManager;
         }
 
         public async UniTask StartGameAsync()
@@ -29,11 +35,11 @@ namespace _Project.Scripts.Gameplay.Network.Services
             networkSceneInfo.AddSceneRef(
                 SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(GAMEPLAY)),
                 LoadSceneMode.Additive);
-            startGameArgs.SceneManager = _generalNetworkObjectsRepository.CurrentNetworkSceneManager;
-            startGameArgs.ObjectProvider = _generalNetworkObjectsRepository.CurrentNetworkObjectProvider;
+            startGameArgs.SceneManager = _networkSceneManager;
+            startGameArgs.ObjectProvider = _networkObjectProvider;
             startGameArgs.Scene = networkSceneInfo;
             
-            await _generalNetworkObjectsRepository.CurrentNetworkRunner.StartGame(startGameArgs);
+            await _networkRunner.StartGame(startGameArgs);
         }
     }
 }

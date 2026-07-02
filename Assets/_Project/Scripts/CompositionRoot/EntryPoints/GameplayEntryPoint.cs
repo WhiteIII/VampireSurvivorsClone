@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using _Project.Scripts.Common.AssetsManagement;
 using _Project.Scripts.Common.Services.Initialize;
@@ -13,7 +14,7 @@ using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.EntryPoints
 {
-    public class GameplayEntryPoint : IInitializable
+    public class GameplayEntryPoint : IInitializable, IDisposable
     {
         private readonly AsyncInitializableRepository _initializableRepository;
         private readonly UIController _uiController;
@@ -51,7 +52,9 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_assetsLoader.GetLoadedTaskAssets());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_gameStarter.StartGameAsync());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_initializableRepository.GetTasks());
+            //await _uiController.CreateAndOpenWindowAsync<>();
             await _uiController.CloseWindowAsync<LoadingWindow>();
+            _loadingWindowViewModel.ResetLoadingProgress();
             List<NetworkObject> list = _generalNetworkObjectsRepository.CurrentNetworkRunner.GetAllNetworkObjects();
 
             Debug.Log($"Count: {list.Count}");
@@ -61,6 +64,9 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
                 Debug.Log(networkObject.GetComponent<NetworkBehaviour>().GetType().FullName);
             }
         }
+
+        public void Dispose() => 
+            _assetsLoader.UnloadAssets(_enemiesBarsWindowAssetReference, _enemyBarAssetReference);
 
         private void AddAssetsForLoading()
         {
