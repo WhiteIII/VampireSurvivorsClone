@@ -12,6 +12,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindIsSingle<AssetsLoader>();
             BindIsSingle<GeneralNetworkObjectsRepository>();
             BindIsSingle<GameStateSwitcher>();
+            BindIsSingle<NetworkComponentCreationRepository>();
             BindInterfacesToIsSingle<BootstrapEntryPoint>();
         }
     }

@@ -16,7 +16,11 @@ namespace _Project.Scripts.CompositionRoot.Services
             _instantiator = instantiator;
         }
 
-        public T Create() =>
-            _controller.Add(_instantiator.Instantiate<T>());
+        public T Create()
+        {
+            if (_controller.FactoryContains<T>())
+                _controller.Add(_instantiator.Instantiate<T>());
+            return _controller.GetWindowFactoryByFactoryType<T>();
+        }
     }
 }

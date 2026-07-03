@@ -14,12 +14,11 @@ using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.EntryPoints
 {
-    public class GameplayEntryPoint : IInitializable, IDisposable
+    public class GameplayEntryPoint : IInitializable
     {
         private readonly AsyncInitializableRepository _initializableRepository;
         private readonly UIController _uiController;
         private readonly LoadingWindowViewModel _loadingWindowViewModel;
-        private readonly GeneralNetworkObjectsRepository _generalNetworkObjectsRepository;
         private readonly AssetsLoader _assetsLoader;
         private readonly FusionGameStarter _gameStarter;
         private readonly AssetReference _enemiesBarsWindowAssetReference;
@@ -38,7 +37,6 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             _initializableRepository = initializableRepository;
             _uiController = uiController;
             _loadingWindowViewModel = loadingWindowViewModel;
-            _generalNetworkObjectsRepository = generalNetworkObjectsRepository;
             _enemiesBarsWindowAssetReference = enemiesBarsWindowAssetReference;
             _enemyBarAssetReference = enemyBarAssetReference;
             _assetsLoader = assetsLoader;
@@ -55,18 +53,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             //await _uiController.CreateAndOpenWindowAsync<>();
             await _uiController.CloseWindowAsync<LoadingWindow>();
             _loadingWindowViewModel.ResetLoadingProgress();
-            List<NetworkObject> list = _generalNetworkObjectsRepository.CurrentNetworkRunner.GetAllNetworkObjects();
-
-            Debug.Log($"Count: {list.Count}");
-            foreach (NetworkObject networkObject in list)
-            {
-                Debug.Log(networkObject);
-                Debug.Log(networkObject.GetComponent<NetworkBehaviour>().GetType().FullName);
-            }
         }
-
-        public void Dispose() => 
-            _assetsLoader.UnloadAssets(_enemiesBarsWindowAssetReference, _enemyBarAssetReference);
 
         private void AddAssetsForLoading()
         {
@@ -77,8 +64,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
         private int GetTotalTasksCount()
         {
             int startGameUnit = 1;
-            return 2 + _initializableRepository.Count + startGameUnit;
-            // TODO в assetsLoader свойство NotLoadedAssetsCount отображает количество лишних ассетов!
+            return _assetsLoader.NotLoadedAssetsCount + _initializableRepository.Count + startGameUnit;
         }
     }
 }

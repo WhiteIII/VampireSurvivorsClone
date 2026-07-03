@@ -96,13 +96,14 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         }
 
         protected async UniTask<T> CreateEmptyObjectWithParameters<T>(
+            NetworkTransform parent = null,
             Vector3? position = null, 
             Quaternion? rotation = null,
             PlayerRef? playerRef = null) where T : TBaseItem
         {
             await InitializeTask;
             T spawnedObject = await _networkObjectCreator
-                .CreateEmptyObjectWithParameters<T>(position, rotation, playerRef);
+                .CreateEmptyObjectWithParameters<T>(parent, position, rotation, playerRef);
             return GameLoop.TryRegister(TryAddInRepository(spawnedObject));
         }
         

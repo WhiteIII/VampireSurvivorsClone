@@ -20,7 +20,7 @@ namespace _Project.Scripts.Common.AssetsManagement
             if (loadedAssets != null)
                 _notLoadedAssets.AddRange(loadedAssets);
         }
-
+        
         public UniTask[] GetLoadedTaskAssets()
         {
             List<UniTask> tasks = new(_notLoadedAssets.Count);

@@ -26,11 +26,13 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         [Header("NetworkPrefabs:")] 
         [SerializeField] private NetworkPrefabRef _playerPrefabAssetReference;
         [SerializeField] private NetworkPrefabRef _enemyPrefabAssetReference;
-
+        
+        [Header("OnScene:")]
+        [SerializeField] private NetworkTransform _networkServicesParent; 
+        
         public override void InstallBindings()
         {
             BindIsSingle<GeneralNetworkObjectsCreator>();
-            BindIsSingle<NetworkComponentCreationRepository>();
             Container.Bind<NetworkRunner>()
                 .FromFactory<GeneralNetworkObjectFactory<NetworkRunner>>().AsSingle();
             Container.Bind<NetworkSceneManagerDefault>()
@@ -45,13 +47,14 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindIsSingle<AsyncInitializableRepository>();
             BindIsSingle<EnemySpawnPositionHelper>();
             BindIsSingle<FusionGameStarter>();
-            BindAssets();
             BindInterfacesToIsSingle<InputController>();
 
             BindIsSingle<NetworkCreatorForBinding>();
+            BindAssets();
             BindCreators();
             BindRepositories();
             BindFactories();
+            BindParents();
             BindNetworkComponent<PlayerSpawner>();
             BindNetworkComponent<EnemySpawner>();
             BindNetworkComponent<GameLoop>();
@@ -88,20 +91,17 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindAsset("EnemyPrefabAssetReference", _enemyPrefabAssetReference);
         }
 
+        private void BindParents()
+        {
+            BindWithId("NetworkServicesParent", _networkServicesParent);
+        }
+
         private void BindNetworkComponent<T>() 
             where T : NetworkBehaviour
         {
+            RegisterNetworkPrefab<T>();
             if (IsServer)
-            {
                 BindAsyncFromFactory<T, NetworkComponentFactory<T>>();
-                
-            }
-        }
-
-        private void BindNetworkComponentIfIsClient<T>() 
-            where T : NetworkBehaviour
-        {
-             
         }
         
         private void BindAsyncFromFactory<TContract, TFactory>()

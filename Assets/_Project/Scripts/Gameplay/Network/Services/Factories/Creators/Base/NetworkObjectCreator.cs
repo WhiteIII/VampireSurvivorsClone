@@ -51,8 +51,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         public UniTask<T> Create<T>(AssetReference assetReference, Vector3 position) where T : TBaseItem => 
             CreateWithParameters<T>(assetReference, position);
 
-        public UniTask<T> CreateEmptyNetworkObjectWithComponent<T>() where T : TBaseItem =>
-            CreateEmptyObjectWithParameters<T>();
+        public UniTask<T> CreateEmptyNetworkObjectWithComponent<T>(NetworkTransform parent = null) where T : TBaseItem =>
+            CreateEmptyObjectWithParameters<T>(parent);
         
         public void Despawn(TBaseItem item) => 
             _networkRunner.Despawn(item.Object);
@@ -94,6 +94,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         }
 
         public async UniTask<T> CreateEmptyObjectWithParameters<T>(
+            NetworkTransform parent = null,
             Vector3? position = null, 
             Quaternion? rotation = null,
             PlayerRef? playerRef = null) where T : TBaseItem
@@ -101,7 +102,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             if (_networkRunner.IsServer == false)
                 throw new Exception("An attempt was made to create an network object that was not a server!");
 
-            uint freeRawValue = _networkComponentCreationRepository.RegisterTypeAndGetTypeId<T>();
+            uint freeRawValue = _networkComponentCreationRepository.GetIdByType<T>();
             NetworkPrefabId networkPrefabId = NetworkPrefabId.FromRaw(freeRawValue);
 
             NetworkObject spawnedObject = await _networkRunner.SpawnAsync(
@@ -109,6 +110,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
                 position, 
                 rotation, 
                 playerRef);
+            if (parent)
+                spawnedObject.transform.SetParent(parent.transform);
             
             return spawnedObject.GetComponent<T>();
         }

@@ -9,6 +9,7 @@ namespace _Project.Scripts.View.Base
     public abstract class Window : MonoBehaviour, IWindow
     {
         private IWindowAnimation _windowAnimation;
+        private CancellationToken _cancellationToken;
         
         public bool IsOpen { get; private set; }
         public bool IsInteractable { get; private set; }
@@ -16,6 +17,7 @@ namespace _Project.Scripts.View.Base
         private void Awake()
         {
             _windowAnimation = GetComponent<IWindowAnimation>();
+            _cancellationToken = this.GetCancellationTokenOnDestroy();
             OnAwakeMethod();
         }
 
@@ -24,10 +26,9 @@ namespace _Project.Scripts.View.Base
 
         public async UniTask OpenAsync()
         {
-            CancellationToken cancellationToken = this.GetCancellationTokenOnDestroy();
-            await OnOpenAnimationStartAsync(cancellationToken);
-            await _windowAnimation.PlayOpenAnimationAsync(cancellationToken);
-            await OnOpenAnimationEndAsync(cancellationToken);
+            await OnOpenAnimationStartAsync(_cancellationToken);
+            await _windowAnimation.PlayOpenAnimationAsync(_cancellationToken);
+            await OnOpenAnimationEndAsync(_cancellationToken);
             OnEnableInteractable();
             IsOpen = true;
         }
@@ -35,9 +36,8 @@ namespace _Project.Scripts.View.Base
         public async UniTask CloseAsync()
         {
             OnDisableInteractable();
-            CancellationToken cancellationToken = this.GetCancellationTokenOnDestroy();
-            await OnCloseAnimationStartAsync(cancellationToken);
-            await _windowAnimation.PlayCloseAnimationAsync(cancellationToken);
+            await OnCloseAnimationStartAsync(_cancellationToken);
+            await _windowAnimation.PlayCloseAnimationAsync(_cancellationToken);
             IsOpen = false;
         }
 

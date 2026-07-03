@@ -15,6 +15,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         [Header("AssetReferences:")]
         [SerializeField] private AssetReference _loadingWindowAssetReference;
         [SerializeField] private AssetReference _menuWindowAssetReference;
+        [SerializeField] private AssetReference _enemiesBarsWindowAssetReference;
+        [SerializeField] private AssetReference _enemyBarWindowAssetReference;
         
         [Header("OnScene:")]
         [SerializeField] private RectTransform _uiRootRectTransform;
@@ -23,6 +25,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         {
             BindAsset("LoadingWindowAssetReference", _loadingWindowAssetReference);
             BindAsset("MenuWindowAssetReference", _menuWindowAssetReference);
+            BindAsset("EnemiesBarsWindowAssetReference", _enemiesBarsWindowAssetReference);
+            BindAsset("EnemyBarAssetReference", _enemyBarWindowAssetReference);
             
             BindWindowFactory<LoadingWindowFactory>();
             BindWindowFactory<MenuWindowFactory>();

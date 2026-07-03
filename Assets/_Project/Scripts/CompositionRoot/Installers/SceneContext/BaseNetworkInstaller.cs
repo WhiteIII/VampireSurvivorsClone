@@ -1,10 +1,6 @@
-using System.Collections.Generic;
 using _Project.Scripts.Common.SceneSwitcher;
-using _Project.Scripts.Gameplay.Network.Services.Factories;
-using _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProvider;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Fusion;
-using UnityEngine;
 using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
@@ -12,7 +8,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
     public abstract class BaseNetworkInstaller : AdvancedMonoInstaller
     {
         private GameStateSwitcher _gameStateSwitcher;
-
+        private NetworkComponentCreationRepository _networkComponentCreationRepository;
+        
         protected bool IsServer
         {
             get
@@ -23,7 +20,15 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             }
         }
         
-        [Inject] private void Construct(GameStateSwitcher gameStateSwitcher) => 
+        [Inject] private void Construct(
+            GameStateSwitcher gameStateSwitcher,
+            NetworkComponentCreationRepository networkComponentCreationRepository)
+        {
             _gameStateSwitcher = gameStateSwitcher;
+            _networkComponentCreationRepository = networkComponentCreationRepository;
+        }
+
+        protected void RegisterNetworkPrefab<T>() where T : NetworkBehaviour => 
+            _networkComponentCreationRepository.RegisterTypeAndGetTypeId<T>();
     }
 }

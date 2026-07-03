@@ -19,11 +19,10 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
         public uint GetIdByType<T>() where T : NetworkBehaviour => 
             _idAndTypes.First(x => x.Value == typeof(T)).Key;
 
-        public uint RegisterTypeAndGetTypeId<T>() where T : NetworkBehaviour
+        public void RegisterTypeAndGetTypeId<T>() where T : NetworkBehaviour
         {
             _currentId++;
             _idAndTypes.Add(_currentId, typeof(T));
-            return _currentId;
         }
     }
 }
