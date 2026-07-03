@@ -1,6 +1,7 @@
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent.UpgradeSystem;
 using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.InputSystem;
+using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
 
@@ -21,12 +22,18 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
         public void Initialize(PlayerRef playerRef) =>  
             PlayerRef = playerRef;
 
-        public override void Spawned()
+        public override async void Spawned()
         {
             _playerMovement = GetComponent<PlayerMovement>();
             _attackSystem = GetComponent<AttackSystem>();
+            _health = GetComponent<Health>();
             PlayerRunTimeDataNetwork playerData = GetComponent<PlayerRunTimeDataNetwork>();
-            //playerData.Setup(x => _health.SetMaxHealth(x));
+            await UniTask.WaitWhile(() => playerData.IsInitializeEnd == false);
+            playerData.Setup(
+                x => _health.SetMaxHealth(x), 
+                x => _playerMovement.SetMovementSpeed(x));
+            _health.SetMaxHealth(playerData.Health);
+            _playerMovement.SetMovementSpeed(playerData.MovementSpeed);
         }
         
         public void SetPosition(Vector3 position) =>

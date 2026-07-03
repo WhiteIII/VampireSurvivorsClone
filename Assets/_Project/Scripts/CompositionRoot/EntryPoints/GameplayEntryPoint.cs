@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using _Project.Scripts.Common.AssetsManagement;
 using _Project.Scripts.Common.Services.Initialize;
 using _Project.Scripts.Gameplay.Network.Services;
@@ -7,8 +5,6 @@ using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using _Project.Scripts.View.Implementation;
 using _Project.Scripts.View.Services;
 using _Project.Scripts.ViewModel.Implementation;
-using Fusion;
-using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
 
@@ -50,7 +46,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_assetsLoader.GetLoadedTaskAssets());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_gameStarter.StartGameAsync());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_initializableRepository.GetTasks());
-            //await _uiController.CreateAndOpenWindowAsync<>();
+            //await _uiController.CreateAndOpenWindowAsync<EnemiesBarsWindow>();
             await _uiController.CloseWindowAsync<LoadingWindow>();
             _loadingWindowViewModel.ResetLoadingProgress();
         }

@@ -9,15 +9,21 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent.UpgradeSystem
 {
     public class PlayerRunTimeDataNetwork : InjectNetworkBehaviour, IPlayerData
     {
-        [Networked, UnityNonSerialized] public int Health { get; set; }
-        [Networked, UnityNonSerialized] public int Damage { get; set; }
-        [Networked, UnityNonSerialized] public float AttackCooldown { get; set; }
-        [Networked, UnityNonSerialized] public float MovementSpeed { get; set; }
-        [Networked, UnityNonSerialized] public float AttackDistance { get; set; }
+        [Networked, UnityNonSerialized] private int NetworkedHealth { get; set; }
+        [Networked, UnityNonSerialized] private int NetworkedDamage { get; set; }
+        [Networked, UnityNonSerialized] private float NetworkedAttackCooldown { get; set; }
+        [Networked, UnityNonSerialized] private float NetworkedMovementSpeed { get; set; }
+        [Networked, UnityNonSerialized] private float NetworkedAttackDistance { get; set; }
 
+        public int Health => NetworkedHealth;
+        public int Damage => NetworkedDamage;
+        public float AttackCooldown => NetworkedAttackCooldown;
+        public float MovementSpeed => NetworkedMovementSpeed;
+        public float AttackDistance => NetworkedAttackDistance;
+        
         private Action<int> _onSetHealth;
         private Action<float> _onSetMovementSpeed;
-        
+
         [Inject] private async void Construct(IConfigService configService)
         {
             bool hasStateAuthority = await GetStateAuthorityAsync();
@@ -29,11 +35,11 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent.UpgradeSystem
             
             IPlayerData playerData = configService.GetConfig<IPlayerData>();
             
-            Health = playerData.Health;
-            Damage = playerData.Damage;
-            AttackCooldown = playerData.AttackCooldown;
-            MovementSpeed = playerData.MovementSpeed;
-            AttackDistance = playerData.AttackDistance;
+            NetworkedHealth = playerData.Health;
+            NetworkedDamage = playerData.Damage;
+            NetworkedAttackCooldown = playerData.AttackCooldown;
+            NetworkedMovementSpeed = playerData.MovementSpeed;
+            NetworkedAttackDistance = playerData.AttackDistance;
             EndInitialization();
         }
 
@@ -45,19 +51,19 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent.UpgradeSystem
 
         public void SetHealth(int health)
         {
-            Health = health;
+            NetworkedHealth = health;
             _onSetHealth.Invoke(health);
         }
-        
+
         public void SetDamage(int damage) =>
-            Damage = damage;
-        
+            NetworkedDamage = damage;
+
         public void SetAttackCoolDown(int coolDown) =>
-            AttackCooldown = coolDown;
+            NetworkedAttackCooldown = coolDown;
 
         public void SetMovementSpeed(float movementSpeed)
         {
-            MovementSpeed = movementSpeed;
+            NetworkedMovementSpeed = movementSpeed;
             _onSetMovementSpeed.Invoke(movementSpeed);
         }
     }
