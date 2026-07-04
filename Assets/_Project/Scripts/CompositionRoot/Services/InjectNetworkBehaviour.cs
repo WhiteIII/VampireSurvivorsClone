@@ -33,7 +33,7 @@ namespace _Project.Scripts.CompositionRoot.Services
         {
             _isSpawned = true;
             await UniTask.WaitWhile(() => IsInitializeEnd == false);
-            OnSpawn();
+            OnSpawnMethod();
         }
 
         protected void EndInitialization() =>
@@ -45,6 +45,6 @@ namespace _Project.Scripts.CompositionRoot.Services
             return HasStateAuthority;
         }
 
-        protected virtual void OnSpawn() { }
+        protected virtual void OnSpawnMethod() { }
     }
 }

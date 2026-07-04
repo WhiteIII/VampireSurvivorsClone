@@ -41,7 +41,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
             EndInitialization();
         }
 
-        protected override void OnSpawn()
+        protected override void OnSpawnMethod()
         {
             if (HasStateAuthority == false)
                 return;

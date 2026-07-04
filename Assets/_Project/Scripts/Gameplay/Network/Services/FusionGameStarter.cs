@@ -14,6 +14,8 @@ namespace _Project.Scripts.Gameplay.Network.Services
         private readonly NetworkObjectEndEmptyObjectProvider _networkObjectProvider;
         private readonly NetworkSceneManagerDefault _networkSceneManager;
         private readonly GameStateSwitcher _gameStateSwitcher;
+
+        public bool GameStarted { get; private set; }
         
         public FusionGameStarter(
             GameStateSwitcher gameStateSwitcher, 
@@ -40,6 +42,7 @@ namespace _Project.Scripts.Gameplay.Network.Services
             startGameArgs.Scene = networkSceneInfo;
             
             await _networkRunner.StartGame(startGameArgs);
+            GameStarted = true;
         }
     }
 }

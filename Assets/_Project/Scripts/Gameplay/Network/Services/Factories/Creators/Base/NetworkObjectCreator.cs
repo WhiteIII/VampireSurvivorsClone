@@ -7,6 +7,7 @@ using _Project.Scripts.Gameplay.Network.Services.HostMigration;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Cysharp.Threading.Tasks;
 using Fusion;
+using R3;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -18,10 +19,16 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         ISendGlobalRepositoryOnHostMigration
         where TBaseItem : NetworkBehaviour
     {
+        public Observable<TBaseItem> OnSpawn => _onCreate;
+        public Observable<TBaseItem> OnDespawn => _onDespawn;
+        
         private LocalAssetProvider _localAssetProvider;
         private NetworkComponentCreationRepository _networkComponentCreationRepository;
         private NetworkRunner _networkRunner;
         
+        private readonly Subject<TBaseItem> _onCreate = new();
+        private readonly Subject<TBaseItem> _onDespawn = new();
+
         public NetworkObjectCreator(
             LocalAssetProvider localAssetProvider,
             GeneralNetworkObjectsRepository generalNetworkObjectsRepository, 
@@ -44,7 +51,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             else
                 throw new Exception("Asset provider not found!");
         }
-        
+
         public UniTask<T> Create<T>(AssetReference assetReference) where T : TBaseItem =>
             CreateWithParameters<T>(assetReference);
 
@@ -55,7 +62,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             CreateEmptyObjectWithParameters<T>(parent);
         
         public void Despawn(TBaseItem item) => 
-            _networkRunner.Despawn(item.Object);
+            _networkRunner.Despawn(SendObjectOnDespawn(item).Object);
 
         public async UniTask<T> CreateWithParameters<T>(
             NetworkPrefabRef assetReference,
@@ -72,7 +79,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
                 rotation, 
                 playerRef);
 
-            return spawnedObject.GetComponent<T>();
+            return SendObjectOnSpawn(spawnedObject.GetComponent<T>());
         }
         
         public async UniTask<T> CreateWithParameters<T>(
@@ -90,7 +97,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
                 rotation, 
                 playerRef);
 
-            return spawnedObject.GetComponent<T>();
+            return SendObjectOnSpawn(spawnedObject.GetComponent<T>());
         }
 
         public async UniTask<T> CreateEmptyObjectWithParameters<T>(
@@ -113,7 +120,21 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             if (parent)
                 spawnedObject.transform.SetParent(parent.transform);
             
-            return spawnedObject.GetComponent<T>();
+            return SendObjectOnSpawn(spawnedObject.GetComponent<T>());
+        }
+        
+        private T SendObjectOnSpawn<T>(T instance)
+            where T : TBaseItem
+        {
+            _onCreate.OnNext(instance);
+            return instance;
+        }
+
+        private T SendObjectOnDespawn<T>(T instance)
+            where T : TBaseItem
+        {
+            _onDespawn.OnNext(instance);
+            return instance;
         }
     }
 }

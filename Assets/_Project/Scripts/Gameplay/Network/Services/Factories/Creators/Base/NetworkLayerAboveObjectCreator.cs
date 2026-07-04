@@ -8,6 +8,7 @@ using _Project.Scripts.Gameplay.Network.Services.HostMigration;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Cysharp.Threading.Tasks;
 using Fusion;
+using R3;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
@@ -21,6 +22,9 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         ISendGlobalRepositoryOnHostMigration
         where TBaseItem : NetworkBehaviour
     {
+        public Observable<TBaseItem> OnSpawn => _networkObjectCreator.OnSpawn;
+        public Observable<TBaseItem> OnDespawn => _networkObjectCreator.OnDespawn;
+
         private IRepository<TBaseItem> _repository;
         private NetworkObjectCreator<TBaseItem> _networkObjectCreator;
         
@@ -51,7 +55,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
 
         public void OnHostMigration(GeneralNetworkObjectsRepository generalNetworkObjectsRepository) =>
             _networkObjectCreator.OnHostMigration(generalNetworkObjectsRepository);
-        
+
         public UniTask<T> Create<T>(AssetReference assetReference) where T : TBaseItem =>
             CreateWithParameters<T>(assetReference);
 

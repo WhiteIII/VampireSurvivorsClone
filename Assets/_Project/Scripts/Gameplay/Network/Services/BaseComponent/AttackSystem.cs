@@ -25,7 +25,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
             EndInitialization();
         }
 
-        protected override void OnSpawn() => 
+        protected override void OnSpawnMethod() => 
             PlayerData = GetComponent<PlayerRunTimeDataNetwork>();
 
         public void TryAttack()
