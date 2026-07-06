@@ -11,19 +11,24 @@ namespace _Project.Scripts.Gameplay.Network
         public Observable<(NetworkRunner, PlayerRef)> OnPlayerJoinedSubject => _onPlayerJoinedSubject;
         public Observable<(NetworkRunner, PlayerRef)> OnPlayerLeftSubject => _onPlayerLeftSubject;
         public Observable<(NetworkRunner, NetworkInput)> OnInputSubject => _onInputSubject;
+        public Observable<NetworkRunner> OnSceneLoadDoneSubject => _onSceneLoadDoneSubject;
     
         private readonly BehaviorSubject<(NetworkRunner, PlayerRef)> _onPlayerJoinedSubject = new(new());
         private readonly Subject<(NetworkRunner, PlayerRef)> _onPlayerLeftSubject = new();
         private readonly Subject<(NetworkRunner, NetworkInput)> _onInputSubject = new();
-        
+        private readonly Subject<NetworkRunner> _onSceneLoadDoneSubject = new();
+
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) =>
             _onPlayerJoinedSubject.OnNext((runner, player));
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) => 
             _onPlayerLeftSubject.OnNext((runner, player));
-        
+
         public void OnInput(NetworkRunner runner, NetworkInput input) => 
             _onInputSubject.OnNext((runner, input));
+
+        public void OnSceneLoadDone(NetworkRunner runner) => 
+            _onSceneLoadDoneSubject.OnNext(runner);
 
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
 
@@ -42,7 +47,7 @@ namespace _Project.Scripts.Gameplay.Network
         public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data) { }
 
         public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress) { }
-        
+
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) {}
 
         public void OnConnectedToServer(NetworkRunner runner) { }
@@ -52,8 +57,6 @@ namespace _Project.Scripts.Gameplay.Network
         public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
 
         public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
-
-        public void OnSceneLoadDone(NetworkRunner runner) { }
 
         public void OnSceneLoadStart(NetworkRunner runner) { }
     }

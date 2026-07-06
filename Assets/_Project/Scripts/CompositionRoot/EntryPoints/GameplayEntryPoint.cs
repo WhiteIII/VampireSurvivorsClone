@@ -19,6 +19,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
         private readonly FusionGameStarter _gameStarter;
         private readonly AssetReference _enemiesBarsWindowAssetReference;
         private readonly AssetReference _enemyBarAssetReference;
+        private readonly NetworkBehavioursRepository _networkBehavioursRepository;
         
         public GameplayEntryPoint(
             AsyncInitializableRepository initializableRepository,
@@ -28,7 +29,8 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             [Inject(Id = "EnemiesBarsWindowAssetReference")] AssetReference enemiesBarsWindowAssetReference,
             [Inject(Id = "EnemyBarAssetReference")] AssetReference enemyBarAssetReference,
             AssetsLoader assetsLoader,
-            FusionGameStarter fusionGameStarter)
+            FusionGameStarter fusionGameStarter,
+            NetworkBehavioursRepository networkBehavioursRepository)
         {
             _initializableRepository = initializableRepository;
             _uiController = uiController;
@@ -37,6 +39,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             _enemyBarAssetReference = enemyBarAssetReference;
             _assetsLoader = assetsLoader;
             _gameStarter = fusionGameStarter;
+            _networkBehavioursRepository = networkBehavioursRepository;
         }
 
         public async void Initialize()
@@ -45,6 +48,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             _loadingWindowViewModel.StartMultiStageLoading(GetTotalTasksCount());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_assetsLoader.GetLoadedTaskAssets());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_gameStarter.StartGameAsync());
+            await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_networkBehavioursRepository.InitializeAsync());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_initializableRepository.GetTasks());
             //await _uiController.CreateAndOpenWindowAsync<EnemiesBarsWindow>();
             await _uiController.CloseWindowAsync<LoadingWindow>();
@@ -60,7 +64,11 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
         private int GetTotalTasksCount()
         {
             int startGameUnit = 1;
-            return _assetsLoader.NotLoadedAssetsCount + _initializableRepository.Count + startGameUnit;
+            int networkBehavioursRepositoryUnit = 1;
+            return _assetsLoader.NotLoadedAssetsCount + 
+                   _initializableRepository.Count + 
+                   startGameUnit + 
+                   networkBehavioursRepositoryUnit;
         }
     }
 }

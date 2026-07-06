@@ -1,45 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
+using _Project.Scripts.Common.Services.Initialize;
 using _Project.Scripts.Common.Services.Repositories.Base;
 using Cysharp.Threading.Tasks;
 using Fusion;
+using R3;
 using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Repositories
 {
-    public class NetworkBehavioursRepository : IRepository<NetworkBehaviour>, IInitializable
+    public class NetworkBehavioursRepository : IAsyncInitializable
     {
         private readonly List<NetworkBehaviour> _list = new();
 
         private readonly NetworkRunner _networkRunner;
-        private readonly FusionGameStarter _gameStarter;
+        private readonly NetworkRunnerCallBacksListener _callBacksListener;
 
+        private bool _isActive = false;
+        
         public int Count => _list.Count;
-
         public UniTask InitialisationTask
         {
             get
             {
-                if (_gameStarter.GameStarted)
+                if (_isActive)
                     return UniTask.CompletedTask;
-                return UniTask.WaitWhile(() => _gameStarter.GameStarted == false);
+                return UniTask.WaitWhile(() => _isActive == false);
             }
         }
 
-        public NetworkBehavioursRepository(NetworkRunner networkRunner, FusionGameStarter gameStarter)
+        public NetworkBehavioursRepository(
+            NetworkRunner networkRunner, 
+            NetworkRunnerCallBacksListener callBacksListener)
         {
             _networkRunner = networkRunner;
-            _gameStarter = gameStarter;
+            _callBacksListener = callBacksListener;
         }
 
-        public async void Initialize()
+        public async UniTask InitializeAsync()
         {
-            await InitialisationTask;
             if (_networkRunner.IsServer)
                 return;
-            List<NetworkObject> networkObjects = _networkRunner.GetAllNetworkObjects();
+
+            List<NetworkObject> networkObjects;
+            while (TryGetAllNetworkObjects(out networkObjects) == false)
+                await UniTask.Yield();
+
+            networkObjects = _networkRunner.GetAllNetworkObjects();
             foreach (NetworkObject networkObject in networkObjects)
                 _list.AddRange(networkObject.NetworkedBehaviours);
+            _isActive = true;
         }
 
         public bool TryGet<T>(out T item) where T : NetworkBehaviour
@@ -56,20 +66,12 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
             return false;
         }
 
-        public T Add<T>(T item) 
-            where T : NetworkBehaviour
+        private bool TryGetAllNetworkObjects(out List<NetworkObject> networkObjects)
         {
-            _list.Add(item);
-            return item;
+            networkObjects  = _networkRunner.GetAllNetworkObjects();
+            if (networkObjects.Count == 0)
+                return false;
+            return true;
         }
-
-        public void Remove(NetworkBehaviour item) => 
-            _list.Remove(item);
-
-        public IEnumerator<NetworkBehaviour> GetEnumerator() => 
-            _list.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => 
-            GetEnumerator();
     }
 }
