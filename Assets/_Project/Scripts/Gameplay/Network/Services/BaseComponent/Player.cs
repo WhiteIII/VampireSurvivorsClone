@@ -11,7 +11,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
     [RequireComponent(typeof(AttackSystem))]
     [RequireComponent(typeof(PlayerRunTimeDataNetwork))]
     [RequireComponent(typeof(Health))]
-    public class Player : NetworkBehaviour, IUpdatable
+    public class Player : DamageableCharacter, IUpdatable
     {
         private PlayerMovement _playerMovement;
         private AttackSystem _attackSystem;

@@ -906,6 +906,7 @@ MonoBehaviour:
     RawGuidValue: 2425eae7bcdcc454bbe5d4bdea2022a2
   _networkServicesParent: {fileID: 1291402729}
   _map: {fileID: 1520487244}
+  _camera: {fileID: 1302164324}
 --- !u!114 &2107132882
 MonoBehaviour:
   m_ObjectHideFlags: 0

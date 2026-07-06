@@ -4,6 +4,7 @@ using _Project.Scripts.CompositionRoot.EntryPoints;
 using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network;
 using _Project.Scripts.Gameplay.Network.Services;
+using _Project.Scripts.Gameplay.Network.Services.BaseComponent.Local;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Implementation;
@@ -31,11 +32,13 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         [Header("OnScene:")]
         [SerializeField] private NetworkTransform _networkServicesParent;
         [SerializeField] private Map _map;
+        [SerializeField] private Camera _camera;
         
         public override void InstallBindings()
         {
             BindIsSingle<GeneralNetworkObjectsCreator>();
             BindIsSingle<NetworkBehavioursRepository>();
+            BindIsSingle<CameraController>().WithArguments(_camera);
             Container.Bind<Map>().FromInstance(_map).AsSingle();
             Container.Bind<NetworkRunner>()
                 .FromFactory<GeneralNetworkObjectFactory<NetworkRunner>>().AsSingle();
