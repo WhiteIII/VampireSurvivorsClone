@@ -21,7 +21,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
         [Networked] private PlayerFactory Factory { get; set; }
         [Networked] private PlayerRepository PlayerRepository { get; set; }
 
-        [Inject] private async void Construct(
+        [Inject] private async UniTask Construct(
             AsyncDependenciesRepository asyncDependenciesRepository,
             NetworkRunnerCallBacksListener callBacksListener,
             SpawnPositionHelper spawnPositionHelper)
@@ -81,8 +81,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
                 return;
             if (PlayerRepository.TryGetByPlayerRef(out Player _, playerRef))
                 return;
-            await InitializeTask;
-            Factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef).Forget();
+            await InitializeTask; 
+            await Factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef);
         }
     }
 }

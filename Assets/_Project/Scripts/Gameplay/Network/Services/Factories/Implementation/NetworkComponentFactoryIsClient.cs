@@ -10,22 +10,15 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
         where T : NetworkBehaviour
     {
         private readonly NetworkBehavioursRepository _repository;
-        private readonly DiContainer _container;
         
-        public NetworkComponentFactoryIsClient(NetworkBehavioursRepository repository, DiContainer container)
-        {
+        public NetworkComponentFactoryIsClient(NetworkBehavioursRepository repository) => 
             _repository = repository;
-            _container = container;
-        }
 
         public async UniTask<T> Create()
         {
             await _repository.InitialisationTask;
             if (_repository.TryGet(out T component))
-            {
-                _container.Inject(component);
                 return component;
-            }
             throw new Exception("Component not found!");
         }
     }

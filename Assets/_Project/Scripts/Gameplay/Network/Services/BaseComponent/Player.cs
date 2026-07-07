@@ -1,3 +1,4 @@
+using _Project.Scripts.Gameplay.Network.Services.BaseComponent.Local;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent.UpgradeSystem;
 using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.InputSystem;
@@ -7,6 +8,7 @@ using UnityEngine;
 
 namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
 {
+    [RequireComponent(typeof(CameraSetter))]
     [RequireComponent(typeof(PlayerMovement))]
     [RequireComponent(typeof(AttackSystem))]
     [RequireComponent(typeof(PlayerRunTimeDataNetwork))]
@@ -17,10 +19,12 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
         private AttackSystem _attackSystem;
         private Health _health;
         
-        public PlayerRef PlayerRef { get; private set; }
+        [Networked] private PlayerRef NetworkedPlayerRef { get; set; }
+        
+        public PlayerRef PlayerRef => NetworkedPlayerRef;
         
         public void Initialize(PlayerRef playerRef) =>  
-            PlayerRef = playerRef;
+            NetworkedPlayerRef = playerRef;
 
         public override async void Spawned()
         {

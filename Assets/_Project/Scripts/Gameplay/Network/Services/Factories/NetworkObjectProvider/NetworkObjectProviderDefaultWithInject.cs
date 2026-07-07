@@ -21,8 +21,13 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProv
         
         protected T AddComponentOnNetworkObject<T>(GameObject gameObject) where T : Behaviour =>
             _instantiator.InstantiateComponent<T>(gameObject);
-        
-        protected override NetworkObject InstantiatePrefab(NetworkRunner _, NetworkObject prefab) => 
-            _instantiator.InstantiatePrefab(prefab.gameObject).GetComponent<NetworkObject>();
+
+        protected override NetworkObject InstantiatePrefab(NetworkRunner networkRunner, NetworkObject prefab)
+        {
+            if (networkRunner.IsServer)
+                return _instantiator.InstantiatePrefab(prefab.gameObject).GetComponent<NetworkObject>();
+            return Instantiate(prefab.gameObject).GetComponent<NetworkObject>();
+        }
+        //TODO Добавить Dictionary в который будут кладся префабы и булевое значение через метод, по которому можно будет определить, нужно инжектить или нет 
     }
 }
