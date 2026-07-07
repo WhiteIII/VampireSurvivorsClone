@@ -5,6 +5,7 @@ using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementation
@@ -28,12 +29,17 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
             EndInitialization();
         }
 
-        public async UniTask<T> Create<T>(NetworkPrefabRef networkPrefabRef, Vector3 position, PlayerRef playerRef)
+        public async UniTask<T> Create<T>(AssetReference assetReference, bool isWithInjection, Vector3 spawnPosition, PlayerRef playerRef)
             where T : Player
         {
-            T player = await CreateWithParameters<T>(networkPrefabRef, position, null, playerRef);
+            T player = await CreateWithParameters<T>(
+                assetReference,
+                isWithInjection,
+                spawnPosition,
+                null,
+                playerRef);
             player.Initialize(playerRef);
             return player;
-        } 
+        }
     }
 }

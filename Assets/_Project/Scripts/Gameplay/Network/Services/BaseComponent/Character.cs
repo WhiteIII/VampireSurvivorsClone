@@ -7,11 +7,11 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
     public class Character : NetworkBehaviour
     {
         public ReadOnlyReactiveProperty<Vector3> Position { get; private set; }
-        [Networked] private uint NetworkId { get; set; }
+        [Networked] private uint NetworkCharacterId { get; set; }
         [Networked] private NetworkBool NetworkIsActive { get; set; }
         
         public bool IsActive => NetworkIsActive;
-        public uint EnemyId => NetworkId;
+        public uint CharacterId => NetworkCharacterId;
 
         private void Awake()
         {
@@ -23,7 +23,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
         }
 
         public void SetId(uint id) => 
-            NetworkId = id;
+            NetworkCharacterId = id;
 
         public void Enable() => 
             NetworkIsActive = true;

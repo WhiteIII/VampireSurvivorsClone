@@ -1,4 +1,3 @@
-using System;
 using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Implementation;
@@ -82,7 +81,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
             if (PlayerRepository.TryGetByPlayerRef(out Player _, playerRef))
                 return;
             await InitializeTask; 
-            await Factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef);
+            await Factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef, true);
         }
     }
 }

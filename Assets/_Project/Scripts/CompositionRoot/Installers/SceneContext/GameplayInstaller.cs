@@ -19,6 +19,7 @@ using _Project.Scripts.Gameplay.Services;
 using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
@@ -26,8 +27,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
     public class GameplayInstaller : BaseNetworkInstaller
     {
         [Header("NetworkPrefabs:")] 
-        [SerializeField] private NetworkPrefabRef _playerPrefabAssetReference;
-        [SerializeField] private NetworkPrefabRef _enemyPrefabAssetReference;
+        [SerializeField] private AssetReference _playerPrefabAssetReference;
+        [SerializeField] private AssetReference _enemyPrefabAssetReference;
         
         [Header("OnScene:")]
         [SerializeField] private NetworkTransform _networkServicesParent;

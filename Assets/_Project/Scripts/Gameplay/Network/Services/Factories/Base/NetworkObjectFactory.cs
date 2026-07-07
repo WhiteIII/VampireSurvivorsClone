@@ -18,7 +18,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Base
         }
 
         public UniTask<TValue> Create() => 
-            _networkObjectsCreator.Create<TValue>(PrefabAssetReference);
+            _networkObjectsCreator.Create<TValue>(PrefabAssetReference, true);
 
         public void Despawn(TValue item) => 
             _networkObjectsCreator.Despawn(item);

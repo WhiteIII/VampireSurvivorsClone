@@ -19,6 +19,8 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
         private readonly FusionGameStarter _gameStarter;
         private readonly AssetReference _enemiesBarsWindowAssetReference;
         private readonly AssetReference _enemyBarAssetReference;
+        private readonly AssetReference _playerAssetReference;
+        private readonly AssetReference _enemyAssetReference;
         private readonly NetworkBehavioursRepository _networkBehavioursRepository;
         
         public GameplayEntryPoint(
@@ -30,7 +32,9 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             [Inject(Id = "EnemyBarAssetReference")] AssetReference enemyBarAssetReference,
             AssetsLoader assetsLoader,
             FusionGameStarter fusionGameStarter,
-            NetworkBehavioursRepository networkBehavioursRepository)
+            NetworkBehavioursRepository networkBehavioursRepository,
+            [Inject(Id = "PlayerPrefabAssetReference")]AssetReference playerAssetReference,
+            [Inject(Id = "EnemyPrefabAssetReference")]AssetReference enemyAssetReference)
         {
             _initializableRepository = initializableRepository;
             _uiController = uiController;
@@ -40,6 +44,8 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             _assetsLoader = assetsLoader;
             _gameStarter = fusionGameStarter;
             _networkBehavioursRepository = networkBehavioursRepository;
+            _playerAssetReference = playerAssetReference;
+            _enemyAssetReference = enemyAssetReference;
         }
 
         public async void Initialize()
@@ -55,10 +61,21 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             _loadingWindowViewModel.ResetLoadingProgress();
         }
 
+        private void OnGameEnd()
+        {
+            _assetsLoader.UnloadAssets(
+                _enemiesBarsWindowAssetReference, 
+                _enemyBarAssetReference, 
+                _playerAssetReference,
+                _enemyAssetReference);
+        }
+        
         private void AddAssetsForLoading()
         {
             _assetsLoader.AddAsset(_enemiesBarsWindowAssetReference);
             _assetsLoader.AddAsset(_enemyBarAssetReference);
+            _assetsLoader.AddAsset(_playerAssetReference);
+            _assetsLoader.AddAsset(_enemyAssetReference);
         }
 
         private int GetTotalTasksCount()

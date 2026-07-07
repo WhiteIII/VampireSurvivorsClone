@@ -1,9 +1,10 @@
+using Fusion;
 using UnityEngine;
 using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent.Local
 {
-    public class CameraSetter : MonoBehaviour
+    public class CameraSetter : NetworkBehaviour
     {
         [SerializeField] private Transform _cameraAnchorPoint;
         
@@ -11,10 +12,12 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent.Local
         
         [Inject] private void Construct(CameraController cameraController) => 
             _cameraController = cameraController;
-        //TODO Construct вызывается сразу у двух игроков, от сюда баги с камерой
         
         private void LateUpdate()
         {
+            if (HasInputAuthority == false)
+                return;
+            
             _cameraController.MoveTo(_cameraAnchorPoint.position);
         }
     }

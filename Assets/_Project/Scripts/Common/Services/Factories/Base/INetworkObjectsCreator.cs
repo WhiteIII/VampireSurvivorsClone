@@ -9,8 +9,8 @@ namespace _Project.Scripts.Common.Services.Factories.Base
     {
         Observable<TBaseItem> OnSpawn { get; }
         Observable<TBaseItem> OnDespawn { get; }
-        UniTask<T> Create<T>(AssetReference assetReference) where T : TBaseItem;
-        UniTask<T> Create<T>(AssetReference assetReference, Vector3 position) where T : TBaseItem;
+        UniTask<T> Create<T>(AssetReference assetReference, bool isWithInjection) where T : TBaseItem;
+        UniTask<T> Create<T>(AssetReference assetReference, bool isWithInjection, Vector3 position) where T : TBaseItem;
         void Despawn(TBaseItem item);
     }
 }

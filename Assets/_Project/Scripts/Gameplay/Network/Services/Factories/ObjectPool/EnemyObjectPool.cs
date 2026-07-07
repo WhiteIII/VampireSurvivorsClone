@@ -99,10 +99,10 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
                 OnPositionChanged = enemy.Position,
                 OnHealthChanged = enemy.OnHealthChanged,
                 OnMaxHealthChanged = enemy.OnMaxHealthChanged,
-                EnemyId = enemy.EnemyId
+                EnemyId = enemy.CharacterId
             });
 
         private void OnRelease(Enemy enemy) => 
-            _viewModel.Remove(enemy.EnemyId);
+            _viewModel.Remove(enemy.CharacterId);
     }
 }

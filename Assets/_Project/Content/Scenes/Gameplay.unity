@@ -556,13 +556,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1302164322}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.22478093, y: 0, z: 0, w: 0.9744094}
   m_LocalPosition: {x: 0, y: 8.49, z: -13.14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 25.98, y: 0, z: 0}
 --- !u!114 &1302164326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -901,9 +901,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerPrefabAssetReference:
-    RawGuidValue: 7bdc7304802497b409b7c8512eb847c3
+    m_AssetGUID: 7bdc7304802497b409b7c8512eb847c3
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
   _enemyPrefabAssetReference:
-    RawGuidValue: 2425eae7bcdcc454bbe5d4bdea2022a2
+    m_AssetGUID: 2425eae7bcdcc454bbe5d4bdea2022a2
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
   _networkServicesParent: {fileID: 1291402729}
   _map: {fileID: 1520487244}
   _camera: {fileID: 1302164324}

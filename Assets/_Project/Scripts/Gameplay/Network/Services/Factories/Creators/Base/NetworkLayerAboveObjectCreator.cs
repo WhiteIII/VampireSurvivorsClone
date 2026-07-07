@@ -56,11 +56,11 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         public void OnHostMigration(GeneralNetworkObjectsRepository generalNetworkObjectsRepository) =>
             _networkObjectCreator.OnHostMigration(generalNetworkObjectsRepository);
 
-        public UniTask<T> Create<T>(AssetReference assetReference) where T : TBaseItem =>
-            CreateWithParameters<T>(assetReference);
+        public UniTask<T> Create<T>(AssetReference assetReference, bool isWithInjection) where T : TBaseItem =>
+            CreateWithParameters<T>(assetReference, isWithInjection);
 
-        public UniTask<T> Create<T>(AssetReference assetReference, Vector3 position) where T : TBaseItem => 
-            CreateWithParameters<T>(assetReference, position);
+        public UniTask<T> Create<T>(AssetReference assetReference, bool isWithInjection, Vector3 position) where T : TBaseItem => 
+            CreateWithParameters<T>(assetReference, isWithInjection, position);
 
         public UniTask<T> Create<T>(NetworkPrefabRef assetReference, Vector3 position) where T : TBaseItem =>
             CreateWithParameters<T>(assetReference, position);
@@ -89,17 +89,19 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         
         protected async UniTask<T> CreateWithParameters<T>(
             AssetReference assetReference, 
+            bool isWithInjection = true,
             Vector3? position = null, 
             Quaternion? rotation = null,
             PlayerRef? playerRef = null) where T : TBaseItem
         {
             await InitializeTask;
             T spawnedObject = await _networkObjectCreator
-                .CreateWithParameters<T>(assetReference, position, rotation, playerRef);
+                .CreateWithParameters<T>(assetReference, isWithInjection, position, rotation, playerRef);
             return GameLoop.TryRegister(TryAddInRepository(spawnedObject));
         }
 
         protected async UniTask<T> CreateEmptyObjectWithParameters<T>(
+            bool isWithInjection = true,
             NetworkTransform parent = null,
             Vector3? position = null, 
             Quaternion? rotation = null,
@@ -107,7 +109,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         {
             await InitializeTask;
             T spawnedObject = await _networkObjectCreator
-                .CreateEmptyObjectWithParameters<T>(parent, position, rotation, playerRef);
+                .CreateEmptyObjectWithParameters<T>(parent, isWithInjection, position, rotation, playerRef);
             return GameLoop.TryRegister(TryAddInRepository(spawnedObject));
         }
         

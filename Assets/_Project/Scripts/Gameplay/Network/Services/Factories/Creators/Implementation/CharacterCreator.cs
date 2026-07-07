@@ -28,10 +28,10 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
             EndInitialization();
         }
 
-        public async UniTask<T> CreateWithView<T>(AssetReference assetReference, Vector3 position) 
+        public async UniTask<T> CreateWithView<T>(AssetReference assetReference, bool isWithInject, Vector3 position) 
             where T : Character
         {
-            T character = await Create<T>(assetReference, position);
+            T character = await Create<T>(assetReference, isWithInject, position);
             if (character.TryGetComponent(out Health health))
             {
                 

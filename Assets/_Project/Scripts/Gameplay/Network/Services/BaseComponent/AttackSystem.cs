@@ -1,6 +1,7 @@
 using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent.UpgradeSystem;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
+using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
 using Zenject;
@@ -13,7 +14,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
         [Networked] private PlayerRunTimeDataNetwork PlayerData { get; set; }
         [Networked] private TickTimer Timer { get; set; }
 
-        [Inject] private async void Construct(AsyncDependenciesRepository asyncDependenciesRepository)
+        [Inject] private async UniTask Construct(AsyncDependenciesRepository asyncDependenciesRepository)
         {
             bool hasStateAuthority = await GetStateAuthorityAsync();
             if (hasStateAuthority == false)

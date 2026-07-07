@@ -5,20 +5,21 @@ using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementati
 using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
 {
-    public class PlayerFactory : NetworkFactory<Player, PlayerCreator>, INetworkFactory<Player, Vector3, PlayerRef>
+    public class PlayerFactory : NetworkFactory<Player, PlayerCreator>, INetworkFactory<Player, Vector3, PlayerRef, bool>
     {
-        private NetworkPrefabRef _playerAssetReference;
-
-        [Inject] private async void Construct(
-            [Inject(Id = "PlayerPrefabAssetReference")] NetworkPrefabRef prefabAssetReference, 
+        private AssetReference _playerAssetReference;
+        
+        [Inject] private async UniTask Construct(
+            [Inject(Id = "PlayerPrefabAssetReference")] AssetReference prefabAssetReference,
             AsyncDependenciesRepository asyncDependenciesRepository)
         {
             _playerAssetReference = prefabAssetReference;
-
+            
             bool hasStateAuthority = await GetStateAuthorityAsync();
             if (hasStateAuthority == false)
             {
@@ -31,8 +32,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
             EndInitialization();
         } 
         
-        public UniTask<Player> Create(Vector3 spawnPosition, PlayerRef playerRef) => 
-            Creator.Create<Player>(_playerAssetReference, spawnPosition, playerRef);
+        public UniTask<Player> Create(Vector3 spawnPosition, PlayerRef playerRef, bool isWithInjection) => 
+            Creator.Create<Player>(_playerAssetReference, isWithInjection, spawnPosition, playerRef);
 
         public void Despawn(Player item) => 
             Creator.Despawn(item);

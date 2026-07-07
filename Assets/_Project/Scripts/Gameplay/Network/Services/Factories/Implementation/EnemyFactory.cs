@@ -5,16 +5,17 @@ using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implementati
 using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
 {
     public class EnemyFactory : NetworkFactory<Enemy, EnemyCreator>, INetworkFactory<Enemy, Vector3>
     {
-        private NetworkPrefabRef _enemyAssetReference;
+        private AssetReference _enemyAssetReference;
         
         [Inject] private async void Construct(
-            [Inject(Id = "EnemyPrefabAssetReference")] NetworkPrefabRef prefabAssetReference, 
+            [Inject(Id = "EnemyPrefabAssetReference")] AssetReference prefabAssetReference, 
             AsyncDependenciesRepository asyncDependenciesRepository)
         {
             _enemyAssetReference = prefabAssetReference;
@@ -32,7 +33,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
         } 
         
         public UniTask<Enemy> Create(Vector3 spawnPosition) => 
-            Creator.Create<Enemy>(_enemyAssetReference, spawnPosition);
+            Creator.Create<Enemy>(_enemyAssetReference, true, spawnPosition);
 
         public void Despawn(Enemy item) => 
             Creator.Despawn(item);
