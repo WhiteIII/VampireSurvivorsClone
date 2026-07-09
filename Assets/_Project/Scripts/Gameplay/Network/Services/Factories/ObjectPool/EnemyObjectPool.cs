@@ -22,7 +22,6 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
         [Networked] private EnemySpawnPositionHelper PositionHelper { get; set; }
         [Networked] private IdGenerator IdGenerator { get; set; }
         [Networked] private EnemyFactory Factory { get; set; }
-        [Networked] private EnemyRepository Repository { get; set; }
         
         [Inject] private async UniTask Construct(
             IInstantiator instantiator, 
@@ -41,7 +40,6 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
             Factory = await asyncDependenciesRepository.GetInstanceAsync<EnemyFactory>();
             IdGenerator = await asyncDependenciesRepository.GetInstanceAsync<IdGenerator>();
             PositionHelper = await asyncDependenciesRepository.GetInstanceAsync<EnemySpawnPositionHelper>();
-            Repository = await asyncDependenciesRepository.GetInstanceAsync<EnemyRepository>();
             EndInitialization();
         }
 

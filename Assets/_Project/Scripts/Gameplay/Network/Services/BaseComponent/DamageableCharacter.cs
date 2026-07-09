@@ -17,6 +17,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
         {
             _health = GetComponent<Health>();
             OnHealthChanged = _health.OnHealthChanged;
+            OnMaxHealthChanged = _health.OnMaxHealthChanged;
             _health
                 .OnDead
                 .Subscribe(_ => _onDead.OnNext(this))

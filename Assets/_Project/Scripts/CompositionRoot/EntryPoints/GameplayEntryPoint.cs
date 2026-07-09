@@ -64,6 +64,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_gameStarter.StartGameAsync());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_networkBehavioursRepository.InitializeAsync());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_initializableRepository.GetTasks());
+            await _uiController.CreateAndOpenWindowAsync<EnemiesBarsWindow>();
             await _uiController.CloseWindowAsync<LoadingWindow>();
             _loadingWindowViewModel.ResetLoadingProgress();
             await IfIsHost();
