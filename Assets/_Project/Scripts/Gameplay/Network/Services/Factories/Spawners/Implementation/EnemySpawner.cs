@@ -6,6 +6,7 @@ using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
 using _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Base;
 using _Project.Scripts.Gameplay.Network.Services.GameCycle;
+using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Cysharp.Threading.Tasks;
 using Fusion;
 using R3;
@@ -24,6 +25,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implemen
                                     || IsActive == false
                                     || SpawnedEnemies.Count == MAX_SPAWNED_ENEMIES;
         
+        [Networked] private EnemyRepository Repository { get; set; }
         [Networked] private TickTimer Timer { get; set; }
         [Networked] private EnemyObjectPool Pool { get; set; }
         [Networked, UnityNonSerialized] private NetworkBool IsActive { get; set; } = false;
@@ -43,6 +45,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implemen
 
             SpawnCooldown = configService.GetConfig<IGameConfig>().EnemySpawnCooldown;
             Pool = await asyncDependenciesRepository.GetInstanceAsync<EnemyObjectPool>();
+            Repository = await asyncDependenciesRepository.GetInstanceAsync<EnemyRepository>();
             EndInitialization();
         }
 

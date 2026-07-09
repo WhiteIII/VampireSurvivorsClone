@@ -76,7 +76,7 @@ namespace _Project.Scripts.View.Base
     {
         protected T ViewModel { get; private set; }
 
-        [Inject] private void Construct(T viewModel) =>
+        [Inject] private void Construct([InjectOptional] T viewModel) =>
             ViewModel = viewModel;
 
         protected sealed override void OnAwakeMethod()

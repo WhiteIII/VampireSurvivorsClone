@@ -1,5 +1,6 @@
 using _Project.Scripts.Common.Services.Factories.Implementation;
 using _Project.Scripts.View.Base;
+using _Project.Scripts.View.Implementation;
 using _Project.Scripts.View.Services;
 using _Project.Scripts.VIew.Services.Factories.Implementation;
 using _Project.Scripts.View.Services.Repositrories;
@@ -30,10 +31,13 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             
             BindWindowFactory<LoadingWindowFactory>();
             BindWindowFactory<MenuWindowFactory>();
+            Container.Bind<IFactory<EnemyBar>>().To<EnemyBarFactory>().WhenInjectedInto<EnemiesBarsWindow>();
+            BindWindowFactory<EnemiesBarsWindowFactory>();
             
             BindInterfacesAndSelfToIsSingle<MenuViewModel>();
             BindIsSingle<CreateGameOrConnectToGameViewModel>();
             BindIsSingle<LoadingWindowViewModel>();
+            BindIsSingle<EnemiesBarsViewModel>();
             
             BindWindowsServices();
         }

@@ -70,6 +70,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindNetworkComponent<EnemyObjectPool>();
             BindNetworkComponent<EnemySpawnPositionHelper>();
             BindNetworkComponent<IdGenerator>();
+            BindNetworkComponent<EnemyRepository>();
             
             BindInterfacesToIsSingle<GameplayEntryPoint>();
         }

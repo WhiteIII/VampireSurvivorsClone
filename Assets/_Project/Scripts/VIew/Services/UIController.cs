@@ -20,22 +20,6 @@ namespace _Project.Scripts.View.Services
             _uiRoot = uiRoot;
         }
 
-        public bool FactoryContains<T>() where T : IFactory<Window>
-        {
-            foreach (IFactory<Window> windowFactory in _windowFactories)
-            {
-                if (windowFactory is T _)
-                    return true;
-            }    
-            return false;
-        }
-        
-        public T Add<T>(T windowFactory) where T : IFactory<Window>
-        {
-            _windowFactories.Add(windowFactory);
-            return windowFactory;
-        }
-        
         public async UniTask CreateAndOpenWindowAsync<T>()
             where T : Window
         {
@@ -72,16 +56,6 @@ namespace _Project.Scripts.View.Services
             await _repository.CloseAndDestroyWindows(windows);
         }
 
-        public T GetWindowFactoryByFactoryType<T>() where T : IFactory<Window>
-        {
-            foreach (IFactory<Window> windowFactory in _windowFactories)
-            {
-                if (windowFactory is T resultFactory)
-                    return resultFactory;
-            }
-            throw new Exception("Factory window not found!");
-        }
-        
         private IFactory<T> GetWindowFactory<T>()
             where T : Window
         {
