@@ -32,7 +32,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
             _viewModel = viewModel;
             bool stateAuthority = await GetStateAuthorityAsync();
 
-            if (stateAuthority)
+            if (stateAuthority == false)
             {
                 EndInitialization();
                 return;

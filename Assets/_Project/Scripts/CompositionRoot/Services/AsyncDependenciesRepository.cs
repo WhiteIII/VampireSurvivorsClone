@@ -10,6 +10,9 @@ namespace _Project.Scripts.CompositionRoot.Services
         private readonly List<IAsyncDependence> _dependencies;
         private readonly List<object> _instances = new();
 
+        public bool IsInitialized => InstancesIsDone;
+        public IEnumerable<object> Instances => _instances; 
+        
         private bool InstancesIsDone => _instances.Count == _dependencies.Count;
         
         public AsyncDependenciesRepository(List<IAsyncDependence> dependencies) =>

@@ -1,11 +1,8 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using _Project.Scripts.Common.Services.Initialize;
-using _Project.Scripts.Common.Services.Repositories.Base;
 using Cysharp.Threading.Tasks;
 using Fusion;
-using R3;
-using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Repositories
 {
@@ -14,7 +11,6 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
         private readonly List<NetworkBehaviour> _list = new();
 
         private readonly NetworkRunner _networkRunner;
-        private readonly NetworkRunnerCallBacksListener _callBacksListener;
 
         private bool _isActive = false;
         
@@ -29,13 +25,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
             }
         }
 
-        public NetworkBehavioursRepository(
-            NetworkRunner networkRunner, 
-            NetworkRunnerCallBacksListener callBacksListener)
-        {
+        public NetworkBehavioursRepository(NetworkRunner networkRunner) =>
             _networkRunner = networkRunner;
-            _callBacksListener = callBacksListener;
-        }
 
         public async UniTask InitializeAsync()
         {
@@ -52,6 +43,18 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
             _isActive = true;
         }
 
+        public T Get<T>() 
+            where T : NetworkBehaviour
+        {
+            foreach (NetworkBehaviour networkBehaviour in _list)
+            {
+                if (networkBehaviour is T concreteNetworkBehaviour)
+                    return concreteNetworkBehaviour;
+            }
+
+            throw new Exception("NetworkBehaviour not found!");
+        }
+        
         public bool TryGet<T>(out T item) where T : NetworkBehaviour
         {
             item = null;

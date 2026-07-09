@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using _Project.Scripts.CompositionRoot.Services;
-using _Project.Scripts.Gameplay.Network.Services.HostMigration;
-using _Project.Scripts.Gameplay.Network.Services.Repositories;
+using Cysharp.Threading.Tasks;
 using Fusion;
+using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
 {
@@ -14,6 +14,13 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
         
         private bool _isPaused;
 
+        [Inject] private async UniTask Construct(GameLoopLocalBuffer buffer)
+        {
+            await buffer.InitializeAsync();
+            foreach (IUpdatable updatable in buffer.Updatables)
+                Register(updatable);
+        }
+        
         public void AfterHostMigration()
         {
             List<NetworkObject> networkObjects = Runner.GetAllNetworkObjects();

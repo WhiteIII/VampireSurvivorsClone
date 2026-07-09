@@ -39,6 +39,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         {
             BindIsSingle<GeneralNetworkObjectsCreator>();
             BindIsSingle<NetworkBehavioursRepository>();
+            BindIsSingle<GameLoopLocalBuffer>();
             BindIsSingle<CameraController>().WithArguments(_camera);
             Container.Bind<Map>().FromInstance(_map).AsSingle();
             Container.Bind<NetworkRunner>()

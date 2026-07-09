@@ -17,12 +17,18 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implemen
     {
         private const int MAX_SPAWNED_ENEMIES = 16;
         
+        private readonly Dictionary<Observable<Character>, CompositeDisposable> _deadObservers = new(MAX_SPAWNED_ENEMIES);
+
+        private bool SpawnIsNotValid => HasStateAuthority == false
+                                    || IsInitializeEnd == false
+                                    || IsActive == false
+                                    || SpawnedEnemies.Count == MAX_SPAWNED_ENEMIES;
+        
         [Networked] private TickTimer Timer { get; set; }
         [Networked] private EnemyObjectPool Pool { get; set; }
         [Networked, UnityNonSerialized] private NetworkBool IsActive { get; set; } = false;
         [Networked, UnityNonSerialized] private float SpawnCooldown { get; set; }
         [Networked, Capacity(MAX_SPAWNED_ENEMIES)] private NetworkLinkedList<Enemy> SpawnedEnemies => default;
-        private readonly Dictionary<Observable<Character>, CompositeDisposable> _deadObservers = new(MAX_SPAWNED_ENEMIES);
 
         [Inject] private async UniTask Construct(
             IConfigService configService, 
@@ -39,6 +45,9 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implemen
             Pool = await asyncDependenciesRepository.GetInstanceAsync<EnemyObjectPool>();
             EndInitialization();
         }
+
+        protected override void OnSpawnMethod() => 
+            Timer = TickTimer.CreateFromSeconds(Runner, SpawnCooldown);
 
         public void AfterHostMigration()
         {
@@ -62,21 +71,31 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implemen
         
         public void GameLoopUpdate()
         {
-            if (HasStateAuthority == false && IsInitializeEnd)
+            if (SpawnIsNotValid)
                 return;
             
             if (Timer.Expired(Runner))
             {
-                Spawn().Forget();
                 Timer = TickTimer.CreateFromSeconds(Runner, SpawnCooldown);   
+                Spawn().Forget();
             }
         }
 
-        public void Enable() => 
+        public void Enable()
+        {
+            if (HasStateAuthority == false)
+                return;
+            
             IsActive = true;
+        }
 
-        public void Disable() => 
+        public void Disable()
+        {
+            if (HasStateAuthority == false)
+                return;
+            
             IsActive = false;
+        }
 
         private async UniTask Spawn()
         {

@@ -3,7 +3,8 @@ using Fusion;
 
 namespace _Project.Scripts.CompositionRoot.Services
 {
-    public abstract class InjectNetworkBehaviour : NetworkBehaviour
+    public abstract class 
+        InjectNetworkBehaviour : NetworkBehaviour
     {
         private bool _isSpawned = false;
         
