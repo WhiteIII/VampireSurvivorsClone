@@ -36,7 +36,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
             playerData.Setup(
                 x => _health.SetMaxHealth(x), 
                 x => _playerMovement.SetMovementSpeed(x));
-            _health.SetMaxHealth(playerData.Health);
+            _health.Initialize(playerData.Health);
             _playerMovement.SetMovementSpeed(playerData.MovementSpeed);
         }
         

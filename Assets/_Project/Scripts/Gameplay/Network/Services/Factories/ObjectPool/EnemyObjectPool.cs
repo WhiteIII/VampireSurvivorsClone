@@ -8,21 +8,28 @@ using _Project.Scripts.Gameplay.Services;
 using _Project.Scripts.ViewModel.Implementation;
 using Cysharp.Threading.Tasks;
 using Fusion;
+using R3;
 using Zenject;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
 {
-    public class EnemyObjectPool : InjectNetworkBehaviour, IAsyncObjectPool<Enemy>, IAfterHostMigration
+    public class EnemyObjectPool : InjectNetworkBehaviour, IAsyncObjectPoolWithObservables<Enemy>, IAfterHostMigration
     {
+        public Observable<Enemy> OnGetObservable { get; }
+        public Observable<Enemy> OnReleaseObservable { get; }
+        
         private EnemiesBarsViewModel _viewModel;
 
+        private readonly Subject<Enemy> _onGetObservable = new();
+        private readonly Subject<Enemy> _onReleaseObservable = new();
         private readonly List<Enemy> _enableEnemies = new();
         private readonly List<Enemy> _disableEnemies = new();
-        
+
         [Networked] private EnemySpawnPositionHelper PositionHelper { get; set; }
         [Networked] private IdGenerator IdGenerator { get; set; }
         [Networked] private EnemyFactory Factory { get; set; }
-        
+
+
         [Inject] private async UniTask Construct(
             IInstantiator instantiator, 
             EnemiesBarsViewModel viewModel,
@@ -90,7 +97,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
             enemy.SetId(IdGenerator.GetId());
             return enemy;
         }
-        
+
         private void OnGet(Enemy enemy) =>
             _viewModel.Add(new EnemyBarViewModelData
             {

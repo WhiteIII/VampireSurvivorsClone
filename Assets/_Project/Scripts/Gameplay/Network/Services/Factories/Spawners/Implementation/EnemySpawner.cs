@@ -18,7 +18,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implemen
     {
         private const int MAX_SPAWNED_ENEMIES = 16;
         
-        private readonly Dictionary<Observable<Character>, CompositeDisposable> _deadObservers = new(MAX_SPAWNED_ENEMIES);
+        private readonly Dictionary<Observable<DamageableCharacter>, CompositeDisposable> _deadObservers = new(MAX_SPAWNED_ENEMIES);
 
         private bool SpawnIsNotValid => HasStateAuthority == false
                                     || IsInitializeEnd == false
@@ -109,7 +109,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implemen
         private void AddEnemy(Enemy enemy)
         {
             SpawnedEnemies.Add(enemy);
-            Observable<Character> deadObserver = enemy.OnDead;
+            Observable<DamageableCharacter> deadObserver = enemy.OnDead;
             CompositeDisposable disposable = new();
             deadObserver
                 .Subscribe(x => RemoveEnemy((Enemy)x))
