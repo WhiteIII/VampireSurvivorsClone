@@ -9,11 +9,11 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
         public ReadOnlyReactiveProperty<int> OnHealthChanged { get; private set; }
         public ReadOnlyReactiveProperty<int> OnMaxHealthChanged { get; private set; }
         public Observable<Unit> OnDead => _onDead;
+        public Observable<Unit> OnRevive => _onRevive;
         
-        private readonly ReactiveProperty<int> _onHealthChanged = new();
-        private readonly ReactiveProperty<int> _onMaxHealthChanged = new();
         private readonly Subject<Unit> _onDead = new();
-
+        private readonly Subject<Unit> _onRevive = new();
+        
         [Networked] private int NetworkedMaxHealth { get; set; }
         [Networked] private int NetworkedCurrentHealth { get; set; }
         
@@ -35,22 +35,28 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
             NetworkedCurrentHealth = maxHealth;
         }
 
-        public void SetMaxHealth(int maxHealth)
-        {
-            int pastHealth = NetworkedMaxHealth;
+        public void SetMaxHealth(int maxHealth) => 
             NetworkedMaxHealth = maxHealth;
-            _onMaxHealthChanged.OnNext(NetworkedMaxHealth);
-        } 
 
-        public void Revive() => 
+        public void Revive()
+        {
             NetworkedCurrentHealth = NetworkedMaxHealth;
+            RPC_OnRevive();
+        } 
 
         public void TakeDamage(int damage)
         {
             NetworkedCurrentHealth = Mathf.Max(0, NetworkedCurrentHealth - damage);
-            _onHealthChanged.OnNext(NetworkedCurrentHealth);
             if (NetworkedCurrentHealth == 0)
-                _onDead.OnNext(Unit.Default);
+                RPC_OnDead();
         }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
+        private void RPC_OnDead() => 
+            _onDead.OnNext(Unit.Default);
+        
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
+        private void RPC_OnRevive() => 
+            _onRevive.OnNext(Unit.Default);
     }
 }

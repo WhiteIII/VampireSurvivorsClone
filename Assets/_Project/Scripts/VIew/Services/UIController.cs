@@ -55,7 +55,7 @@ namespace _Project.Scripts.View.Services
             _repository.DisableInteractableOnWindows(windows);
             await _repository.CloseAndDestroyWindows(windows);
         }
-
+        
         private IFactory<T> GetWindowFactory<T>()
             where T : Window
         {

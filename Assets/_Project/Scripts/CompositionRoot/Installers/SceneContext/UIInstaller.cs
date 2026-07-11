@@ -5,6 +5,7 @@ using _Project.Scripts.View.Services;
 using _Project.Scripts.VIew.Services.Factories.Implementation;
 using _Project.Scripts.View.Services.Repositrories;
 using _Project.Scripts.ViewModel.Implementation;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
@@ -32,8 +33,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindWindowFactory<LoadingWindowFactory>();
             BindWindowFactory<MenuWindowFactory>();
             Container.Bind<IFactory<EnemyBar>>().To<EnemyBarFactory>().WhenInjectedInto<EnemiesBarsWindow>();
-            BindWindowFactory<EnemiesBarsWindowFactory>();
-            
+            //BindAsyncWindowFactory<EnemiesBarsWindowFactory>();
+
             BindInterfacesAndSelfToIsSingle<MenuViewModel>();
             BindIsSingle<CreateGameOrConnectToGameViewModel>();
             BindIsSingle<LoadingWindowViewModel>();
@@ -52,5 +53,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         
         private void BindWindowFactory<T>() where T : IFactory<Window> =>
             Container.Bind<IFactory<Window>>().To<T>().AsSingle();
+        
+        private void BindAsyncWindowFactory<T>() where T : IFactory<UniTask<Window>> =>
+            Container.Bind<IFactory<UniTask<Window>>>().To<T>().AsSingle();
     }
 }

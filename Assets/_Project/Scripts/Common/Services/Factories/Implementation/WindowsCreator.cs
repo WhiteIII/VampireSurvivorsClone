@@ -10,8 +10,8 @@ namespace _Project.Scripts.Common.Services.Factories.Implementation
     {
         public WindowsCreator(
             WindowsRepository repository, 
-            IInstantiator instantiator, 
-            LocalAssetProvider localAssetProvider) : base(repository, instantiator, localAssetProvider)
+            DiContainer container, 
+            LocalAssetProvider localAssetProvider) : base(repository, localAssetProvider, container)
         {
         }
     }

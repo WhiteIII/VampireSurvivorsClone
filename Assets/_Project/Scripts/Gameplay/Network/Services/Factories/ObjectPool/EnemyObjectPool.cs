@@ -3,8 +3,6 @@ using _Project.Scripts.Common.Services.Factories.ObjectPools.Base;
 using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.BaseComponent;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Implementation;
-using _Project.Scripts.Gameplay.Network.Services.Repositories;
-using _Project.Scripts.Gameplay.Services;
 using _Project.Scripts.ViewModel.Implementation;
 using Cysharp.Threading.Tasks;
 using Fusion;
@@ -15,27 +13,21 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
 {
     public class EnemyObjectPool : InjectNetworkBehaviour, IAsyncObjectPoolWithObservables<Enemy>, IAfterHostMigration
     {
-        public Observable<Enemy> OnGetObservable { get; }
-        public Observable<Enemy> OnReleaseObservable { get; }
+        public Observable<Enemy> OnGetObservable => _onGetObservable;
+        public Observable<Enemy> OnReleaseObservable => _onReleaseObservable;
         
-        private EnemiesBarsViewModel _viewModel;
-
         private readonly Subject<Enemy> _onGetObservable = new();
         private readonly Subject<Enemy> _onReleaseObservable = new();
         private readonly List<Enemy> _enableEnemies = new();
         private readonly List<Enemy> _disableEnemies = new();
 
         [Networked] private EnemySpawnPositionHelper PositionHelper { get; set; }
-        [Networked] private IdGenerator IdGenerator { get; set; }
         [Networked] private EnemyFactory Factory { get; set; }
-
 
         [Inject] private async UniTask Construct(
             IInstantiator instantiator, 
-            EnemiesBarsViewModel viewModel,
             AsyncDependenciesRepository asyncDependenciesRepository)
         {
-            _viewModel = viewModel;
             bool stateAuthority = await GetStateAuthorityAsync();
 
             if (stateAuthority == false)
@@ -45,7 +37,6 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
             }
 
             Factory = await asyncDependenciesRepository.GetInstanceAsync<EnemyFactory>();
-            IdGenerator = await asyncDependenciesRepository.GetInstanceAsync<IdGenerator>();
             PositionHelper = await asyncDependenciesRepository.GetInstanceAsync<EnemySpawnPositionHelper>();
             EndInitialization();
         }
@@ -94,20 +85,13 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
         private async UniTask<Enemy> Create()
         {
             Enemy enemy = await Factory.Create(PositionHelper.GetSpawnPosition());
-            enemy.SetId(IdGenerator.GetId());
             return enemy;
         }
 
         private void OnGet(Enemy enemy) =>
-            _viewModel.Add(new EnemyBarViewModelData
-            {
-                OnPositionChanged = enemy.Position,
-                OnHealthChanged = enemy.OnHealthChanged,
-                OnMaxHealthChanged = enemy.OnMaxHealthChanged,
-                EnemyId = enemy.CharacterId
-            });
+            _onGetObservable.OnNext(enemy);
 
-        private void OnRelease(Enemy enemy) => 
-            _viewModel.Remove(enemy.CharacterId);
+        private void OnRelease(Enemy enemy) =>
+            _onReleaseObservable.OnNext(enemy);
     }
 }

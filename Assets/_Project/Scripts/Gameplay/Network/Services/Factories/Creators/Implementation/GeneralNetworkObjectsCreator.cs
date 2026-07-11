@@ -9,8 +9,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
     {
         public GeneralNetworkObjectsCreator(
             GeneralNetworkObjectsRepository repository, 
-            IInstantiator instantiator, 
-            LocalAssetProvider localAssetProvider) : base(repository, instantiator, localAssetProvider)
+            DiContainer container, 
+            LocalAssetProvider localAssetProvider) : base(repository, localAssetProvider, container)
         {
         }
     }

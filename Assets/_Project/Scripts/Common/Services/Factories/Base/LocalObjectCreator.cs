@@ -11,24 +11,34 @@ namespace _Project.Scripts.Common.Services.Factories.Base
     {
         private readonly IRepository<TBaseItem> _repository;
         private readonly LocalAssetProvider _localAssetProvider;
-        private readonly IInstantiator _instantiator;
-
+        private readonly DiContainer _container;
+        
         protected LocalObjectCreator(
             IRepository<TBaseItem> repository, 
-            IInstantiator instantiator, 
-            LocalAssetProvider localAssetProvider)
+            LocalAssetProvider localAssetProvider,
+            DiContainer container)
         {
             _repository = repository;
-            _instantiator = instantiator;
             _localAssetProvider = localAssetProvider;
+            _container = container;
         }
 
         public T Create<T>(AssetReference assetReference) where T : TBaseItem => 
             _repository.Add(
-                _instantiator.InstantiatePrefab(
+                _container.InstantiatePrefab(
                     _localAssetProvider.GetAsset<GameObject>(assetReference)).GetComponent<T>());
 
+        public TValue Create<TValue, TParameter>(AssetReference assetReference, TParameter parameter) 
+            where TValue : TBaseItem
+        {
+            DiContainer subContainer = _container.CreateSubContainer();
+            subContainer.Bind<TParameter>().FromInstance(parameter).WhenInjectedInto<TValue>();
+            return _repository.Add(
+                subContainer.InstantiatePrefab(
+                    _localAssetProvider.GetAsset<GameObject>(assetReference)).GetComponent<TValue>());
+        }
+        
         public T CreateComponentOnGameObject<T>() where T : TBaseItem => 
-            _repository.Add(_instantiator.InstantiateComponentOnNewGameObject<T>());
+            _repository.Add(_container.InstantiateComponentOnNewGameObject<T>());
     }
 }
