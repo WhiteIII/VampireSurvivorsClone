@@ -1,3 +1,4 @@
+using _Project.Scripts.Common.Services.Factories;
 using _Project.Scripts.Common.Services.Factories.Implementation;
 using _Project.Scripts.View.Base;
 using _Project.Scripts.View.Implementation;
@@ -32,13 +33,12 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             
             BindWindowFactory<LoadingWindowFactory>();
             BindWindowFactory<MenuWindowFactory>();
-            Container.Bind<IFactory<EnemyBar>>().To<EnemyBarFactory>().WhenInjectedInto<EnemiesBarsWindow>();
-            //BindAsyncWindowFactory<EnemiesBarsWindowFactory>();
+            Container.Bind<IFactory<EnemyBar>>().To<EnemyBarFactory>().AsSingle().WhenInjectedInto<EnemiesBarsWindow>();
+            BindAsyncWindowFactory<EnemiesBarsWindow, EnemiesBarsWindowFactory>();
 
             BindInterfacesAndSelfToIsSingle<MenuViewModel>();
             BindIsSingle<CreateGameOrConnectToGameViewModel>();
             BindIsSingle<LoadingWindowViewModel>();
-            BindIsSingle<EnemiesBarsViewModel>();
             
             BindWindowsServices();
         }
@@ -54,7 +54,13 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         private void BindWindowFactory<T>() where T : IFactory<Window> =>
             Container.Bind<IFactory<Window>>().To<T>().AsSingle();
         
-        private void BindAsyncWindowFactory<T>() where T : IFactory<UniTask<Window>> =>
-            Container.Bind<IFactory<UniTask<Window>>>().To<T>().AsSingle();
+        private void BindAsyncWindowFactory<TValue, TFactory>()
+            where TValue : Window
+            where TFactory : IFactory<UniTask<TValue>>
+        {
+            Container.Bind<TFactory>().AsSingle().WhenInjectedInto<AbstractOverAsyncFactory<TFactory, TValue>>();
+            Container.Bind<IAbstractOverAsyncFactory<Window>>()
+                .To<AbstractOverAsyncFactory<TFactory, TValue>>().AsSingle();
+        }
     }
 }
