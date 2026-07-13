@@ -9,11 +9,11 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
     public class GameLoopLocalBuffer : IAsyncInitializable
     {
         private readonly List<IUpdatable> _updatables = new();
-        private readonly AsyncDependenciesRepository _dependencies;
+        private readonly IAsyncDependenciesRepository _dependencies;
 
         public IEnumerable<IUpdatable> Updatables => _updatables;
         
-        public GameLoopLocalBuffer(AsyncDependenciesRepository dependencies) => 
+        public GameLoopLocalBuffer(IAsyncDependenciesRepository dependencies) => 
             _dependencies = dependencies;
 
         public async UniTask InitializeAsync()

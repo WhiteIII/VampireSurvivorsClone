@@ -3,10 +3,9 @@ using Fusion;
 
 namespace _Project.Scripts.CompositionRoot.Services
 {
-    public abstract class 
-        InjectNetworkBehaviour : NetworkBehaviour
+    public abstract class InjectNetworkBehaviour : NetworkBehaviour
     {
-        private bool _isSpawned = false;
+        private bool _isSpawned;
         
         [Networked, UnityNonSerialized] public NetworkBool IsInitializeEnd { get; set; } = false;
 
@@ -20,7 +19,7 @@ namespace _Project.Scripts.CompositionRoot.Services
             }
         }
 
-        protected UniTask WaitToSpawnTask
+        private UniTask WaitToSpawnTask
         {
             get
             {

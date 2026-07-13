@@ -12,8 +12,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
 {
     public class PlayerCreator : NetworkLayerAboveObjectCreator<Player>
     {
-        [Inject] private async void Construct(
-            AsyncDependenciesRepository dependenciesRepository,
+        [Inject] private async UniTask Construct(
+            IAsyncDependenciesRepository dependenciesRepository,
             IInstantiator instantiator)
         {
             bool hasStateAuthority = await GetStateAuthorityAsync();

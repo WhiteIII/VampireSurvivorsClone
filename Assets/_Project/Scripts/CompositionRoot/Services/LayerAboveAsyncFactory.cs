@@ -5,6 +5,7 @@ namespace _Project.Scripts.CompositionRoot.Services
 {
     public class LayerAboveAsyncFactory<TType, TFactory> : IFactory<AsyncDependence<TType>>
         where TFactory : IFactory<UniTask<TType>>
+        where TType : class
     {
         private readonly TFactory _factory;
         

@@ -1,4 +1,7 @@
 using _Project.Scripts.Common.SceneSwitcher;
+using _Project.Scripts.Common.Services.Initialize;
+using _Project.Scripts.CompositionRoot.EntryPoints;
+using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Fusion;
 using Zenject;
@@ -28,7 +31,21 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             _networkComponentCreationRepository = networkComponentCreationRepository;
         }
 
+        public sealed override void InstallBindings()
+        {
+            BindIsSingle<AsyncInitializableRepository>().WhenInjectedInto<GameplayEntryPoint>();
+            if (IsServer)
+                BindIsSingle<AsyncDependenciesRepository>().WhenInjectedInto<GeneralAsyncDependenciesRepository>();
+            else
+                BindIsSingle<AsyncDependenciesRepositoryClient>().WhenInjectedInto<GeneralAsyncDependenciesRepository>();
+            Container.Bind(typeof(IAsyncDependenciesRepository), typeof(IAsyncInitializable))
+                .To<GeneralAsyncDependenciesRepository>().AsSingle();
+            OnInstallBindings();
+        }
+        
         protected void RegisterNetworkPrefab<T>() where T : NetworkBehaviour => 
             _networkComponentCreationRepository.RegisterTypeAndGetTypeId<T>();
+        
+        protected abstract void OnInstallBindings();
     }
 }

@@ -16,7 +16,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
         
         [Inject] private async UniTask Construct(
             [Inject(Id = "PlayerPrefabAssetReference")] AssetReference prefabAssetReference,
-            AsyncDependenciesRepository asyncDependenciesRepository)
+            IAsyncDependenciesRepository asyncDependenciesRepository)
         {
             _playerAssetReference = prefabAssetReference;
             

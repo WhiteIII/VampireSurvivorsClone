@@ -14,9 +14,9 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
     {
         private AssetReference _enemyAssetReference;
         
-        [Inject] private async void Construct(
+        [Inject] private async UniTask Construct(
             [Inject(Id = "EnemyPrefabAssetReference")] AssetReference prefabAssetReference, 
-            AsyncDependenciesRepository asyncDependenciesRepository)
+            IAsyncDependenciesRepository asyncDependenciesRepository)
         {
             _enemyAssetReference = prefabAssetReference;
 

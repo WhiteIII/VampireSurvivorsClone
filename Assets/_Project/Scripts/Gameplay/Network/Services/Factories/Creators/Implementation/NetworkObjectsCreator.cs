@@ -1,6 +1,7 @@
 using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
+using Cysharp.Threading.Tasks;
 using Fusion;
 using Zenject;
 
@@ -8,8 +9,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
 {
     public class NetworkObjectsCreator : NetworkLayerAboveObjectCreator<NetworkBehaviour>
     {
-        [Inject] private async void Construct(
-            AsyncDependenciesRepository dependenciesRepository,
+        [Inject] private async UniTask Construct(
+            IAsyncDependenciesRepository dependenciesRepository,
             IInstantiator instantiator) 
         {
             bool hasStateAuthority = await GetStateAuthorityAsync();

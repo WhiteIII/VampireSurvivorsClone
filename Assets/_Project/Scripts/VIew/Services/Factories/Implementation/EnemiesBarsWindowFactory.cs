@@ -11,12 +11,12 @@ namespace _Project.Scripts.VIew.Services.Factories.Implementation
 {
     public class EnemiesBarsWindowFactory : BaseWindowFactoryAsync<EnemiesBarsWindow>
     {
-        private readonly AsyncDependenciesRepository _asyncDependenciesRepository;
+        private readonly IAsyncDependenciesRepository _asyncDependenciesRepository;
         
         public EnemiesBarsWindowFactory(
             [Inject(Id = "EnemiesBarsWindowAssetReference")]AssetReference assetReference,
             WindowsCreator windowCreator,
-            AsyncDependenciesRepository asyncDependenciesRepository) : base(windowCreator, assetReference)
+            IAsyncDependenciesRepository asyncDependenciesRepository) : base(windowCreator, assetReference)
         {
             _asyncDependenciesRepository = asyncDependenciesRepository;
         }
@@ -27,5 +27,7 @@ namespace _Project.Scripts.VIew.Services.Factories.Implementation
                 .GetInstanceAsync<EnemiesBarsViewModel>();
             return CreateByCreator(enemiesBarsView);
         }
+        
+        //TODO переместить на сцену геймплея!
     }
 }

@@ -35,7 +35,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         [SerializeField] private Map _map;
         [SerializeField] private Camera _camera;
         
-        public override void InstallBindings()
+        protected override void OnInstallBindings()
         {
             BindIsSingle<GeneralNetworkObjectsCreator>();
             BindIsSingle<NetworkBehavioursRepository>();
@@ -51,9 +51,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             Container.Bind<NetworkRunnerCallBacksListener>()
                 .FromFactory<NetworkRunnerCallBacksListenerFactory>().AsSingle();
 
-            BindInterfacesAndSelfToIsSingle<AsyncDependenciesRepository>();
             BindInterfacesAndSelfToIsSingle<SpawnPositionHelper>();
-            BindIsSingle<AsyncInitializableRepository>();
             BindIsSingle<EnemySpawnPositionHelper>();
             BindIsSingle<FusionGameStarter>();
             BindInterfacesToIsSingle<InputController>();
@@ -115,9 +113,11 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         
         private void BindAsyncFromFactory<TContract, TFactory>()
             where TFactory : IFactory<UniTask<TContract>>
+            where TContract : class
         {
-            Container.Bind<IAsyncDependence>().To<AsyncDependence<TContract>>()
-                .FromFactory<LayerAboveAsyncFactory<TContract, TFactory>>().AsSingle();
+            Container.Bind<IAsyncDependence<object>>().To<AsyncDependence<TContract>>()
+                .FromFactory<LayerAboveAsyncFactory<TContract, TFactory>>()
+                .AsSingle().WhenInjectedInto<IAsyncDependenciesRepository>();
         }
     }
 }

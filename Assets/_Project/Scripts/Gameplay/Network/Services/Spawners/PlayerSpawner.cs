@@ -21,7 +21,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
         [Networked] private PlayerRepository PlayerRepository { get; set; }
 
         [Inject] private async UniTask Construct(
-            AsyncDependenciesRepository asyncDependenciesRepository,
+            IAsyncDependenciesRepository asyncDependenciesRepository,
             NetworkRunnerCallBacksListener callBacksListener,
             SpawnPositionHelper spawnPositionHelper)
         {

@@ -52,7 +52,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         }
         
         private void BindWindowFactory<T>() where T : IFactory<Window> =>
-            Container.Bind<IFactory<Window>>().To<T>().AsSingle();
+            Container.Bind<IFactory<Window>>().To<T>().AsSingle().WhenInjectedInto<UIController>();
         
         private void BindAsyncWindowFactory<TValue, TFactory>()
             where TValue : Window
@@ -60,7 +60,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         {
             Container.Bind<TFactory>().AsSingle().WhenInjectedInto<AbstractOverAsyncFactory<TFactory, TValue>>();
             Container.Bind<IAbstractOverAsyncFactory<Window>>()
-                .To<AbstractOverAsyncFactory<TFactory, TValue>>().AsSingle();
+                .To<AbstractOverAsyncFactory<TFactory, TValue>>().AsSingle().WhenInjectedInto<UIController>();
         }
     }
 }

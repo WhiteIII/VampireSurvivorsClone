@@ -12,7 +12,7 @@ namespace _Project.Scripts.Gameplay.Network.Services
     {
         private readonly Action<NetworkBehaviour> _onSpawn;
         private readonly Action<NetworkBehaviour> _onDespawn;
-        private readonly AsyncDependenciesRepository _asyncDependenciesRepository;
+        private readonly IAsyncDependenciesRepository _asyncDependenciesRepository;
 
         private readonly CompositeDisposable _disposables = new();
         
@@ -21,7 +21,7 @@ namespace _Project.Scripts.Gameplay.Network.Services
         public NetworkCreatorAdapter(
             Action<NetworkBehaviour> onSpawn,
             Action<NetworkBehaviour> onDespawn,
-            AsyncDependenciesRepository asyncDependenciesRepository)
+            IAsyncDependenciesRepository asyncDependenciesRepository)
         {
             _onSpawn = onSpawn;
             _onDespawn = onDespawn;

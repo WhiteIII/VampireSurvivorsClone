@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using _Project.Scripts.Common.Services.Initialize;
 using Cysharp.Threading.Tasks;
 
 namespace _Project.Scripts.CompositionRoot.Services
 {
-    public class AsyncDependenciesRepository : IAsyncInitializable
+    public class AsyncDependenciesRepository : IAsyncDependenciesRepository
     {
-        private readonly List<IAsyncDependence> _dependencies;
+        private readonly List<IAsyncDependence<object>> _dependencies;
         private readonly List<object> _instances = new();
 
         public bool IsInitialized => InstancesIsDone;
@@ -15,20 +14,22 @@ namespace _Project.Scripts.CompositionRoot.Services
         
         private bool InstancesIsDone => _instances.Count == _dependencies.Count;
         
-        public AsyncDependenciesRepository(List<IAsyncDependence> dependencies) =>
+        public AsyncDependenciesRepository(List<IAsyncDependence<object>> dependencies) =>
             _dependencies = dependencies;
         
         public async UniTask InitializeAsync()
         {
-            foreach (IAsyncDependence dependence in _dependencies)
+            foreach (IAsyncDependence<object> dependence in _dependencies)
             {
                 if (dependence.InstanceCreated == false && dependence.CreatedInProcess == false)
                     await dependence.InitializeAsync();
-                _instances.Add(dependence.ObjectInstance);
+                _instances.Add(dependence.Instance);
             }
+            await OnInitialize();
         }
 
         public async UniTask<T> GetInstanceAsync<T>()
+            where T : class
         {
             if (InstancesIsDone)
             {
@@ -39,7 +40,7 @@ namespace _Project.Scripts.CompositionRoot.Services
                 }
             }
 
-            foreach (IAsyncDependence dependence in _dependencies)
+            foreach (IAsyncDependence<object> dependence in _dependencies)
             {
                 if (dependence is AsyncDependence<T> concreteDependence)
                 {
@@ -50,12 +51,18 @@ namespace _Project.Scripts.CompositionRoot.Services
                         else
                             await concreteDependence.CreateInstanceAsync();
                     }
-                    if (_instances.Contains(dependence.ObjectInstance) == false)
-                        _instances.Add(dependence.ObjectInstance);
+                    if (_instances.Contains(dependence.Instance) == false)
+                        _instances.Add(dependence.Instance);
                     return concreteDependence.Instance;
                 }
             }
             throw new Exception("Instance not found!");
         }
+        
+        protected void Add(object instance) => 
+            _instances.Add(instance);
+
+        protected virtual UniTask OnInitialize() => 
+            UniTask.CompletedTask;
     }
 }

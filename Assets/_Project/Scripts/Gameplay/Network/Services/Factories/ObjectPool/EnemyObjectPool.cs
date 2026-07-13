@@ -26,7 +26,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
 
         [Inject] private async UniTask Construct(
             IInstantiator instantiator, 
-            AsyncDependenciesRepository asyncDependenciesRepository)
+            IAsyncDependenciesRepository asyncDependenciesRepository)
         {
             bool stateAuthority = await GetStateAuthorityAsync();
 

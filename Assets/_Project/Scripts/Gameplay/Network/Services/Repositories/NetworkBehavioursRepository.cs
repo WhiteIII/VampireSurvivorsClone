@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Common.Services.Initialize;
 using Cysharp.Threading.Tasks;
@@ -6,15 +7,14 @@ using Fusion;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Repositories
 {
-    public class NetworkBehavioursRepository : IAsyncInitializable
+    public class NetworkBehavioursRepository : IAsyncInitializable, IEnumerable<NetworkBehaviour>
     {
         private readonly List<NetworkBehaviour> _list = new();
 
         private readonly NetworkRunner _networkRunner;
 
-        private bool _isActive = false;
+        private bool _isActive;
         
-        public int Count => _list.Count;
         public UniTask InitialisationTask
         {
             get
@@ -76,5 +76,11 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
                 return false;
             return true;
         }
+
+        public IEnumerator<NetworkBehaviour> GetEnumerator() => 
+            _list.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => 
+            GetEnumerator();
     }
 }

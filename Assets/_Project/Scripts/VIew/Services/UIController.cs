@@ -44,8 +44,7 @@ namespace _Project.Scripts.View.Services
             if (TryGetAsyncWindowFactory(out IAbstractOverAsyncFactory<T> asyncWindowFactory) == false)
                 throw new Exception("Can't create window!");
             await asyncWindowFactory.CreateAsync();
-            T createdWindow = asyncWindowFactory.CreatedValue;
-            await _uiRoot.Add(createdWindow).OpenAsync();
+            await _uiRoot.Add(asyncWindowFactory.CreatedValue).OpenAsync();
         }
 
         public async UniTask OpenWindowAsync<T>()

@@ -12,7 +12,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
     public class CharacterCreator : NetworkLayerAboveObjectCreator<Character>
     {
         [Inject] private async void Construct(
-            AsyncDependenciesRepository dependenciesRepository,
+            IAsyncDependenciesRepository dependenciesRepository,
             IInstantiator instantiator) 
         {
             bool hasStateAuthority = await GetStateAuthorityAsync();

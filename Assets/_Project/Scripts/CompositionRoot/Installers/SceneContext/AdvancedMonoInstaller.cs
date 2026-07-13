@@ -1,4 +1,3 @@
-using Fusion;
 using UnityEngine.AddressableAssets;
 using Zenject;
 
@@ -8,14 +7,11 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
     {
         protected void BindAsset(string id, AssetReference instance) => 
             BindWithId<AssetReference>(id).FromInstance(instance);
-        
-        protected void BindAsset(string id, NetworkPrefabRef prefabRef) => 
-            BindWithId<NetworkPrefabRef>(id).FromInstance(prefabRef);
-        
+
         protected void BindWithId<T>(string id, T instance) => 
             BindWithId<T>(id).FromInstance(instance);
-        
-        protected ConcreteBinderGeneric<T> BindWithId<T>(string id) => 
+
+        private ConcreteBinderGeneric<T> BindWithId<T>(string id) => 
             Container.Bind<T>().WithId(id);
         
         protected ConcreteIdArgConditionCopyNonLazyBinder BindIsSingle<T>() =>

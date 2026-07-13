@@ -34,7 +34,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implemen
 
         [Inject] private async UniTask Construct(
             IConfigService configService, 
-            AsyncDependenciesRepository asyncDependenciesRepository)
+            IAsyncDependenciesRepository asyncDependenciesRepository)
         {
             bool hasStateAuthority = await GetStateAuthorityAsync();
             if (hasStateAuthority == false)

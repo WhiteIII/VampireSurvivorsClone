@@ -33,7 +33,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         
         protected async UniTask Initialize(
             IRepository<TBaseItem> repository,
-            AsyncDependenciesRepository asyncDependenciesRepository,
+            IAsyncDependenciesRepository asyncDependenciesRepository,
             IInstantiator instantiator)
         {
             _networkObjectCreator = instantiator.Instantiate<NetworkObjectCreator<TBaseItem>>();

@@ -26,7 +26,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
         private readonly AssetReference _playerAssetReference;
         private readonly AssetReference _enemyAssetReference;
         private readonly NetworkBehavioursRepository _networkBehavioursRepository;
-        private readonly AsyncDependenciesRepository _networkServicesRepository;
+        private readonly IAsyncDependenciesRepository _asyncServicesRepository;
         
         public GameplayEntryPoint(
             NetworkRunner networkRunner,
@@ -41,7 +41,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             NetworkBehavioursRepository networkBehavioursRepository,
             [Inject(Id = "PlayerPrefabAssetReference")]AssetReference playerAssetReference,
             [Inject(Id = "EnemyPrefabAssetReference")]AssetReference enemyAssetReference, 
-            AsyncDependenciesRepository networkServicesRepository) : base(networkRunner)
+            IAsyncDependenciesRepository asyncServicesRepository) : base(networkRunner)
         {
             _initializableRepository = initializableRepository;
             _uiController = uiController;
@@ -53,7 +53,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             _networkBehavioursRepository = networkBehavioursRepository;
             _playerAssetReference = playerAssetReference;
             _enemyAssetReference = enemyAssetReference;
-            _networkServicesRepository = networkServicesRepository;
+            _asyncServicesRepository = asyncServicesRepository;
         }
 
         public override async void Initialize()
@@ -75,7 +75,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             if (IsServer == false)
                 return;
 
-            EnemySpawner enemySpawner = await _networkServicesRepository.GetInstanceAsync<EnemySpawner>();
+            EnemySpawner enemySpawner = await _asyncServicesRepository.GetInstanceAsync<EnemySpawner>();
             enemySpawner.Enable();
         }
 
