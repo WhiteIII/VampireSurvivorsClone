@@ -27,7 +27,5 @@ namespace _Project.Scripts.VIew.Services.Factories.Implementation
                 .GetInstanceAsync<EnemiesBarsViewModel>();
             return CreateByCreator(enemiesBarsView);
         }
-        
-        //TODO переместить на сцену геймплея!
     }
 }

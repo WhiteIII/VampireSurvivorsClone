@@ -21,6 +21,6 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         }
         
         private void BindConfig<T>(T config) where T : IConfig => 
-            Container.Bind<IConfig>().FromInstance(config).AsCached();
+            Container.Bind<IConfig>().FromInstance(config).AsCached().WhenInjectedInto<ScriptableObjectsConfigService>();
     }
 }

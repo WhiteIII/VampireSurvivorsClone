@@ -71,6 +71,21 @@ namespace _Project.Scripts.View.Services
             await _repository.CloseAndDestroyWindows(windows);
         }
 
+        public T AddAsyncWindowFactory<T>(T windowFactory) 
+            where T : IAbstractOverAsyncFactory<Window>
+        {
+            _asyncWindowFactories.Add(windowFactory);
+            return windowFactory;
+        }
+
+        public bool TryGetAsyncWindowFactory<T>(out IAbstractOverAsyncFactory<T> factory)
+        {
+            factory = GetAsyncWindowFactory<T>();
+            if (factory == null)
+                return false;
+            return true;
+        }
+
         private bool TryGetWindowFactory<T>(out IFactory<T> factory)
             where T : Window
         {
@@ -80,14 +95,6 @@ namespace _Project.Scripts.View.Services
             return true;
         }
 
-        private bool TryGetAsyncWindowFactory<T>(out IAbstractOverAsyncFactory<T> factory)
-        {
-            factory = GetAsyncWindowFactory<T>();
-            if (factory == null)
-                return false;
-            return true;
-        }
-        
         private IFactory<T> GetWindowFactory<T>()
             where T : Window
         {

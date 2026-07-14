@@ -34,7 +34,6 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindWindowFactory<LoadingWindowFactory>();
             BindWindowFactory<MenuWindowFactory>();
             Container.Bind<IFactory<EnemyBar>>().To<EnemyBarFactory>().AsSingle().WhenInjectedInto<EnemiesBarsWindow>();
-            BindAsyncWindowFactory<EnemiesBarsWindow, EnemiesBarsWindowFactory>();
 
             BindInterfacesAndSelfToIsSingle<MenuViewModel>();
             BindIsSingle<CreateGameOrConnectToGameViewModel>();
