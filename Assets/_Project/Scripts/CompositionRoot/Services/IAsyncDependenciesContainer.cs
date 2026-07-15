@@ -4,6 +4,6 @@ namespace _Project.Scripts.CompositionRoot.Services
 {
     public interface IAsyncDependenciesContainer
     {
-        UniTask<T> Resolve<T>();
+        UniTask<T> Resolve<T>() where T : class;
     }
 }

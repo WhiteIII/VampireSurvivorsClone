@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Zenject;
 
@@ -8,12 +7,18 @@ namespace _Project.Scripts.CompositionRoot.Services
     public class AsyncDependenciesContainer : IInitializable, IAsyncDependenciesContainer
     {
         private readonly DiContainer _diContainer;
+        private readonly AsyncDependenciesContainersFromManyScenes _asyncDependenciesContainersFromMany;
         private readonly AsyncDependenciesGiver _dependenciesGiver = new();
         
         private DiContainer _subContainer;
 
-        public AsyncDependenciesContainer(DiContainer diContainer) => 
+        public AsyncDependenciesContainer(
+            DiContainer diContainer, 
+            AsyncDependenciesContainersFromManyScenes asyncDependenciesContainersFromMany)
+        {
             _diContainer = diContainer;
+            _asyncDependenciesContainersFromMany = asyncDependenciesContainersFromMany;
+        }
 
         public void Initialize() => 
             _subContainer = _diContainer.CreateSubContainer();
@@ -29,42 +34,14 @@ namespace _Project.Scripts.CompositionRoot.Services
             _dependenciesGiver.AddFactory(_subContainer.Instantiate<AsyncDependenceProvider<TValue, TFactory>>());
         }
 
-        public UniTask<T> Resolve<T>() => 
-            _dependenciesGiver.GetInstanceAsync<T>();
-    }
-
-    public class AsyncDependenciesContainersFromManyScenes
-    {
-        private readonly HashSet<AsyncDependenciesContainer> _containers = new();
-
-        public int Count => _containers.Count;
-        
-        public void AddContainer(AsyncDependenciesContainer container) => 
-            _containers.Add(container);
-
-        public void RemoveContainer(AsyncDependenciesContainer container) => 
-            _containers.Add(container);
-
-        public bool Contains<T>() 
+        public async UniTask<T> Resolve<T>()
             where T : class
         {
-            foreach (var container in _containers)
-            {
-                if (container.Contains<T>())
-                    return true;
-            }
-            return false;
-        }
-        
-        public UniTask<T> GetInstanceAsync<T>()  
-            where T : class
-        {
-            foreach (var container in _containers)
-            {
-                if (container.Contains<T>())
-                    return container.Resolve<T>();
-            }
-            throw new Exception($"{nameof(T)} not found!");
+            if (_dependenciesGiver.Contains<T>())
+                return await _dependenciesGiver.GetInstanceAsync<T>();
+            if (_asyncDependenciesContainersFromMany.Contains<T>())
+                return await _asyncDependenciesContainersFromMany.GetInstanceAsync<T>();
+            throw new Exception($"Can't resolve instance of type {typeof(T).FullName}");
         }
     }
 }
