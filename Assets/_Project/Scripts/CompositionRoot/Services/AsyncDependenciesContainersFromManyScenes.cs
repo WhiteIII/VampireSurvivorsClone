@@ -1,39 +1,54 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using R3;
 
 namespace _Project.Scripts.CompositionRoot.Services
 {
-    public class AsyncDependenciesContainersFromManyScenes
+    public class AsyncDependenciesContainersFromManyScenes : IAsyncDependenciesContainer, IDisposable
     {
-        private readonly HashSet<AsyncDependenciesContainer> _containers = new();
+        private readonly HashSet<(AsyncDependenciesContainer, CompositeDisposable)> _containersPairDisposables = new();
 
-        public void AddContainer(AsyncDependenciesContainer container) => 
-            _containers.Add(container);
-
-        public void RemoveContainer(AsyncDependenciesContainer container) => 
-            _containers.Add(container);
-
-        public bool Contains<T>() 
-            where T : class
+        public void Dispose()
         {
-            foreach (var container in _containers)
-            {
-                if (container.Contains<T>())
-                    return true;
-            }
-            return false;
+            foreach ((_, CompositeDisposable disposable) in _containersPairDisposables)
+                disposable.Dispose();
+            _containersPairDisposables.Clear();
         }
-        
-        public UniTask<T> GetInstanceAsync<T>()  
+
+        public UniTask<T> Resolve<T>()  
             where T : class
         {
-            foreach (var container in _containers)
+            foreach ((AsyncDependenciesContainer container, _) in _containersPairDisposables)
             {
                 if (container.Contains<T>())
                     return container.Resolve<T>();
             }
             throw new Exception($"{nameof(T)} not found!");
+        }
+
+        public AsyncDependenciesContainer AddContainer(AsyncDependenciesContainer container)
+        {
+            (AsyncDependenciesContainer, CompositeDisposable) containerPairDisposable = 
+                new(container, new CompositeDisposable());
+            container
+                .ContainerDisposed
+                .Subscribe(RemoveContainer)
+                .AddTo(containerPairDisposable.Item2);
+            _containersPairDisposables.Add(containerPairDisposable);
+            return containerPairDisposable.Item1;
+        }
+
+        private void RemoveContainer(AsyncDependenciesContainer disposedContainer)
+        {
+            foreach ((AsyncDependenciesContainer container, CompositeDisposable disposable) in _containersPairDisposables)
+            {
+                if (container == disposedContainer)
+                {
+                    disposable.Dispose();
+                    return;
+                }
+            } 
         }
     }
 }

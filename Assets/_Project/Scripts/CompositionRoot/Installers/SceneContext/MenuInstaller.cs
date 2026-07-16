@@ -4,7 +4,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
     public class MenuInstaller : AdvancedMonoInstaller
     {
-        public override void InstallBindings()
+        protected override void OnInstallBindings()
         {
             Container.BindInterfacesTo<MenuEntryPoint>().AsSingle();
         }

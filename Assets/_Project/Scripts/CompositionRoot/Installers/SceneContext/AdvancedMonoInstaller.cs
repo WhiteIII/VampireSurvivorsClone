@@ -1,3 +1,6 @@
+using System;
+using _Project.Scripts.CompositionRoot.Services;
+using Cysharp.Threading.Tasks;
 using UnityEngine.AddressableAssets;
 using Zenject;
 
@@ -5,6 +8,18 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
     public abstract class AdvancedMonoInstaller : MonoInstaller
     {
+        private AsyncDependenciesContainer _asyncDependenciesContainer;
+        
+        public sealed override void InstallBindings()
+        {
+            AsyncDependenciesContainerFactory factory = Container.Instantiate<AsyncDependenciesContainerFactory>();
+            _asyncDependenciesContainer = factory.Create();
+            OnInstallBindings();
+        }
+
+        public void BindAsync<TValue, TFactory>() where TFactory : IFactory<UniTask<TValue>> where TValue : class =>
+            _asyncDependenciesContainer.Register<TValue, TFactory>();
+        
         protected void BindAsset(string id, AssetReference instance) => 
             BindWithId<AssetReference>(id).FromInstance(instance);
 
@@ -22,5 +37,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 
         protected ConcreteIdArgConditionCopyNonLazyBinder BindInterfacesAndSelfToIsSingle<T>() =>
             Container.BindInterfacesAndSelfTo<T>().AsSingle();
+
+        protected abstract void OnInstallBindings();
     }
 }

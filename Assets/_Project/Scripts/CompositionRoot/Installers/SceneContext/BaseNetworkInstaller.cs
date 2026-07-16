@@ -31,7 +31,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             _networkComponentCreationRepository = networkComponentCreationRepository;
         }
 
-        public sealed override void InstallBindings()
+        protected sealed override void OnInstallBindings()
         {
             BindIsSingle<AsyncInitializableRepository>().WhenInjectedInto<GameplayEntryPoint>();
             if (IsServer)
@@ -40,12 +40,12 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
                 BindIsSingle<AsyncDependenciesRepositoryClient>().WhenInjectedInto<GeneralAsyncDependenciesRepository>();
             Container.Bind(typeof(IAsyncDependenciesRepository), typeof(IAsyncInitializable))
                 .To<GeneralAsyncDependenciesRepository>().AsSingle();
-            OnInstallBindings();
+            OverrideOnInstallBindings();
         }
         
         protected void RegisterNetworkPrefab<T>() where T : NetworkBehaviour => 
             _networkComponentCreationRepository.RegisterTypeAndGetTypeId<T>();
         
-        protected abstract void OnInstallBindings();
+        protected abstract void OverrideOnInstallBindings();
     }
 }

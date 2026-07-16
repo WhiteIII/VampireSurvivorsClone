@@ -24,7 +24,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         [Header("OnScene:")]
         [SerializeField] private RectTransform _uiRootRectTransform;
         
-        public override void InstallBindings()
+        protected override void OnInstallBindings()
         {
             BindAsset("LoadingWindowAssetReference", _loadingWindowAssetReference);
             BindAsset("MenuWindowAssetReference", _menuWindowAssetReference);

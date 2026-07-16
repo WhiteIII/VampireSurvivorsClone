@@ -12,7 +12,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
     public class UIGameplayInstaller : AdvancedMonoInstaller
     {
-        public override void InstallBindings()
+        protected override void OnInstallBindings()
         {
             BindAsyncFromFactory<EnemiesBarsViewModel, EnemiesBarsViewModelFactory>();
             AddAsyncWindowFactory<EnemiesBarsWindow, EnemiesBarsWindowFactory>();

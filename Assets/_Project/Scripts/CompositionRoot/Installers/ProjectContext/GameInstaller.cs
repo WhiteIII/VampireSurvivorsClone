@@ -7,7 +7,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.ProjectContext
 {
     public class GameInstaller : AdvancedMonoInstaller
     {
-        public override void InstallBindings()
+        protected override void OnInstallBindings()
         {
             BindIsSingle<GlobalRepository>();
             Container.Bind<LocalAssetProvider>()

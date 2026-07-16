@@ -35,7 +35,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         [SerializeField] private Map _map;
         [SerializeField] private Camera _camera;
         
-        protected override void OnInstallBindings()
+        protected override void OverrideOnInstallBindings()
         {
             BindIsSingle<GeneralNetworkObjectsCreator>();
             BindIsSingle<NetworkBehavioursRepository>();
