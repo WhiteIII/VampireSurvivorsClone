@@ -16,7 +16,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
         
         [Inject] private async UniTask Construct(
             [Inject(Id = "EnemyPrefabAssetReference")] AssetReference prefabAssetReference, 
-            IAsyncDependenciesRepository asyncDependenciesRepository)
+            IAsyncDependenciesContainer asyncDependenciesContainer)
         {
             _enemyAssetReference = prefabAssetReference;
 
@@ -27,7 +27,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
                 return;
             }
             
-            EnemyCreator creator = await asyncDependenciesRepository.GetInstanceAsync<EnemyCreator>();
+            EnemyCreator creator = await asyncDependenciesContainer.Resolve<EnemyCreator>();
             Initialize(creator);
             EndInitialization();
         } 

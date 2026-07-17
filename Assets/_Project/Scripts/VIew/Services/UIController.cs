@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using _Project.Scripts.Common.Services.Factories;
+using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.View.Base;
 using _Project.Scripts.View.Services.Repositrories;
 using Cysharp.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace _Project.Scripts.View.Services
 {
     public class UIController
     {
-        private readonly List<IAbstractOverAsyncFactory<Window>> _asyncWindowFactories;
+        private readonly List<IAsyncDependenceProvider<Window>> _asyncWindowFactories;
         private readonly List<IFactory<Window>> _windowFactories;
         private readonly WindowsRepository _repository;
         private readonly UIRoot _uiRoot;
@@ -19,7 +20,7 @@ namespace _Project.Scripts.View.Services
             List<IFactory<Window>> windowFactories,
             WindowsRepository repository,
             UIRoot uiRoot,
-            List<IAbstractOverAsyncFactory<Window>> asyncWindowFactories)
+            List<IAsyncDependenceProvider<Window>> asyncWindowFactories)
         {
             _windowFactories = windowFactories;
             _repository = repository;
@@ -41,10 +42,10 @@ namespace _Project.Scripts.View.Services
                 await _uiRoot.Add(windowFactory.Create()).OpenAsync();
                 return;
             }
-            if (TryGetAsyncWindowFactory(out IAbstractOverAsyncFactory<T> asyncWindowFactory) == false)
+            if (TryGetAsyncWindowFactory(out IAsyncDependenceProvider<T> asyncWindowFactory) == false)
                 throw new Exception("Can't create window!");
             await asyncWindowFactory.CreateAsync();
-            await _uiRoot.Add(asyncWindowFactory.CreatedValue).OpenAsync();
+            await _uiRoot.Add(asyncWindowFactory.Value).OpenAsync();
         }
 
         public async UniTask OpenWindowAsync<T>()
@@ -72,13 +73,13 @@ namespace _Project.Scripts.View.Services
         }
 
         public T AddAsyncWindowFactory<T>(T windowFactory) 
-            where T : IAbstractOverAsyncFactory<Window>
+            where T : IAsyncDependenceProvider<Window>
         {
             _asyncWindowFactories.Add(windowFactory);
             return windowFactory;
         }
 
-        public bool TryGetAsyncWindowFactory<T>(out IAbstractOverAsyncFactory<T> factory)
+        public bool TryGetAsyncWindowFactory<T>(out IAsyncDependenceProvider<T> factory)
         {
             factory = GetAsyncWindowFactory<T>();
             if (factory == null)
@@ -106,11 +107,11 @@ namespace _Project.Scripts.View.Services
             return null;
         }
 
-        private IAbstractOverAsyncFactory<T> GetAsyncWindowFactory<T>()
+        private IAsyncDependenceProvider<T> GetAsyncWindowFactory<T>()
         {
-            foreach (IAbstractOverAsyncFactory<Window> windowFactory in _asyncWindowFactories)
+            foreach (IAsyncDependenceProvider<Window> windowFactory in _asyncWindowFactories)
             {
-                if (windowFactory is IAbstractOverAsyncFactory<T> resultFactory)
+                if (windowFactory is IAsyncDependenceProvider<T> resultFactory)
                     return resultFactory;
             }
             return null;

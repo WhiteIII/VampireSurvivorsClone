@@ -10,19 +10,19 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
     public class NetworkObjectsCreator : NetworkLayerAboveObjectCreator<NetworkBehaviour>
     {
         [Inject] private async UniTask Construct(
-            IAsyncDependenciesRepository dependenciesRepository,
+            IAsyncDependenciesContainer dependenciesContainer,
             IInstantiator instantiator) 
         {
             bool hasStateAuthority = await GetStateAuthorityAsync();
             if (hasStateAuthority == false)
             {
-                await Initialize(null, dependenciesRepository, instantiator);
+                await Initialize(null, dependenciesContainer, instantiator);
                 EndInitialization();
                 return;
             }
             
-            NetworkObjectsRepository repository = await dependenciesRepository.GetInstanceAsync<NetworkObjectsRepository>();
-            await Initialize(repository, dependenciesRepository, instantiator);
+            NetworkObjectsRepository repository = await dependenciesContainer.Resolve<NetworkObjectsRepository>();
+            await Initialize(repository, dependenciesContainer, instantiator);
             EndInitialization();
         }
     }

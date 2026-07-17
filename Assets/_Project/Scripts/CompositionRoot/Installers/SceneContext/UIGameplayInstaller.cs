@@ -14,24 +14,15 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
     {
         protected override void OnInstallBindings()
         {
-            BindAsyncFromFactory<EnemiesBarsViewModel, EnemiesBarsViewModelFactory>();
+            BindAsync<EnemiesBarsViewModel, EnemiesBarsViewModelFactory>();
             AddAsyncWindowFactory<EnemiesBarsWindow, EnemiesBarsWindowFactory>();
-        }
-        
-        private void BindAsyncFromFactory<TContract, TFactory>()
-            where TFactory : IFactory<UniTask<TContract>>
-            where TContract : class
-        {
-            Container.Bind<IAsyncDependence<object>>().To<AsyncDependence<TContract>>()
-                .FromFactory<LayerAboveAsyncFactory<TContract, TFactory>>()
-                .AsSingle().WhenInjectedInto<IAsyncDependenciesRepository>();
         }
 
         private void AddAsyncWindowFactory<TContract, TFactory>()
             where TFactory : IFactory<UniTask<TContract>>
             where TContract : Window
         {
-            Container.Bind<IAbstractOverAsyncFactory<TContract>>()
+            Container.Bind<IAsyncDependenceProvider<TContract>>()
                 .FromFactory<AddFactoryToUIController<TContract, TFactory>>().AsSingle();
         }
     }

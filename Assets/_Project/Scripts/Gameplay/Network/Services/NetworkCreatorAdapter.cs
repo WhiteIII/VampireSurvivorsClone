@@ -12,7 +12,7 @@ namespace _Project.Scripts.Gameplay.Network.Services
     {
         private readonly Action<NetworkBehaviour> _onSpawn;
         private readonly Action<NetworkBehaviour> _onDespawn;
-        private readonly IAsyncDependenciesRepository _asyncDependenciesRepository;
+        private readonly IAsyncDependenciesContainer _asyncDependenciesRepository;
 
         private readonly CompositeDisposable _disposables = new();
         
@@ -21,7 +21,7 @@ namespace _Project.Scripts.Gameplay.Network.Services
         public NetworkCreatorAdapter(
             Action<NetworkBehaviour> onSpawn,
             Action<NetworkBehaviour> onDespawn,
-            IAsyncDependenciesRepository asyncDependenciesRepository)
+            IAsyncDependenciesContainer asyncDependenciesRepository)
         {
             _onSpawn = onSpawn;
             _onDespawn = onDespawn;
@@ -30,7 +30,7 @@ namespace _Project.Scripts.Gameplay.Network.Services
         
         public async void Initialize()
         {
-            _creator = await _asyncDependenciesRepository.GetInstanceAsync<INetworkObjectsCreator<T>>();
+            _creator = await _asyncDependenciesRepository.Resolve<INetworkObjectsCreator<T>>();
             _creator
                 .OnSpawn
                 .Subscribe(x => _onSpawn.Invoke(x))

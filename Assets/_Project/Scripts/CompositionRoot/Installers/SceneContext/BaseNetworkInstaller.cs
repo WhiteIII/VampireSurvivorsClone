@@ -30,22 +30,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             _gameStateSwitcher = gameStateSwitcher;
             _networkComponentCreationRepository = networkComponentCreationRepository;
         }
-
-        protected sealed override void OnInstallBindings()
-        {
-            BindIsSingle<AsyncInitializableRepository>().WhenInjectedInto<GameplayEntryPoint>();
-            if (IsServer)
-                BindIsSingle<AsyncDependenciesRepository>().WhenInjectedInto<GeneralAsyncDependenciesRepository>();
-            else
-                BindIsSingle<AsyncDependenciesRepositoryClient>().WhenInjectedInto<GeneralAsyncDependenciesRepository>();
-            Container.Bind(typeof(IAsyncDependenciesRepository), typeof(IAsyncInitializable))
-                .To<GeneralAsyncDependenciesRepository>().AsSingle();
-            OverrideOnInstallBindings();
-        }
         
         protected void RegisterNetworkPrefab<T>() where T : NetworkBehaviour => 
             _networkComponentCreationRepository.RegisterTypeAndGetTypeId<T>();
-        
-        protected abstract void OverrideOnInstallBindings();
     }
 }

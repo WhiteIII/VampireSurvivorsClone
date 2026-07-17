@@ -8,10 +8,10 @@ namespace _Project.Scripts.ViewModel.Services.Factories
 {
     public class EnemiesBarsViewModelFactory : IFactory<UniTask<EnemiesBarsViewModel>>
     {
-        private readonly IAsyncDependenciesRepository _repository;
+        private readonly IAsyncDependenciesContainer _repository;
         private readonly IInstantiator _instantiator;
         
-        public EnemiesBarsViewModelFactory(IAsyncDependenciesRepository repository, IInstantiator instantiator)
+        public EnemiesBarsViewModelFactory(IAsyncDependenciesContainer repository, IInstantiator instantiator)
         {
             _repository = repository;
             _instantiator = instantiator;
@@ -19,7 +19,7 @@ namespace _Project.Scripts.ViewModel.Services.Factories
 
         public async UniTask<EnemiesBarsViewModel> Create()
         {
-            EnemyObjectPool enemyObjectPool = await _repository.GetInstanceAsync<EnemyObjectPool>();
+            EnemyObjectPool enemyObjectPool = await _repository.Resolve<EnemyObjectPool>();
             EnemiesBarsViewModel viewModel = _instantiator.Instantiate<EnemiesBarsViewModel>();
             viewModel.SetObservables(enemyObjectPool.OnGetObservable, enemyObjectPool.OnReleaseObservable);
             return viewModel;

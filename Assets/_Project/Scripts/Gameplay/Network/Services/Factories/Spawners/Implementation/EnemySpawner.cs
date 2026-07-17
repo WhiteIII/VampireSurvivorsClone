@@ -34,7 +34,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implemen
 
         [Inject] private async UniTask Construct(
             IConfigService configService, 
-            IAsyncDependenciesRepository asyncDependenciesRepository)
+            IAsyncDependenciesContainer asyncDependenciesContainer)
         {
             bool hasStateAuthority = await GetStateAuthorityAsync();
             if (hasStateAuthority == false)
@@ -44,8 +44,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implemen
             }
 
             SpawnCooldown = configService.GetConfig<IGameConfig>().EnemySpawnCooldown;
-            Pool = await asyncDependenciesRepository.GetInstanceAsync<EnemyObjectPool>();
-            Repository = await asyncDependenciesRepository.GetInstanceAsync<EnemyRepository>();
+            Pool = await asyncDependenciesContainer.Resolve<EnemyObjectPool>();
+            Repository = await asyncDependenciesContainer.Resolve<EnemyRepository>();
             EndInitialization();
         }
 

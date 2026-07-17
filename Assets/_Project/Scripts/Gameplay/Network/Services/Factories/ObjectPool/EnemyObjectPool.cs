@@ -26,7 +26,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
 
         [Inject] private async UniTask Construct(
             IInstantiator instantiator, 
-            IAsyncDependenciesRepository asyncDependenciesRepository)
+            IAsyncDependenciesContainer asyncDependenciesContainer)
         {
             bool stateAuthority = await GetStateAuthorityAsync();
 
@@ -36,8 +36,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
                 return;
             }
 
-            Factory = await asyncDependenciesRepository.GetInstanceAsync<EnemyFactory>();
-            PositionHelper = await asyncDependenciesRepository.GetInstanceAsync<EnemySpawnPositionHelper>();
+            Factory = await asyncDependenciesContainer.Resolve<EnemyFactory>();
+            PositionHelper = await asyncDependenciesContainer.Resolve<EnemySpawnPositionHelper>();
             EndInitialization();
         }
 

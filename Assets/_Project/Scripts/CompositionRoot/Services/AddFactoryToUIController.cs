@@ -6,7 +6,7 @@ using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Services
 {
-    public class AddFactoryToUIController<TWindow, TAsyncWindowFactory> : IFactory<IAbstractOverAsyncFactory<TWindow>>
+    public class AddFactoryToUIController<TWindow, TAsyncWindowFactory> : IFactory<IAsyncDependenceProvider<TWindow>>
         where TWindow : Window
         where TAsyncWindowFactory : IFactory<UniTask<TWindow>>
     {
@@ -19,15 +19,15 @@ namespace _Project.Scripts.CompositionRoot.Services
             _uiController = uiController;
         }
 
-        public IAbstractOverAsyncFactory<TWindow> Create()
+        public IAsyncDependenceProvider<TWindow> Create()
         {
-            if (_uiController.TryGetAsyncWindowFactory(out IAbstractOverAsyncFactory<TWindow> factory))
+            if (_uiController.TryGetAsyncWindowFactory(out IAsyncDependenceProvider<TWindow> factory))
                 return factory;
             DiContainer subContainer = _container.CreateSubContainer();
             subContainer.Bind<TAsyncWindowFactory>().AsSingle()
-                .WhenInjectedInto<AbstractOverAsyncFactory<TAsyncWindowFactory, TWindow>>();
+                .WhenInjectedInto<AsyncDependenceProvider<TWindow, TAsyncWindowFactory>>();
             return _uiController.AddAsyncWindowFactory(
-                subContainer.Instantiate<AbstractOverAsyncFactory<TAsyncWindowFactory, TWindow>>());
+                subContainer.Instantiate<AsyncDependenceProvider<TWindow, TAsyncWindowFactory>>());
         }
     }
 }

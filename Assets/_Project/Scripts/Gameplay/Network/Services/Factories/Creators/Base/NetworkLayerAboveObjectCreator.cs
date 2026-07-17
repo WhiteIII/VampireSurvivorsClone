@@ -33,7 +33,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         
         protected async UniTask Initialize(
             IRepository<TBaseItem> repository,
-            IAsyncDependenciesRepository asyncDependenciesRepository,
+            IAsyncDependenciesContainer asyncDependenciesRepository,
             IInstantiator instantiator)
         {
             _networkObjectCreator = instantiator.Instantiate<NetworkObjectCreator<TBaseItem>>();
@@ -47,7 +47,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             
             _repository = repository;
             RepositoryNetworkBehaviour = (NetworkBehaviour)_repository;
-            GameLoop = await asyncDependenciesRepository.GetInstanceAsync<GameLoop>();
+            GameLoop = await asyncDependenciesRepository.Resolve<GameLoop>();
         }
 
         public void OnHostMigration(GlobalRepository globalRepository) => 

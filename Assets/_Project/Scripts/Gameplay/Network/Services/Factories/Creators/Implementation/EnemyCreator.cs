@@ -10,11 +10,11 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
     public class EnemyCreator : NetworkLayerAboveObjectCreator<Enemy>
     {
         [Inject] private async UniTask Construct(
-            IAsyncDependenciesRepository dependenciesRepository,
+            IAsyncDependenciesContainer dependenciesContainer,
             IInstantiator instantiator) 
         {
             await GetStateAuthorityAsync();
-            await Initialize(null, dependenciesRepository, instantiator);
+            await Initialize(null, dependenciesContainer, instantiator);
             EndInitialization();
         }
     }

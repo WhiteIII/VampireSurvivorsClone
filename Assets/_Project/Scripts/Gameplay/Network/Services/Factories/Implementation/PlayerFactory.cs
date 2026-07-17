@@ -16,7 +16,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
         
         [Inject] private async UniTask Construct(
             [Inject(Id = "PlayerPrefabAssetReference")] AssetReference prefabAssetReference,
-            IAsyncDependenciesRepository asyncDependenciesRepository)
+            IAsyncDependenciesContainer asyncDependenciesContainer)
         {
             _playerAssetReference = prefabAssetReference;
             
@@ -27,7 +27,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
                 return;
             }
             
-            PlayerCreator creator = await asyncDependenciesRepository.GetInstanceAsync<PlayerCreator>();
+            PlayerCreator creator = await asyncDependenciesContainer.Resolve<PlayerCreator>();
             Initialize(creator);
             EndInitialization();
         } 

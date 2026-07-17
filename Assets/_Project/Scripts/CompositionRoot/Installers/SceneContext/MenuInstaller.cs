@@ -6,7 +6,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
     {
         protected override void OnInstallBindings()
         {
-            Container.BindInterfacesTo<MenuEntryPoint>().AsSingle();
+            BindInterfacesToIsSingle<MenuEntryPoint>();
         }
     }
 }

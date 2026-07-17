@@ -21,7 +21,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
         [Networked] private PlayerRepository PlayerRepository { get; set; }
 
         [Inject] private async UniTask Construct(
-            IAsyncDependenciesRepository asyncDependenciesRepository,
+            IAsyncDependenciesContainer asyncDependenciesRepository,
             NetworkRunnerCallBacksListener callBacksListener,
             SpawnPositionHelper spawnPositionHelper)
         {
@@ -35,8 +35,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
                 return;
             }
             
-            Factory = await asyncDependenciesRepository.GetInstanceAsync<PlayerFactory>();
-            PlayerRepository = await asyncDependenciesRepository.GetInstanceAsync<PlayerRepository>();
+            Factory = await asyncDependenciesRepository.Resolve<PlayerFactory>();
+            PlayerRepository = await asyncDependenciesRepository.Resolve<PlayerRepository>();
             EndInitialization();
         }
 

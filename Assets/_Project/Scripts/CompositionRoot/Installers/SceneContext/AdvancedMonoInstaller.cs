@@ -8,17 +8,16 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
     public abstract class AdvancedMonoInstaller : MonoInstaller
     {
-        private AsyncDependenciesContainer _asyncDependenciesContainer;
-        
         public sealed override void InstallBindings()
         {
-            AsyncDependenciesContainerFactory factory = Container.Instantiate<AsyncDependenciesContainerFactory>();
-            _asyncDependenciesContainer = factory.Create();
+            Container.Bind(typeof(IInitializable), typeof(IDisposable))
+                .To<AsyncDependenciesContainer>()
+                .FromFactory<AsyncDependenciesContainer, AsyncDependenciesContainerFactory>().AsSingle();
             OnInstallBindings();
         }
 
-        public void BindAsync<TValue, TFactory>() where TFactory : IFactory<UniTask<TValue>> where TValue : class =>
-            _asyncDependenciesContainer.Register<TValue, TFactory>();
+        protected void BindAsync<TValue, TFactory>() where TFactory : IFactory<UniTask<TValue>> where TValue : class =>
+            Container.Bind().FromFactory<TValue, BindFromAsyncDependenciesContainer<TValue, TFactory>>().AsSingle();
         
         protected void BindAsset(string id, AssetReference instance) => 
             BindWithId<AssetReference>(id).FromInstance(instance);

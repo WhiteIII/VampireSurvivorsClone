@@ -14,7 +14,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
         [Networked] private PlayerRunTimeDataNetwork PlayerData { get; set; }
         [Networked] private TickTimer Timer { get; set; }
 
-        [Inject] private async UniTask Construct(IAsyncDependenciesRepository asyncDependenciesRepository)
+        [Inject] private async UniTask Construct(IAsyncDependenciesContainer asyncDependenciesRepository)
         {
             bool hasStateAuthority = await GetStateAuthorityAsync();
             if (hasStateAuthority == false)
@@ -22,7 +22,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
                 EndInitialization();
                 return;
             }
-            Repository = await asyncDependenciesRepository.GetInstanceAsync<EnemyRepository>();
+            Repository = await asyncDependenciesRepository.Resolve<EnemyRepository>();
             EndInitialization();
         }
 

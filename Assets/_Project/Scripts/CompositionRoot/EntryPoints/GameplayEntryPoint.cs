@@ -16,7 +16,6 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
 {
     public class GameplayEntryPoint : BaseNetworkSceneEntryPoint, IInitializable
     {
-        private readonly AsyncInitializableRepository _initializableRepository;
         private readonly UIController _uiController;
         private readonly LoadingWindowViewModel _loadingWindowViewModel;
         private readonly AssetsLoader _assetsLoader;
@@ -26,11 +25,10 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
         private readonly AssetReference _playerAssetReference;
         private readonly AssetReference _enemyAssetReference;
         private readonly NetworkBehavioursRepository _networkBehavioursRepository;
-        private readonly IAsyncDependenciesRepository _asyncServicesRepository;
+        private readonly IAsyncDependenciesContainer _asyncDependenciesContainer;
         
         public GameplayEntryPoint(
             NetworkRunner networkRunner,
-            AsyncInitializableRepository initializableRepository,
             UIController uiController,
             LoadingWindowViewModel loadingWindowViewModel,
             GeneralNetworkObjectsRepository generalNetworkObjectsRepository, 
@@ -41,9 +39,8 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             NetworkBehavioursRepository networkBehavioursRepository,
             [Inject(Id = "PlayerPrefabAssetReference")]AssetReference playerAssetReference,
             [Inject(Id = "EnemyPrefabAssetReference")]AssetReference enemyAssetReference, 
-            IAsyncDependenciesRepository asyncServicesRepository) : base(networkRunner)
+            IAsyncDependenciesContainer asyncDependenciesContainer) : base(networkRunner)
         {
-            _initializableRepository = initializableRepository;
             _uiController = uiController;
             _loadingWindowViewModel = loadingWindowViewModel;
             _enemiesBarsWindowAssetReference = enemiesBarsWindowAssetReference;
@@ -53,7 +50,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             _networkBehavioursRepository = networkBehavioursRepository;
             _playerAssetReference = playerAssetReference;
             _enemyAssetReference = enemyAssetReference;
-            _asyncServicesRepository = asyncServicesRepository;
+            _asyncDependenciesContainer = asyncDependenciesContainer;
         }
 
         public override async void Initialize()
@@ -63,7 +60,6 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_assetsLoader.GetLoadedTaskAssets());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_gameStarter.StartGameAsync());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_networkBehavioursRepository.InitializeAsync());
-            await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_initializableRepository.GetTasks());
             await _uiController.CreateAndOpenWindowAsync<EnemiesBarsWindow>();
             await _uiController.CloseWindowAsync<LoadingWindow>();
             _loadingWindowViewModel.ResetLoadingProgress();
@@ -75,7 +71,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             if (IsServer == false)
                 return;
 
-            EnemySpawner enemySpawner = await _asyncServicesRepository.GetInstanceAsync<EnemySpawner>();
+            EnemySpawner enemySpawner = await _asyncDependenciesContainer.Resolve<EnemySpawner>();
             enemySpawner.Enable();
         }
 
@@ -101,7 +97,6 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             int startGameUnit = 1;
             int networkBehavioursRepositoryUnit = 1;
             return _assetsLoader.NotLoadedAssetsCount + 
-                   _initializableRepository.Count + 
                    startGameUnit + 
                    networkBehavioursRepositoryUnit;
         }

@@ -13,19 +13,19 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Implemen
     public class PlayerCreator : NetworkLayerAboveObjectCreator<Player>
     {
         [Inject] private async UniTask Construct(
-            IAsyncDependenciesRepository dependenciesRepository,
+            IAsyncDependenciesContainer dependenciesContainer,
             IInstantiator instantiator)
         {
             bool hasStateAuthority = await GetStateAuthorityAsync();
             if (hasStateAuthority == false)
             {
-                await Initialize(null, dependenciesRepository, instantiator);
+                await Initialize(null, dependenciesContainer, instantiator);
                 EndInitialization();
                 return;
             }
             
-            PlayerRepository repository = await dependenciesRepository.GetInstanceAsync<PlayerRepository>();
-            await Initialize(repository, dependenciesRepository, instantiator);
+            PlayerRepository repository = await dependenciesContainer.Resolve<PlayerRepository>();
+            await Initialize(repository, dependenciesContainer, instantiator);
             EndInitialization();
         }
 

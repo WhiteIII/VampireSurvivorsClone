@@ -30,29 +30,13 @@ namespace _Project.Scripts.Gameplay.Network.Services.Repositories
 
         public async UniTask InitializeAsync()
         {
-            if (_networkRunner.IsServer)
-                return;
-
             List<NetworkObject> networkObjects;
             while (TryGetAllNetworkObjects(out networkObjects) == false)
                 await UniTask.Yield();
 
-            networkObjects = _networkRunner.GetAllNetworkObjects();
             foreach (NetworkObject networkObject in networkObjects)
                 _list.AddRange(networkObject.NetworkedBehaviours);
             _isActive = true;
-        }
-
-        public T Get<T>() 
-            where T : NetworkBehaviour
-        {
-            foreach (NetworkBehaviour networkBehaviour in _list)
-            {
-                if (networkBehaviour is T concreteNetworkBehaviour)
-                    return concreteNetworkBehaviour;
-            }
-
-            throw new Exception("NetworkBehaviour not found!");
         }
         
         public bool TryGet<T>(out T item) where T : NetworkBehaviour

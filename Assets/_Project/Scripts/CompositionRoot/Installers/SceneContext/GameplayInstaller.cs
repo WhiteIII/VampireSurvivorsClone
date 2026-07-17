@@ -35,11 +35,11 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         [SerializeField] private Map _map;
         [SerializeField] private Camera _camera;
         
-        protected override void OverrideOnInstallBindings()
+        protected override void OnInstallBindings()
         {
             BindIsSingle<GeneralNetworkObjectsCreator>();
             BindIsSingle<NetworkBehavioursRepository>();
-            BindIsSingle<GameLoopLocalBuffer>();
+            BindIsSingle<GameLoopLocalBuffer>().WhenInjectedInto<GameLoop>();
             BindIsSingle<CameraController>().WithArguments(_camera);
             Container.Bind<Map>().FromInstance(_map).AsSingle();
             Container.Bind<NetworkRunner>()
@@ -106,18 +106,9 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         {
             RegisterNetworkPrefab<T>();
             if (IsServer)
-                BindAsyncFromFactory<T, NetworkComponentFactory<T>>();
+                BindAsync<T, NetworkComponentFactory<T>>();
             else
-                BindAsyncFromFactory<T, NetworkComponentFactoryIsClient<T>>();
-        }
-        
-        private void BindAsyncFromFactory<TContract, TFactory>()
-            where TFactory : IFactory<UniTask<TContract>>
-            where TContract : class
-        {
-            Container.Bind<IAsyncDependence<object>>().To<AsyncDependence<TContract>>()
-                .FromFactory<LayerAboveAsyncFactory<TContract, TFactory>>()
-                .AsSingle().WhenInjectedInto<IAsyncDependenciesRepository>();
+                BindAsync<T, NetworkComponentFactoryIsClient<T>>();
         }
     }
 }

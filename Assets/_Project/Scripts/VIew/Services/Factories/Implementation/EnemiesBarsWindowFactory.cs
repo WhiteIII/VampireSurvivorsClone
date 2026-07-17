@@ -11,12 +11,12 @@ namespace _Project.Scripts.VIew.Services.Factories.Implementation
 {
     public class EnemiesBarsWindowFactory : BaseWindowFactoryAsync<EnemiesBarsWindow>
     {
-        private readonly IAsyncDependenciesRepository _asyncDependenciesRepository;
+        private readonly IAsyncDependenciesContainer _asyncDependenciesRepository;
         
         public EnemiesBarsWindowFactory(
             [Inject(Id = "EnemiesBarsWindowAssetReference")]AssetReference assetReference,
             WindowsCreator windowCreator,
-            IAsyncDependenciesRepository asyncDependenciesRepository) : base(windowCreator, assetReference)
+            IAsyncDependenciesContainer asyncDependenciesRepository) : base(windowCreator, assetReference)
         {
             _asyncDependenciesRepository = asyncDependenciesRepository;
         }
@@ -24,7 +24,7 @@ namespace _Project.Scripts.VIew.Services.Factories.Implementation
         public override async UniTask<EnemiesBarsWindow> Create()
         {
             EnemiesBarsViewModel enemiesBarsView = await _asyncDependenciesRepository
-                .GetInstanceAsync<EnemiesBarsViewModel>();
+                .Resolve<EnemiesBarsViewModel>();
             return CreateByCreator(enemiesBarsView);
         }
     }
