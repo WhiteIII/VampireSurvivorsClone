@@ -25,9 +25,6 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         protected void BindWithId<T>(string id, T instance) => 
             BindWithId<T>(id).FromInstance(instance);
 
-        private ConcreteBinderGeneric<T> BindWithId<T>(string id) => 
-            Container.Bind<T>().WithId(id);
-        
         protected ConcreteIdArgConditionCopyNonLazyBinder BindIsSingle<T>() =>
             Container.Bind<T>().AsSingle();
 
@@ -38,5 +35,8 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             Container.BindInterfacesAndSelfTo<T>().AsSingle();
 
         protected abstract void OnInstallBindings();
+
+        private ConcreteBinderGeneric<T> BindWithId<T>(string id) => 
+            Container.Bind<T>().WithId(id);
     }
 }
