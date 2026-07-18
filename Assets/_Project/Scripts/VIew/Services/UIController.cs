@@ -43,7 +43,7 @@ namespace _Project.Scripts.View.Services
                 return;
             }
             if (TryGetAsyncWindowFactory(out IAsyncDependenceProvider<T> asyncWindowFactory) == false)
-                throw new Exception("Can't create window!");
+                throw new Exception($"Can't create window: {nameof(T)}!");
             await asyncWindowFactory.CreateAsync();
             await _uiRoot.Add(asyncWindowFactory.Value).OpenAsync();
         }
@@ -52,7 +52,7 @@ namespace _Project.Scripts.View.Services
             where T : Window
         {
             if (_repository.TryGet(out T window) == false)
-                throw new Exception("Window not found!");
+                throw new Exception($"Window {nameof(T)} not found!");
             if (window.IsOpen == false)
                 await window.OpenAsync();
         }
@@ -61,7 +61,7 @@ namespace _Project.Scripts.View.Services
             where T : Window
         {
             if (_repository.TryGet(out T window) == false)
-                throw new Exception("Window not found!");
+                throw new Exception($"Window {nameof(T)} not found!");
             if (window.IsOpen)
                 await window.CloseAsync();
         }

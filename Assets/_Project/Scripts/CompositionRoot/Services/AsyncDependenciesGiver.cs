@@ -6,11 +6,23 @@ namespace _Project.Scripts.CompositionRoot.Services
 {
     public class AsyncDependenciesGiver
     {
-        private readonly List<IAsyncDependenceProvider<object>> _providers = new();
-        private readonly List<object> _instances = new();
-        
-        public void AddFactory(IAsyncDependenceProvider<object> provider) => 
-            _providers.Add(provider);
+        private readonly HashSet<IAsyncDependenceProvider<object>> _providers = new();
+        private readonly HashSet<object> _instances = new();
+
+        public void Unregister<T>()
+        {
+            if (TryGetCreatedInstance(out T instance))
+                _instances.Remove(instance);
+        }
+
+        public void AddFactory<T>(IAsyncDependenceProvider<T> provider)
+        {
+            if (TryGetCreatedInstance(out T _))
+                throw new Exception($"Type: {typeof(T).Name} already created!");
+            if(TryGetProvider(out IAsyncDependenceProvider<T> _))
+                throw new Exception($"Type: {typeof(IAsyncDependenceProvider<T>).Name} already added to container!");
+            _providers.Add((IAsyncDependenceProvider<object>)provider);
+        }
 
         public async UniTask<T> GetInstanceAsync<T>()
         {
@@ -19,6 +31,7 @@ namespace _Project.Scripts.CompositionRoot.Services
             if (TryGetProvider(out IAsyncDependenceProvider<T> provider))
             {
                 await provider.CreateAsync();
+                _providers.Remove((IAsyncDependenceProvider<object>)provider);
                 _instances.Add(provider.Value);
                 return provider.Value;
             }
@@ -56,8 +69,8 @@ namespace _Project.Scripts.CompositionRoot.Services
             }
             return false;
         }
-        
-        private bool TryGet<T>(out T item, List<T> list, Predicate<T> predicate)
+
+        private bool TryGet<T>(out T item, IEnumerable<T> list, Predicate<T> predicate)
         {
             item = default;
             foreach (T listItem in list)

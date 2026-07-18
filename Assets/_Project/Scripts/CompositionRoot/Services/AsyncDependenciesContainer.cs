@@ -5,41 +5,18 @@ using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Services
 {
-    public class AsyncDependenciesContainer : IInitializable, IDisposable, IAsyncDependenciesContainer
+    public class AsyncDependenciesContainer : IAsyncDependenciesContainer
     {
-        public Observable<AsyncDependenciesContainer> ContainerDisposed => _containerDisposed;
-        
-        private readonly DiContainer _diContainer;
         private readonly AsyncDependenciesGiver _dependenciesGiver = new();
-        private readonly Subject<AsyncDependenciesContainer> _containerDisposed = new();
         
-        private DiContainer _subContainer;
-
-        public AsyncDependenciesContainer(DiContainer diContainer) => 
-            _diContainer = diContainer;
-
-        public void Initialize() => 
-            _subContainer = _diContainer.CreateSubContainer();
-
-        public void Dispose() => 
-            _containerDisposed.OnNext(this);
-
         public bool Contains<T>() where T : class => 
             _dependenciesGiver.Contains<T>();
 
-        public void Register<TValue, TFactory>()
-            where TFactory : IFactory<UniTask<TValue>>
-            where TValue : class
-        {
-            _subContainer.Bind<TFactory>().AsSingle().WhenInjectedInto<AsyncDependenceProvider<TValue, TFactory>>();
-            _dependenciesGiver.AddFactory(_subContainer.Instantiate<AsyncDependenceProvider<TValue, TFactory>>());
-        }
+        public void Register<T>(IAsyncDependenceProvider<T> provider) => 
+            _dependenciesGiver.AddFactory(provider);
 
-        public void Register<TValue>(IAsyncDependenceProvider<TValue> provider)
-        {
-            throw new NotImplementedException();
-        }
-
+        public void Unregister<T>() => _dependenciesGiver.Unregister<T>();
+        
         public async UniTask<T> Resolve<T>()
             where T : class
         {

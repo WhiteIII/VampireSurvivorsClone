@@ -1,9 +1,10 @@
+using System;
 using Cysharp.Threading.Tasks;
 using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Services
 {
-    public class BindFromAsyncDependenciesContainer<TValue, TFactory> : IFactory<TValue>
+    public class BindFromAsyncDependenciesContainer<TValue, TFactory> : IDisposable, IFactory<TValue>
         where TFactory : IFactory<UniTask<TValue>>
         where TValue : class
     {
@@ -25,5 +26,8 @@ namespace _Project.Scripts.CompositionRoot.Services
             _asyncDependenciesContainer.Register(subContainer.Instantiate<AsyncDependenceProvider<TValue, TFactory>>());
             return null;
         }
+
+        public void Dispose() => 
+            _asyncDependenciesContainer.Unregister<TValue>();
     }
 }

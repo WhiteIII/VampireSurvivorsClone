@@ -4,7 +4,8 @@ namespace _Project.Scripts.CompositionRoot.Services
 {
     public interface IAsyncDependenciesContainer
     {
-        void Register<TValue>(IAsyncDependenceProvider<TValue> provider);
+        void Register<T>(IAsyncDependenceProvider<T> provider);
+        void Unregister<T>();
         UniTask<T> Resolve<T>() where T : class;
     }
 }

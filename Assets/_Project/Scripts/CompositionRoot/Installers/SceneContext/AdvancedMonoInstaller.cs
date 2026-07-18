@@ -1,4 +1,3 @@
-using System;
 using _Project.Scripts.CompositionRoot.Services;
 using Cysharp.Threading.Tasks;
 using UnityEngine.AddressableAssets;
@@ -8,16 +7,10 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
     public abstract class AdvancedMonoInstaller : MonoInstaller
     {
-        public sealed override void InstallBindings()
-        {
-            Container.Bind(typeof(IInitializable), typeof(IDisposable))
-                .To<AsyncDependenciesContainer>()
-                .FromFactory<AsyncDependenciesContainer, AsyncDependenciesContainerFactory>().AsSingle();
-            OnInstallBindings();
-        }
-
         protected void BindAsync<TValue, TFactory>() where TFactory : IFactory<UniTask<TValue>> where TValue : class =>
-            Container.Bind().FromFactory<TValue, BindFromAsyncDependenciesContainer<TValue, TFactory>>().AsSingle();
+            Container.Bind().FromIFactory<TValue>(
+                    x => x.To<BindFromAsyncDependenciesContainer<TValue, TFactory>>()
+                        .FromMethod(GetAsyncDependenceFactoryFromMethod<TValue, TFactory>)).AsSingle();
         
         protected void BindAsset(string id, AssetReference instance) => 
             BindWithId<AssetReference>(id).FromInstance(instance);
@@ -34,9 +27,15 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         protected ConcreteIdArgConditionCopyNonLazyBinder BindInterfacesAndSelfToIsSingle<T>() =>
             Container.BindInterfacesAndSelfTo<T>().AsSingle();
 
-        protected abstract void OnInstallBindings();
-
         private ConcreteBinderGeneric<T> BindWithId<T>(string id) => 
             Container.Bind<T>().WithId(id);
+
+        private BindFromAsyncDependenciesContainer<TValue, TFactory> GetAsyncDependenceFactoryFromMethod<TValue, TFactory>()
+            where TFactory : IFactory<UniTask<TValue>> 
+            where TValue : class
+        {
+            BindInterfacesAndSelfToIsSingle<BindFromAsyncDependenciesContainer<TValue, TFactory>>();
+            return Container.Resolve<BindFromAsyncDependenciesContainer<TValue, TFactory>>();
+        }
     }
 }

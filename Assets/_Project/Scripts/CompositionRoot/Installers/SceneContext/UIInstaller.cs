@@ -22,7 +22,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         [Header("OnScene:")]
         [SerializeField] private RectTransform _uiRootRectTransform;
         
-        protected override void OnInstallBindings()
+        public override void InstallBindings()
         {
             BindAsset("LoadingWindowAssetReference", _loadingWindowAssetReference);
             BindAsset("MenuWindowAssetReference", _menuWindowAssetReference);
