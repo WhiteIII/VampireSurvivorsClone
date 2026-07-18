@@ -35,6 +35,11 @@ namespace _Project.Scripts.CompositionRoot.Services
             _dependenciesGiver.AddFactory(_subContainer.Instantiate<AsyncDependenceProvider<TValue, TFactory>>());
         }
 
+        public void Register<TValue>(IAsyncDependenceProvider<TValue> provider)
+        {
+            throw new NotImplementedException();
+        }
+
         public async UniTask<T> Resolve<T>()
             where T : class
         {

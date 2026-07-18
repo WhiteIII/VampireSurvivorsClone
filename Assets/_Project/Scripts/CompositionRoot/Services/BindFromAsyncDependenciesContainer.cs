@@ -7,14 +7,22 @@ namespace _Project.Scripts.CompositionRoot.Services
         where TFactory : IFactory<UniTask<TValue>>
         where TValue : class
     {
-        private readonly AsyncDependenciesContainer _container;
-
-        public BindFromAsyncDependenciesContainer(AsyncDependenciesContainer container) => 
-            _container = container;
+        private readonly IAsyncDependenciesContainer _asyncDependenciesContainer;
+        private readonly DiContainer _diContainer;
+        
+        public BindFromAsyncDependenciesContainer(
+            IAsyncDependenciesContainer asyncDependenciesContainer, 
+            DiContainer diContainer)
+        {
+            _asyncDependenciesContainer = asyncDependenciesContainer;
+            _diContainer = diContainer;
+        }
 
         public TValue Create()
         {
-            _container.Register<TValue, TFactory>();
+            DiContainer subContainer = _diContainer.CreateSubContainer();
+            subContainer.Bind<TFactory>().AsSingle().WhenInjectedInto<AsyncDependenceProvider<TValue, TFactory>>();
+            _asyncDependenciesContainer.Register(subContainer.Instantiate<AsyncDependenceProvider<TValue, TFactory>>());
             return null;
         }
     }

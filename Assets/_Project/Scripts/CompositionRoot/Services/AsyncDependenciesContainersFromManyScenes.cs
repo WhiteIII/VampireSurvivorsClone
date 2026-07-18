@@ -16,6 +16,11 @@ namespace _Project.Scripts.CompositionRoot.Services
             _containersPairDisposables.Clear();
         }
 
+        public void Register<TValue>(IAsyncDependenceProvider<TValue> provider)
+        {
+            
+        }
+
         public UniTask<T> Resolve<T>()  
             where T : class
         {
