@@ -23,7 +23,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             where TContract : Window
         {
             Container.Bind<IAsyncDependenceProvider<TContract>>()
-                .FromFactory<AddFactoryToUIController<TContract, TFactory>>().AsSingle();
+                .FromFactory<AddFactoryToUIController<TContract, TFactory>>().AsSingle().NonLazy();
         }
     }
 }

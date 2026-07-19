@@ -35,7 +35,7 @@ namespace _Project.Scripts.CompositionRoot.Services
                 _instances.Add(provider.Value);
                 return provider.Value;
             }
-            throw new Exception($"{nameof(T)} Not Found!");
+            throw new Exception($"{typeof(T).Name} Not Found!");
         }
 
         public bool Contains<T>()

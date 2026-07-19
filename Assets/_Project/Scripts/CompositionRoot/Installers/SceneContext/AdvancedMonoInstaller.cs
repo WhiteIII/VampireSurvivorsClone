@@ -1,3 +1,4 @@
+using System;
 using _Project.Scripts.CompositionRoot.Services;
 using Cysharp.Threading.Tasks;
 using UnityEngine.AddressableAssets;
@@ -7,10 +8,13 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
     public abstract class AdvancedMonoInstaller : MonoInstaller
     {
+        private IAsyncDependenciesContainer _dependenciesContainer;
+        
+        [Inject] private void Construct(IAsyncDependenciesContainer dependenciesContainer) => 
+            _dependenciesContainer = dependenciesContainer;
+
         protected void BindAsync<TValue, TFactory>() where TFactory : IFactory<UniTask<TValue>> where TValue : class =>
-            Container.Bind().FromIFactory<TValue>(
-                    x => x.To<BindFromAsyncDependenciesContainer<TValue, TFactory>>()
-                        .FromMethod(GetAsyncDependenceFactoryFromMethod<TValue, TFactory>)).AsSingle();
+            throw new NotImplementedException(); //_dependenciesContainer.Register();
         
         protected void BindAsset(string id, AssetReference instance) => 
             BindWithId<AssetReference>(id).FromInstance(instance);
@@ -29,13 +33,5 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 
         private ConcreteBinderGeneric<T> BindWithId<T>(string id) => 
             Container.Bind<T>().WithId(id);
-
-        private BindFromAsyncDependenciesContainer<TValue, TFactory> GetAsyncDependenceFactoryFromMethod<TValue, TFactory>()
-            where TFactory : IFactory<UniTask<TValue>> 
-            where TValue : class
-        {
-            BindInterfacesAndSelfToIsSingle<BindFromAsyncDependenciesContainer<TValue, TFactory>>();
-            return Container.Resolve<BindFromAsyncDependenciesContainer<TValue, TFactory>>();
-        }
     }
 }
