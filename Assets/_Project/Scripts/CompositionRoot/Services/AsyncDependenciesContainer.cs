@@ -12,7 +12,8 @@ namespace _Project.Scripts.CompositionRoot.Services
         public void Register<T>(IAsyncDependenceProvider<T> provider) => 
             _dependenciesGiver.AddFactory(provider);
 
-        public void Unregister<T>() => _dependenciesGiver.Unregister<T>();
+        public void Unregister(Type type) => 
+            _dependenciesGiver.Unregister(type);
         
         public async UniTask<T> Resolve<T>()
             where T : class

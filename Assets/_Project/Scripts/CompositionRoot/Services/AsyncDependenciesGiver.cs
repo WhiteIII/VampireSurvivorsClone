@@ -9,9 +9,9 @@ namespace _Project.Scripts.CompositionRoot.Services
         private readonly HashSet<IAsyncDependenceProvider<object>> _providers = new();
         private readonly HashSet<object> _instances = new();
 
-        public void Unregister<T>()
+        public void Unregister(Type type)
         {
-            if (TryGetCreatedInstance(out T instance))
+            if (TryGetCreatedInstance(out object instance, type))
                 _instances.Remove(instance);
         }
 
@@ -59,6 +59,17 @@ namespace _Project.Scripts.CompositionRoot.Services
             return false;
         }
 
+        private bool TryGetCreatedInstance(out object instance, Type type)
+        {
+            instance = null;
+            if (TryGet(out object createdInstance, _instances, x => x.GetType() == type))
+            {
+                instance = createdInstance;
+                return true;
+            }
+            return false;
+        }
+        
         private bool TryGetCreatedInstance<T>(out T instance)
         {
             instance = default;
