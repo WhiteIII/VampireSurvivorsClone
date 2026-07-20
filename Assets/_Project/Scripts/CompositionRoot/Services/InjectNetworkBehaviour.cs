@@ -7,15 +7,17 @@ namespace _Project.Scripts.CompositionRoot.Services
     {
         private bool _isSpawned;
         
-        [Networked, UnityNonSerialized] public NetworkBool IsInitializeEnd { get; set; } = false;
+        [Networked, UnityNonSerialized] private NetworkBool IsInitializeEndNetwork { get; set; } = false;
 
-        protected UniTask InitializeTask
+        public bool IsInitializeEnd => IsInitializeEndNetwork;
+        
+        public UniTask InitializeTask
         {
             get
             {
-                if (IsInitializeEnd)
+                if (IsInitializeEndNetwork)
                     return UniTask.CompletedTask;
-                return UniTask.WaitWhile(() => IsInitializeEnd == false);
+                return UniTask.WaitWhile(() => IsInitializeEndNetwork == false);
             }
         }
 
@@ -32,12 +34,12 @@ namespace _Project.Scripts.CompositionRoot.Services
         public override sealed async void Spawned()
         {
             _isSpawned = true;
-            await UniTask.WaitWhile(() => IsInitializeEnd == false);
+            await UniTask.WaitWhile(() => IsInitializeEndNetwork == false);
             OnSpawnMethod();
         }
 
         protected void EndInitialization() =>
-            IsInitializeEnd = true;
+            IsInitializeEndNetwork = true;
 
         protected async UniTask<bool> GetStateAuthorityAsync()
         {

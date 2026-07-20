@@ -11,11 +11,10 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
 {
     public class PlayerSpawner : InjectNetworkBehaviour
     {
-        private readonly CompositeDisposable _disposables = new();
-        
+        private CompositeDisposable _disposables;
         private SpawnPositionHelper _spawnPositionHelper;
         private PlayersInSessionData _playersInSessionData;
-        
+
         [Networked] private PlayerFactory Factory { get; set; }
         [Networked] private PlayerRepository PlayerRepository { get; set; }
 
@@ -33,51 +32,63 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
                 EndInitialization();
                 return;
             }
-            
+
             Factory = await asyncDependenciesRepository.Resolve<PlayerFactory>();
             PlayerRepository = await asyncDependenciesRepository.Resolve<PlayerRepository>();
             EndInitialization();
         }
 
-        protected override void OnSpawnMethod()
+        public override void Despawned(NetworkRunner runner, bool hasState)
+        {
+            if (HasStateAuthority)
+                _disposables?.Dispose();
+        } 
+
+        public void Enable()
         {
             if (HasStateAuthority == false)
                 return;
-            
+
+            _disposables = new CompositeDisposable();
             _playersInSessionData
                 .OnPlayerJoinedSubject
-                .Subscribe(createdData => 
+                .Subscribe(createdData =>
                     TrySpawnPlayer(createdData.Item1, createdData.Item2).Forget())
                 .AddTo(_disposables);
             _playersInSessionData
                 .OnPlayerLeftSubject
-                .Subscribe(leftPlayerData => 
+                .Subscribe(leftPlayerData =>
                     TryDespawnPlayer(leftPlayerData.Item1, leftPlayerData.Item2).Forget())
                 .AddTo(_disposables);
+
+            foreach (PlayerRef playerRef in _playersInSessionData)
+                TrySpawnPlayer(Runner, playerRef).Forget();
         }
 
-        public override void Despawned(NetworkRunner runner, bool hasState) =>
-            _disposables.Dispose();
-        
-        //public void OnHostMigration(NetworkRunnerCallBacksListener generalNetworkObjectsRepository) => 
-            //_callBacksListener = generalNetworkObjectsRepository;
+        public void Disable()
+        {
+            if (HasStateAuthority == false)
+                return;
+            
+            _disposables?.Dispose();
+        }
 
         private async UniTask TryDespawnPlayer(NetworkRunner runner, PlayerRef playerRef)
         {
             if (runner.IsServer == false)
                 return;
             await InitializeTask;
-            if (PlayerRepository.TryGetByPlayerRef(out Player player, playerRef)) 
+            if (PlayerRepository.TryGetByPlayerRef(out Player player, playerRef))
                 Factory.Despawn(player);
         }
-        
+
         private async UniTask TrySpawnPlayer(NetworkRunner runner, PlayerRef playerRef)
         {
-            if (runner.IsServer == false) 
+            if (runner.IsServer == false)
                 return;
             if (PlayerRepository.TryGetByPlayerRef(out Player _, playerRef))
                 return;
-            await InitializeTask; 
+            await InitializeTask;
             await Factory.Create(_spawnPositionHelper.GetSpawnPosition(), playerRef, true);
         }
     }

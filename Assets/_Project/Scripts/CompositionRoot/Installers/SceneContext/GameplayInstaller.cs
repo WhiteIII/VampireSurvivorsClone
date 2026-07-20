@@ -40,6 +40,7 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindIsSingle<GeneralNetworkObjectsCreator>();
             BindIsSingle<NetworkBehavioursRepository>();
             BindIsSingle<GameLoopLocalBuffer>().WhenInjectedInto<GameLoop>();
+            BindInterfacesAndSelfToIsSingle<PlayersInSessionData>();
             BindIsSingle<CameraController>().WithArguments(_camera);
             Container.Bind<Map>().FromInstance(_map).AsSingle();
             Container.Bind<NetworkRunner>()
@@ -58,10 +59,12 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 
             BindIsSingle<NetworkCreatorForBinding>();
             BindAssets();
-            BindCreators();
-            BindRepositories();
-            BindFactories();
             BindParents();
+            BindNetworkComponent<PlayerFactory>();
+            BindNetworkComponent<EnemyFactory>();
+            BindNetworkComponent<PlayerRepository>();
+            BindNetworkComponent<PlayerCreator>();
+            BindNetworkComponent<EnemyCreator>();
             BindNetworkComponent<PlayerSpawner>();
             BindNetworkComponent<EnemySpawner>();
             BindNetworkComponent<GameLoop>();
@@ -71,23 +74,6 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindNetworkComponent<EnemyRepository>();
             
             BindInterfacesToIsSingle<GameplayEntryPoint>();
-        }
-
-        private void BindFactories()
-        {
-            BindNetworkComponent<PlayerFactory>();
-            BindNetworkComponent<EnemyFactory>();
-        }
-        
-        private void BindRepositories()
-        {
-            BindNetworkComponent<PlayerRepository>();
-        }
-
-        private void BindCreators()
-        {
-            BindNetworkComponent<PlayerCreator>();
-            BindNetworkComponent<EnemyCreator>();
         }
 
         private void BindAssets()

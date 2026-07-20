@@ -2,6 +2,7 @@ using System;
 using _Project.Scripts.Common.AssetsManagement;
 using _Project.Scripts.Common.Services.Factories.Base;
 using _Project.Scripts.Common.Services.Repositories.Implementation;
+using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services.Factories.NetworkObjectProvider;
 using _Project.Scripts.Gameplay.Network.Services.HostMigration;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
@@ -10,6 +11,7 @@ using Fusion;
 using R3;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using Debug = System.Diagnostics.Debug;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
 {
@@ -82,7 +84,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
                 position, 
                 rotation, 
                 playerRef);
-
+            await WaitWhileNetworkObjectInjectionInProgressAsync(spawnedObject);
+            
             return SendObjectOnSpawn(spawnedObject.GetComponent<T>());
         }
         
@@ -103,7 +106,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
                 position, 
                 rotation, 
                 playerRef);
-
+            await WaitWhileNetworkObjectInjectionInProgressAsync(spawnedObject);
+            
             return SendObjectOnSpawn(spawnedObject.GetComponent<T>());
         }
 
@@ -128,6 +132,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
                 playerRef);
             if (parent)
                 spawnedObject.transform.SetParent(parent.transform);
+            await WaitWhileNetworkObjectInjectionInProgressAsync(spawnedObject);
             
             return SendObjectOnSpawn(spawnedObject.GetComponent<T>());
         }
@@ -144,6 +149,15 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         {
             _onDespawn.OnNext(instance);
             return instance;
+        }
+
+        private async UniTask WaitWhileNetworkObjectInjectionInProgressAsync(NetworkObject networkObject)
+        {
+            foreach (NetworkBehaviour networkBehaviour in networkObject.NetworkedBehaviours)
+            {
+                if (networkBehaviour is InjectNetworkBehaviour injectNetworkBehaviour)
+                    await injectNetworkBehaviour.InitializeTask;
+            }
         }
     }
 }

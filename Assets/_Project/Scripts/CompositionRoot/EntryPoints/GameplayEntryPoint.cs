@@ -4,6 +4,7 @@ using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implementation;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
+using _Project.Scripts.Gameplay.Network.Services.Spawners;
 using _Project.Scripts.View.Implementation;
 using _Project.Scripts.View.Services;
 using _Project.Scripts.ViewModel.Implementation;
@@ -71,7 +72,9 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             if (IsServer == false)
                 return;
 
+            PlayerSpawner playerSpawner = await _asyncDependenciesContainer.Resolve<PlayerSpawner>();
             EnemySpawner enemySpawner = await _asyncDependenciesContainer.Resolve<EnemySpawner>();
+            playerSpawner.Enable();
             enemySpawner.Enable();
         }
 
