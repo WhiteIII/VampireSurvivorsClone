@@ -1,6 +1,7 @@
 using System;
 using _Project.Scripts.Common.Services.Factories.Base;
 using _Project.Scripts.CompositionRoot.Services;
+using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base;
 using Fusion;
 using R3;
 using Zenject;
@@ -16,7 +17,7 @@ namespace _Project.Scripts.Gameplay.Network.Services
 
         private readonly CompositeDisposable _disposables = new();
         
-        private INetworkObjectsCreator<T> _creator;
+        private NetworkLayerAboveObjectCreator<T> _creator;
 
         public NetworkCreatorAdapter(
             Action<NetworkBehaviour> onSpawn,
@@ -30,7 +31,7 @@ namespace _Project.Scripts.Gameplay.Network.Services
         
         public async void Initialize()
         {
-            _creator = await _asyncDependenciesRepository.Resolve<INetworkObjectsCreator<T>>();
+            _creator = await _asyncDependenciesRepository.Resolve<NetworkLayerAboveObjectCreator<T>>();
             _creator
                 .OnSpawn
                 .Subscribe(x => _onSpawn.Invoke(x))

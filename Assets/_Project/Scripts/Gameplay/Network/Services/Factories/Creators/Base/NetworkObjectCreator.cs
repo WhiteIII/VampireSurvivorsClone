@@ -8,10 +8,8 @@ using _Project.Scripts.Gameplay.Network.Services.HostMigration;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using Cysharp.Threading.Tasks;
 using Fusion;
-using R3;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using Debug = System.Diagnostics.Debug;
 
 namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
 {
@@ -21,16 +19,10 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         ISendGlobalRepositoryOnHostMigration
         where TBaseItem : NetworkBehaviour
     {
-        public Observable<TBaseItem> OnSpawn => _onCreate;
-        public Observable<TBaseItem> OnDespawn => _onDespawn;
-        
         private LocalAssetProvider _localAssetProvider;
         private NetworkComponentCreationRepository _networkComponentCreationRepository;
         private NetworkRunner _networkRunner;
         private NetworkObjectEndEmptyObjectProvider _objectProvider;
-        
-        private readonly Subject<TBaseItem> _onCreate = new();
-        private readonly Subject<TBaseItem> _onDespawn = new();
 
         public NetworkObjectCreator(
             LocalAssetProvider localAssetProvider,
@@ -68,7 +60,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             CreateEmptyObjectWithParameters<T>(parent, isWithInjection);
         
         public void Despawn(TBaseItem item) => 
-            _networkRunner.Despawn(SendObjectOnDespawn(item).Object);
+            _networkRunner.Despawn(item.Object);
 
         public async UniTask<T> CreateWithParameters<T>(
             NetworkPrefabRef assetReference,
@@ -86,7 +78,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
                 playerRef);
             await WaitWhileNetworkObjectInjectionInProgressAsync(spawnedObject);
             
-            return SendObjectOnSpawn(spawnedObject.GetComponent<T>());
+            return spawnedObject.GetComponent<T>();
         }
         
         public async UniTask<T> CreateWithParameters<T>(
@@ -108,7 +100,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
                 playerRef);
             await WaitWhileNetworkObjectInjectionInProgressAsync(spawnedObject);
             
-            return SendObjectOnSpawn(spawnedObject.GetComponent<T>());
+            return spawnedObject.GetComponent<T>();
         }
 
         public async UniTask<T> CreateEmptyObjectWithParameters<T>(
@@ -134,21 +126,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
                 spawnedObject.transform.SetParent(parent.transform);
             await WaitWhileNetworkObjectInjectionInProgressAsync(spawnedObject);
             
-            return SendObjectOnSpawn(spawnedObject.GetComponent<T>());
-        }
-        
-        private T SendObjectOnSpawn<T>(T instance)
-            where T : TBaseItem
-        {
-            _onCreate.OnNext(instance);
-            return instance;
-        }
-
-        private T SendObjectOnDespawn<T>(T instance)
-            where T : TBaseItem
-        {
-            _onDespawn.OnNext(instance);
-            return instance;
+            return spawnedObject.GetComponent<T>();
         }
 
         private async UniTask WaitWhileNetworkObjectInjectionInProgressAsync(NetworkObject networkObject)

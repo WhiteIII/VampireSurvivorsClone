@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Base;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
@@ -13,19 +12,28 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Implementation
     {
         private readonly NetworkCreatorForBinding _creator;
         private readonly NetworkTransform _parent;
-
+        private readonly NetworkObjectsCreatedInCompositionRootLocalRepository _repository;
+        
         public NetworkComponentFactory(
             NetworkCreatorForBinding creator,
-            [Inject(Id = "NetworkServicesParent")] NetworkTransform parent)
+            [Inject(Id = "NetworkServicesParent")] NetworkTransform parent, 
+            NetworkObjectsCreatedInCompositionRootLocalRepository repository)
         {
+            _repository = repository;
             _creator = creator;
             _parent = parent;
         }
 
-        public UniTask<T> Create() => 
-            _creator.CreateEmptyNetworkObjectWithComponent<T>(_parent);
+        public async UniTask<T> Create()
+        { 
+            T spawnedObject = await _creator.CreateEmptyNetworkObjectWithComponent<T>(_parent);
+            return _repository.Add(spawnedObject);
+        }
 
-        public void Despawn(T item) => 
+        public void Despawn(T item)
+        {
+            _repository.Remove(item);
             _creator.Despawn(item);
+        } 
     }
 }

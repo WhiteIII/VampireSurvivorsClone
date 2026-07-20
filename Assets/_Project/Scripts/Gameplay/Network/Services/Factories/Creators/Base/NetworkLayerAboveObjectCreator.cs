@@ -22,11 +22,14 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         ISendGlobalRepositoryOnHostMigration
         where TBaseItem : NetworkBehaviour
     {
-        public Observable<TBaseItem> OnSpawn => _networkObjectCreator.OnSpawn;
-        public Observable<TBaseItem> OnDespawn => _networkObjectCreator.OnDespawn;
+        public Observable<TBaseItem> OnSpawn => _onSpawn;
+        public Observable<TBaseItem> OnDespawn => _onDespawn;
 
         private IRepository<TBaseItem> _repository;
         private NetworkObjectCreator<TBaseItem> _networkObjectCreator;
+        
+        private readonly Subject<TBaseItem> _onSpawn = new();
+        private readonly Subject<TBaseItem> _onDespawn = new();
         
         [Networked] private GameLoop GameLoop { get; set; }
         [Networked] private NetworkBehaviour RepositoryNetworkBehaviour { get; set; }
@@ -72,7 +75,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
         {
             GameLoop.TryUnregister(item);
             TryRemoveFromRepository(item);
-            _networkObjectCreator.Despawn(item);
+            _networkObjectCreator.Despawn(SendOnDespawn(item));
         }
 
         protected async UniTask<T> CreateWithParameters<T>(
@@ -84,7 +87,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             await InitializeTask;
             T spawnedObject = await _networkObjectCreator
                 .CreateWithParameters<T>(assetReference, position, rotation, playerRef);
-            return GameLoop.TryRegister(TryAddInRepository(spawnedObject));
+            return SendOnSpawn(GameLoop.TryRegister(TryAddInRepository(spawnedObject)));
         }
         
         protected async UniTask<T> CreateWithParameters<T>(
@@ -97,7 +100,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             await InitializeTask;
             T spawnedObject = await _networkObjectCreator
                 .CreateWithParameters<T>(assetReference, isWithInjection, position, rotation, playerRef);
-            return GameLoop.TryRegister(TryAddInRepository(spawnedObject));
+            return SendOnSpawn(GameLoop.TryRegister(TryAddInRepository(spawnedObject)));
         }
 
         protected async UniTask<T> CreateEmptyObjectWithParameters<T>(
@@ -110,7 +113,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             await InitializeTask;
             T spawnedObject = await _networkObjectCreator
                 .CreateEmptyObjectWithParameters<T>(parent, isWithInjection, position, rotation, playerRef);
-            return GameLoop.TryRegister(TryAddInRepository(spawnedObject));
+            return SendOnSpawn(GameLoop.TryRegister(TryAddInRepository(spawnedObject)));
         }
         
         private T TryRemoveFromRepository<T>(T spawnedObject) where T : TBaseItem => 
@@ -136,6 +139,26 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.Creators.Base
             }
             
             return createdObject;
-        } 
+        }
+
+        private T SendOnSpawn<T>(T spawnedObject) where T : TBaseItem
+        {
+            RPC_SendOnSpawn(spawnedObject);
+            return spawnedObject;
+        }
+
+        private T SendOnDespawn<T>(T spawnedObject) where T : TBaseItem
+        {
+            RPC_SendOnDespawn(spawnedObject);
+            return spawnedObject;
+        }
+        
+        //[Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_SendOnSpawn(TBaseItem item) => 
+            _onSpawn.OnNext(item);
+
+        //[Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_SendOnDespawn(TBaseItem item) => 
+            _onDespawn.OnNext(item);
     }
 }
