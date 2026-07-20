@@ -13,7 +13,7 @@ namespace _Project.Scripts.Gameplay.Network
         public Observable<(NetworkRunner, NetworkInput)> OnInputSubject => _onInputSubject;
         public Observable<NetworkRunner> OnSceneLoadDoneSubject => _onSceneLoadDoneSubject;
     
-        private readonly BehaviorSubject<(NetworkRunner, PlayerRef)> _onPlayerJoinedSubject = new(new());
+        private readonly Subject<(NetworkRunner, PlayerRef)> _onPlayerJoinedSubject = new();
         private readonly Subject<(NetworkRunner, PlayerRef)> _onPlayerLeftSubject = new();
         private readonly Subject<(NetworkRunner, NetworkInput)> _onInputSubject = new();
         private readonly Subject<NetworkRunner> _onSceneLoadDoneSubject = new();
