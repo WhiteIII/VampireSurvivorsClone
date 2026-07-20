@@ -11,8 +11,8 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
         private readonly List<IUpdatable> _updatables = new();
         private readonly Queue<IUpdatable> _addedUpdateablesQueue = new();
         private readonly Queue<IUpdatable> _removedUpdateablesQueue = new();
-        
-        private bool _isPaused;
+
+        private bool _isActive;
 
         [Inject] private async UniTask Construct(GameLoopLocalBuffer buffer)
         {
@@ -34,7 +34,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
 
         public override void FixedUpdateNetwork()
         {
-            if (HasStateAuthority == false)
+            if (HasStateAuthority == false || _isActive == false)
                 return;
 
             foreach (IUpdatable updatable in _updatables)
@@ -53,6 +53,18 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
                 _updatables.Remove(_removedUpdateablesQueue.Dequeue());
         }
 
+        public void Enable()
+        {
+            if (HasStateAuthority)
+                _isActive = true;
+        }
+
+        public void Disable()
+        {
+            if (HasStateAuthority)
+                _isActive = false;
+        }
+        
         public T TryRegister<T>(T item) 
             where T : NetworkBehaviour
         {

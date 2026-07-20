@@ -1,8 +1,8 @@
 using _Project.Scripts.Common.AssetsManagement;
-using _Project.Scripts.Common.Services.Initialize;
 using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implementation;
+using _Project.Scripts.Gameplay.Network.Services.GameCycle;
 using _Project.Scripts.Gameplay.Network.Services.Repositories;
 using _Project.Scripts.Gameplay.Network.Services.Spawners;
 using _Project.Scripts.View.Implementation;
@@ -74,6 +74,8 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
 
             PlayerSpawner playerSpawner = await _asyncDependenciesContainer.Resolve<PlayerSpawner>();
             EnemySpawner enemySpawner = await _asyncDependenciesContainer.Resolve<EnemySpawner>();
+            GameLoop gameLoop = await _asyncDependenciesContainer.Resolve<GameLoop>();
+            gameLoop.Enable();
             playerSpawner.Enable();
             enemySpawner.Enable();
         }
