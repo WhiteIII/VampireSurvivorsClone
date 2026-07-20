@@ -48,7 +48,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
             _callBacksListener
                 .OnPlayerJoinedSubject
                 .Subscribe(createdData => 
-                    TryCreatePlayer(createdData.Item1, createdData.Item2).Forget())
+                    TrySpawnPlayer(createdData.Item1, createdData.Item2).Forget())
                 .AddTo(_disposables);
             _callBacksListener
                 .OnPlayerLeftSubject
@@ -72,7 +72,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Spawners
                 Factory.Despawn(player);
         }
         
-        private async UniTask TryCreatePlayer(NetworkRunner runner, PlayerRef playerRef)
+        private async UniTask TrySpawnPlayer(NetworkRunner runner, PlayerRef playerRef)
         {
             if (runner == false)
                 return;

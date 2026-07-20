@@ -1,4 +1,3 @@
-using _Project.Scripts.Common.Services.Factories;
 using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.View.Base;
 using _Project.Scripts.View.Implementation;
@@ -10,7 +9,7 @@ using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
-    public class UIGameplayInstaller : AdvancedMonoInstaller
+    public class UIGameplayInstaller : AdvancedMonoInstallerWithAsyncInjection
     {
         public override void InstallBindings()
         {

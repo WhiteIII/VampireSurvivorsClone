@@ -8,20 +8,21 @@ namespace _Project.Scripts.CompositionRoot.Services
     public class AsyncDependenceProvider<TValue, TFactory> : IAsyncDependenceProvider<TValue>
         where TFactory : IFactory<UniTask<TValue>>
     {
-        private readonly TFactory _factory;
-        private readonly Subject<Type> _onCreateStarted = new();
-        private readonly Subject<Type> _onCreateCompleted = new();
+        private TFactory _factory;
+        private readonly Func<TFactory> _factoryFactory;
         
         public TValue Value { get; private set; }
         
         public AsyncDependenceProvider(TFactory factory) => 
             _factory = factory;
+        
+        public AsyncDependenceProvider(Func<TFactory> factoryFactory) => 
+            _factoryFactory = factoryFactory;
 
         public async UniTask CreateAsync()
         {
-            _onCreateStarted.OnNext(typeof(TValue));
+            _factory ??= _factoryFactory();
             Value = await _factory.Create();
-            _onCreateCompleted.OnNext(typeof(TValue));
         } 
     }
 }

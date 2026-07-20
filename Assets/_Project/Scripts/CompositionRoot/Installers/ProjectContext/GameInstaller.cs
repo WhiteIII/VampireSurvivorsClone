@@ -3,6 +3,7 @@ using _Project.Scripts.Common.Services.Factories.Implementation;
 using _Project.Scripts.Common.Services.Repositories.Implementation;
 using _Project.Scripts.CompositionRoot.Installers.SceneContext;
 using _Project.Scripts.CompositionRoot.Services;
+using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Installers.ProjectContext
 {

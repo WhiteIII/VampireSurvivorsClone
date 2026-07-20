@@ -8,7 +8,7 @@ using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
 {
-    public abstract class BaseNetworkInstaller : AdvancedMonoInstaller
+    public abstract class BaseNetworkInstaller : AdvancedMonoInstallerWithAsyncInjection
     {
         private GameStateSwitcher _gameStateSwitcher;
         private NetworkComponentCreationRepository _networkComponentCreationRepository;
