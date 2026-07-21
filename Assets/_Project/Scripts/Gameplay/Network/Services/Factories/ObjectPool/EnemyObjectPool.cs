@@ -68,7 +68,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
                 _disableEnemies.RemoveAt(0);
             }
             _enableEnemies.Add(item);
-            OnGet(item);
+            RPC_OnGet(item);
             return (T)item;            
         }
 
@@ -78,7 +78,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
                 return item;
             _enableEnemies.Remove(item);
             _disableEnemies.Add(item);
-            OnRelease(item);
+            RPC_OnRelease(item);
             return item;            
         }
 
@@ -87,11 +87,13 @@ namespace _Project.Scripts.Gameplay.Network.Services.Factories.ObjectPool
             Enemy enemy = await Factory.Create(PositionHelper.GetSpawnPosition());
             return enemy;
         }
-
-        private void OnGet(Enemy enemy) =>
+        
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_OnGet(Enemy enemy) =>
             _onGetObservable.OnNext(enemy);
 
-        private void OnRelease(Enemy enemy) =>
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_OnRelease(Enemy enemy) =>
             _onReleaseObservable.OnNext(enemy);
     }
 }

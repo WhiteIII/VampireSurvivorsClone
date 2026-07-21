@@ -1,7 +1,5 @@
 using System;
 using Cysharp.Threading.Tasks;
-using R3;
-using Zenject;
 
 namespace _Project.Scripts.CompositionRoot.Services
 {

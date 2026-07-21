@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using _Project.Scripts.CompositionRoot.Services;
-using Cysharp.Threading.Tasks;
 using Fusion;
 using Zenject;
 
@@ -13,13 +12,6 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
         private readonly Queue<IUpdatable> _removedUpdateablesQueue = new();
 
         private bool _isActive;
-
-        [Inject] private async UniTask Construct(GameLoopLocalBuffer buffer)
-        {
-            await buffer.InitializeAsync();
-            foreach (IUpdatable updatable in buffer.Updatables)
-                Register(updatable);
-        }
         
         public void AfterHostMigration()
         {
@@ -69,12 +61,13 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
             where T : NetworkBehaviour
         {
             if (item is IUpdatable gameLoopObject)
+            {
+                if (_updatables.Contains(gameLoopObject))
+                    return item;
                 Register(gameLoopObject);
+            }
             return item;
         }
-
-        private void Register(IUpdatable item) =>       
-            _addedUpdateablesQueue.Enqueue(item);
 
         public void TryUnregister<T>(T item) 
             where T : NetworkBehaviour
@@ -84,6 +77,9 @@ namespace _Project.Scripts.Gameplay.Network.Services.GameCycle
             if (_updatables.Contains(updatable))
                 Unregister(updatable);
         }
+
+        private void Register(IUpdatable item) =>       
+            _addedUpdateablesQueue.Enqueue(item);
 
         private void Unregister(IUpdatable updatable) => 
             _removedUpdateablesQueue.Enqueue(updatable);

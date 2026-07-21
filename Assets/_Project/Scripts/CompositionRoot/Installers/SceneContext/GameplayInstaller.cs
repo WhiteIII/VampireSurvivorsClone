@@ -1,3 +1,4 @@
+using _Project.Scripts.Common.Services.Initialize;
 using _Project.Scripts.CompositionRoot.EntryPoints;
 using _Project.Scripts.Gameplay.Network;
 using _Project.Scripts.Gameplay.Network.Services;
@@ -35,18 +36,17 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
             BindIsSingle<GeneralNetworkObjectsCreator>();
             BindIsSingle<NetworkBehavioursRepository>();
             BindIsSingle<NetworkObjectsCreatedInCompositionRootLocalRepository>();
-            BindIsSingle<GameLoopLocalBuffer>().WhenInjectedInto<GameLoop>();
+            BindInterfacesToIsSingle<GameLoopHelper>();
+            BindIsSingle<AsyncInitializableRepository>();
             BindInterfacesAndSelfToIsSingle<PlayersInSessionData>();
             BindIsSingle<CameraController>().WithArguments(_camera);
             Container.Bind<Map>().FromInstance(_map).AsSingle();
-            Container.Bind<NetworkRunner>()
-                .FromFactory<GeneralNetworkObjectFactory<NetworkRunner>>().AsSingle();
-            Container.Bind<NetworkSceneManagerDefault>()
-                .FromFactory<GeneralNetworkObjectFactory<NetworkSceneManagerDefault>>().AsSingle();
-            Container.Bind<NetworkObjectEndEmptyObjectProvider>()
-                .FromFactory<GeneralNetworkObjectFactory<NetworkObjectEndEmptyObjectProvider>>().AsSingle();
-            Container.Bind<NetworkRunnerCallBacksListener>()
-                .FromFactory<NetworkRunnerCallBacksListenerFactory>().AsSingle();
+            BindIsSingleFromFactory<NetworkRunner, GeneralNetworkObjectFactory<NetworkRunner>>();
+            BindIsSingleFromFactory<NetworkSceneManagerDefault, 
+                GeneralNetworkObjectFactory<NetworkSceneManagerDefault>>();
+            BindIsSingleFromFactory<NetworkObjectEndEmptyObjectProvider, 
+                GeneralNetworkObjectFactory<NetworkObjectEndEmptyObjectProvider>>();
+            BindIsSingleFromFactory<NetworkRunnerCallBacksListener, NetworkRunnerCallBacksListenerFactory>();
 
             BindInterfacesAndSelfToIsSingle<SpawnPositionHelper>();
             BindIsSingle<EnemySpawnPositionHelper>();

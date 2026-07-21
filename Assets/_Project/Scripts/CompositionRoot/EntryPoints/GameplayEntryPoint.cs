@@ -1,4 +1,5 @@
 using _Project.Scripts.Common.AssetsManagement;
+using _Project.Scripts.Common.Services.Initialize;
 using _Project.Scripts.CompositionRoot.Services;
 using _Project.Scripts.Gameplay.Network.Services;
 using _Project.Scripts.Gameplay.Network.Services.Factories.Spawners.Implementation;
@@ -27,6 +28,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
         private readonly AssetReference _enemyAssetReference;
         private readonly NetworkBehavioursRepository _networkBehavioursRepository;
         private readonly IAsyncDependenciesContainer _asyncDependenciesContainer;
+        private readonly AsyncInitializableRepository _asyncInitializableRepository;
         
         public GameplayEntryPoint(
             NetworkRunner networkRunner,
@@ -40,7 +42,8 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             NetworkBehavioursRepository networkBehavioursRepository,
             [Inject(Id = "PlayerPrefabAssetReference")]AssetReference playerAssetReference,
             [Inject(Id = "EnemyPrefabAssetReference")]AssetReference enemyAssetReference, 
-            IAsyncDependenciesContainer asyncDependenciesContainer) : base(networkRunner)
+            IAsyncDependenciesContainer asyncDependenciesContainer, 
+            AsyncInitializableRepository asyncInitializableRepository) : base(networkRunner)
         {
             _uiController = uiController;
             _loadingWindowViewModel = loadingWindowViewModel;
@@ -52,6 +55,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             _playerAssetReference = playerAssetReference;
             _enemyAssetReference = enemyAssetReference;
             _asyncDependenciesContainer = asyncDependenciesContainer;
+            _asyncInitializableRepository = asyncInitializableRepository;
         }
 
         public override async void Initialize()
@@ -61,6 +65,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_assetsLoader.GetLoadedTaskAssets());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_gameStarter.StartGameAsync());
             await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_networkBehavioursRepository.InitializeAsync());
+            await _loadingWindowViewModel.WaitLoadingForMultiStageLoadingAsync(_asyncInitializableRepository.GetTasks());
             await _uiController.CreateAndOpenWindowAsync<EnemiesBarsWindow>();
             await _uiController.CloseWindowAsync<LoadingWindow>();
             _loadingWindowViewModel.ResetLoadingProgress();
@@ -102,6 +107,7 @@ namespace _Project.Scripts.CompositionRoot.EntryPoints
             int startGameUnit = 1;
             int networkBehavioursRepositoryUnit = 1;
             return _assetsLoader.NotLoadedAssetsCount + 
+                   _asyncInitializableRepository.Count +
                    startGameUnit + 
                    networkBehavioursRepositoryUnit;
         }

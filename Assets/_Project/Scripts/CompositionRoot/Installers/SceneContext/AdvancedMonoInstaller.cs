@@ -8,6 +8,9 @@ namespace _Project.Scripts.CompositionRoot.Installers.SceneContext
         protected void BindAsset(string id, AssetReference instance) => 
             BindWithId<AssetReference>(id).FromInstance(instance);
 
+        protected void BindIsSingleFromFactory<TValue, TFactory>() where TFactory : IFactory<TValue> =>
+            Container.Bind<TValue>().FromFactory<TFactory>().AsSingle();
+        
         protected void BindWithId<T>(string id, T instance) => 
             BindWithId<T>(id).FromInstance(instance);
 
