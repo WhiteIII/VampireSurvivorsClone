@@ -43,9 +43,8 @@ GameObject:
   - component: {fileID: 4297507346740934368}
   - component: {fileID: 827921672409642940}
   - component: {fileID: 4923931064761845675}
-  - component: {fileID: 8956021275018615492}
   - component: {fileID: 7233183770063778856}
-  - component: {fileID: 8416550315890341580}
+  - component: {fileID: 8956021275018615492}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -86,8 +85,8 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 8956021275018615492}
   - {fileID: 7233183770063778856}
+  - {fileID: 8956021275018615492}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &4923931064761845675
 CharacterController:
@@ -114,18 +113,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &8956021275018615492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3536323579742975473}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 206bfbfea3294db5a81eaba84f49656d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7233183770063778856
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fbde3a9da504b1cb2cf4602ced39fc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8416550315890341580
+--- !u!114 &8956021275018615492
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -147,11 +134,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3536323579742975473}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1541381998, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Script: {fileID: 11500000, guid: 206bfbfea3294db5a81eaba84f49656d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Guid:
-    RawGuidValue: 7bdc7304802497b409b7c8512eb847c3
 --- !u!1 &8008258332873333181
 GameObject:
   m_ObjectHideFlags: 0

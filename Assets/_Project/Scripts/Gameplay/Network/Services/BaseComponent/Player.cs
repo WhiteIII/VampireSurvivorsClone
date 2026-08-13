@@ -26,8 +26,9 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
         public void Initialize(PlayerRef playerRef) =>  
             NetworkedPlayerRef = playerRef;
 
-        public override async void Spawned()
+        protected override async void OnSpawned()
         {
+            base.OnSpawned();
             _playerMovement = GetComponent<PlayerMovement>();
             _attackSystem = GetComponent<AttackSystem>();
             _health = GetComponent<Health>();

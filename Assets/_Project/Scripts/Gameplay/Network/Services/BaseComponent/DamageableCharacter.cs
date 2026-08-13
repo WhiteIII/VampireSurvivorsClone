@@ -1,10 +1,11 @@
+using Fusion;
 using R3;
 using UnityEngine;
 
 namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
 {
     [RequireComponent(typeof(Health))]
-    public abstract class DamageableCharacter : Character
+    public abstract class DamageableCharacter : Character, IAfterSpawned
     {
         public ReadOnlyReactiveProperty<int> OnHealthChanged { get; private set; }
         public ReadOnlyReactiveProperty<int> OnMaxHealthChanged { get; private set; }
@@ -16,7 +17,7 @@ namespace _Project.Scripts.Gameplay.Network.Services.BaseComponent
             
         private Health _health;
 
-        protected override void OnAwake()
+        public void AfterSpawned()
         {
             _health = GetComponent<Health>();
             OnHealthChanged = _health.OnHealthChanged;
